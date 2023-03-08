@@ -1,5 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Dal;
+using Dal.Email;
+using Dal.Email.Interfaces;
 using Dal.Entities;
 using HRelloApi;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication();
 
-builder.Services.AddDbContext<AuthDbContext>(options =>
+builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
@@ -20,7 +22,7 @@ builder.Services.AddIdentity<UserDal, IdentityRole>(config =>
         config.Password.RequireNonAlphanumeric = false;
         config.Password.RequireUppercase = false;
     })
-    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddIdentityServer()
@@ -40,6 +42,9 @@ builder.Services.AddIdentityServer()
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
