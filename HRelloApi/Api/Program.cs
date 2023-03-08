@@ -1,12 +1,15 @@
 using Dal;
 using Dal.Entities;
 using HRelloApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication();
+builder.Services.AddAuthentication()
+    .AddJwtBearer()
+    .AddIdentityServerAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
 {
@@ -28,8 +31,9 @@ builder.Services.AddIdentityServer()
     .AddInMemoryIdentityResources(IdentityConfiguration.IdentityResources)
     .AddInMemoryApiScopes(IdentityConfiguration.ApiScopes)
     .AddInMemoryClients(IdentityConfiguration.Clients)
-    .AddDeveloperSigningCredential();
-//
+    .AddDeveloperSigningCredential()
+    .AddJwtBearerClientAuthentication();
+// TODO
 // builder.Services.ConfigureApplicationCookie(config =>
 // {
 //     config.Cookie.Name = "Notes.Identity.Cookie";
