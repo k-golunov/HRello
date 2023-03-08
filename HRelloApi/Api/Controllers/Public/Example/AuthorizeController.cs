@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Dal.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace HRelloApi.Controllers.Public.Example;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/public/[controller]")]
 public class AuthorizeController
 {
     private readonly SignInManager<IdentityUser> _signInManager;
@@ -24,7 +25,7 @@ public class AuthorizeController
     [HttpPost("register")]
     public async Task<IActionResult> Register()
     {
-        var user = new IdentityUser();
+        var user = new UserDal();
         await _signInManager.SignInAsync(user, isPersistent: false);
         return new OkResult();
     }
