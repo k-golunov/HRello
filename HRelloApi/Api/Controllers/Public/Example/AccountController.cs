@@ -11,7 +11,7 @@ namespace HRelloApi.Controllers.Public.Example;
 /// Контроллер для выдачи токена авторизованным пользователям
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/public/[controller]")]
 public class AccountController: Controller
 {
     /// <summary>
@@ -31,9 +31,11 @@ public class AccountController: Controller
     [HttpGet("getToken")]
     public string GetToken(/* сюда добавить сущность,ссодержащую инфу, передающуюся в токен*/)
     {
-        List<Claim> claims = new List<Claim>();
+        var claims = new List<Claim>();
         //закидываем в лист переданную инфу
-
+        claims.Add(new Claim("email", "a@mail.ru"));
+        claims.Add(new Claim("user", "vova"));
+        
         var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
 
         var jwt = new JwtSecurityToken(
@@ -41,7 +43,7 @@ public class AccountController: Controller
             audience: _options.Audience,
             claims: claims,
             notBefore: DateTime.UtcNow,
-            signingCredentials: new SigningCredentials(signInKey, SecurityAlgorithms.Sha256));
+            signingCredentials: new SigningCredentials(signInKey, SecurityAlgorithms.HmacSha256Signature));
 
         return new JwtSecurityTokenHandler().WriteToken(jwt);
 
