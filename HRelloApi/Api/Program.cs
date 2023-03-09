@@ -2,6 +2,7 @@ using Dal;
 using Dal.Email;
 using Dal.Email.Interfaces;
 using Dal.Entities;
+using Dal.User.Repositories;
 using HRelloApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -32,7 +33,10 @@ builder.Services.AddIdentity<UserDal, IdentityRole>(config =>
     .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddIdentityServer()
+builder.Services.AddIdentityServer(options =>
+    {
+        options.AccessTokenJwtType = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddAspNetIdentity<UserDal>()
     .AddInMemoryApiResources(IdentityConfiguration.ApiResources)
     .AddInMemoryIdentityResources(IdentityConfiguration.IdentityResources)
@@ -52,6 +56,8 @@ builder.Services.AddIdentityServer()
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<UserManager<UserDal>>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

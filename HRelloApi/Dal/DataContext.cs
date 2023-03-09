@@ -38,5 +38,10 @@ public class DataContext : IdentityDbContext<UserDal>
         builder.ApplyConfiguration(new AuthConfiguration());
         
         builder.Entity<EmailDal>().HasIndex(u => u.Email).IsUnique();
+
+        builder.Entity<UserDal>().HasOne(u => u.Departament);
+        builder.Entity<UserDal>().Property(p => p.Name).IsRequired(false);
+        builder.Entity<UserDal>().Property(p => p.Surname).IsRequired(false);
+        builder.Entity<UserDal>().Property(p => p.Patronymic).IsRequired(false);
     }
 }
