@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Serilog;
+using Serilog.Context;
 
 namespace HRelloApi.Controllers.Public.Example;
 
@@ -17,6 +19,7 @@ public class AuthorizeController : ControllerBase
 
     public AuthorizeController(UserManager<UserDal> userManager)
     {
+        LogContext.PushProperty("Source", "Test Authorize Controller");
         _userManager = userManager;
     }
 
@@ -45,6 +48,7 @@ public class AuthorizeController : ControllerBase
         });*/
 
         // получение пользователя по айди
+        Log.Information("получение пользователя по id");
         var b = await _userManager.FindByIdAsync("ff9a04b4-697c-42c0-92ce-2debdeadc059");
         return Ok(b);
     }

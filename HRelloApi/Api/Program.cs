@@ -7,8 +7,25 @@ using HRelloApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Context;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((cts, lc) =>
+    lc
+        .Enrich.WithThreadId()
+        .Enrich.FromLogContext()
+        // .AuditTo.Sink<SerilogSink>()
+        // .Filter.With<SerilogFilter>()
+        // .Enrich.With<SerilogEnrich>()
+        .WriteTo.Console(
+            LogEventLevel.Information,
+            outputTemplate:
+            "{Timestamp:HH:mm:ss:ms} LEVEL:[{Level}]| THREAD:|{ThreadId}| Source: |{Source}| {Message}{NewLine}{Exception}"));
+
+LogContext.PushProperty("Source", "Program");
 
 builder.Services.AddAuthentication(options =>
     {
