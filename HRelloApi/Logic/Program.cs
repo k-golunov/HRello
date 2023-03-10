@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
@@ -24,6 +25,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped(typeof(UserManager<>));
 
 var app = builder.Build();
 
