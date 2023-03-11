@@ -11,7 +11,7 @@ using Serilog;
 using Serilog.Context;
 using Serilog.Events;
 using AutoMapper;
-using HRelloApi.Controllers.Public.Example.Mapping;
+using HRelloApi.Controllers.Public.Auth.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +80,7 @@ builder.Services.AddScoped<UserManager<UserDal>>();
 builder.Services.AddScoped(typeof(Logic.Managers.UserManager<>));
 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
+builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

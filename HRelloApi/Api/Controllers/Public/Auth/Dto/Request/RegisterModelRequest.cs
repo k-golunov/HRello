@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace HRelloApi.Controllers.Public.Example.Dto.Request;
+namespace HRelloApi.Controllers.Public.Auth.Dto.Request;
 
+/// <summary>
+/// Модель данных при регистрации пользователя
+/// </summary>
 public record RegisterModelRequest
 {
     /// <summary>
@@ -27,9 +30,10 @@ public record RegisterModelRequest
     public string Patronymic { get; init; }
     
     /// <summary>
-    /// Пароль
+    /// Пароль пользователя
     /// </summary>
     [Required]
+    [DataType(DataType.Password)]
     [JsonProperty("Password")]
     public string Password { get; init; }
 }

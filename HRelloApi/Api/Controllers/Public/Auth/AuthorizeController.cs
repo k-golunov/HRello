@@ -3,20 +3,20 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Dal.Entities;
-using HRelloApi.Controllers.Public.Example.Dto;
-using HRelloApi.Controllers.Public.Example.Dto.Request;
-using HRelloApi.Controllers.Public.Example.Dto.Response;
-using Microsoft.AspNetCore.Http.HttpResults;
+using HRelloApi.Controllers.Public.Auth.Dto.Request;
+using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Context;
 
-namespace HRelloApi.Controllers.Public.Example;
+namespace HRelloApi.Controllers.Public.Auth;
 
+/// <summary>
+/// Контроллер, принимающий запросы на запросы, связанные с авторизацией пользователей
+/// </summary>
 [ApiController]
 [Route("api/v1/public/[controller]")]
 public class AuthorizeController : ControllerBase
@@ -26,6 +26,13 @@ public class AuthorizeController : ControllerBase
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
+    /// <summary>
+    /// Конструктор контроллера
+    /// </summary>
+    /// <param name="userManager">Сервис логики работы с пользователями</param>
+    /// <param name="signInManager">Сервис логики работы с аутентификацией пользователей</param>
+    /// <param name="options">Настройки уникального токена</param>
+    /// <param name="mapper">Автомаппер</param>
     public AuthorizeController(Logic.Managers.UserManager<UserDal> userManager, 
         SignInManager<UserDal> signInManager, 
         IOptions<JWTSettings> options,
@@ -37,24 +44,25 @@ public class AuthorizeController : ControllerBase
         _options = options.Value;
         _mapper = mapper;
     }
-
-    //todo!
+    
     /// <summary>
     /// Тестовый рест
     /// в данный момент в нем показано, как добавлять новых пользователей через UserManager
     /// без пароля и каких-то еще данных, главное указать почту, username и departamentId
     /// также показано, как получить пользователя
+    ///
+    /// Создает нового пользователя
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// При успешном создании пользователя отправляет электронное письмо на почту созданного пользователя
+    /// для дальнейшей его регистрации на сервисе
+    ///
+    /// !ПОКА ЧТО ВОЗВРАЩАЕТ ID СОЗДАННОГО ПОЛЬЗОВАТЕЛЯ
+    /// </returns>
     [HttpPost("createUser")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
     {
-        var user = new UserDal
-        {
-            UserName = model.UserName,
-            Email = model.Email,
-            DepartamentId = model.DepartamentId,
-        };
+        var user = _mapper.Map<UserDal>(model);
         
         var result = await _userManager.CreateAsync(user);
         
@@ -65,6 +73,7 @@ public class AuthorizeController : ControllerBase
             var claims = new List<Claim>();
             claims.Add(new Claim("Email", model.Email));
             claims.Add(new Claim("DepartmentId", model.DepartamentId.ToString()));
+            claims.Add(new Claim("Role", model.Role));
             claims.Add(new Claim("UserName", model.UserName));
 
             await _userManager.AddClaimsAsync(user, claims);
@@ -108,6 +117,7 @@ public class AuthorizeController : ControllerBase
             claims: claims,
             notBefore: DateTime.UtcNow,
             signingCredentials: new SigningCredentials(signInKey, SecurityAlgorithms.HmacSha256Signature));
+        
 
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }

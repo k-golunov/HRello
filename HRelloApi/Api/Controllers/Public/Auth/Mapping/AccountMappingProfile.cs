@@ -1,11 +1,17 @@
 ﻿using AutoMapper;
 using Dal.Entities;
-using HRelloApi.Controllers.Public.Example.Dto.Request;
+using HRelloApi.Controllers.Public.Auth.Dto.Request;
 
-namespace HRelloApi.Controllers.Public.Example.Mapping;
+namespace HRelloApi.Controllers.Public.Auth.Mapping;
 
+/// <summary>
+/// Класс маппинга модели данных регистрируемого пользователя в базовую сущность
+/// </summary>
 public class AccountMappingProfile: Profile
 {
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public AccountMappingProfile()
     {
         CreateMap<RegisterModelRequest, UserDal>()
