@@ -13,9 +13,9 @@ public record IdModelResponse
     /// </summary>
     [Required]
     [JsonProperty("Id")]
-    public Guid Id;
+    public string Id;
 
-    public IdModelResponse(Guid id)
+    public IdModelResponse(string id)
     {
         Id = id;
     }

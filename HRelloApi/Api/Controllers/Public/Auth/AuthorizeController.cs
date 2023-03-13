@@ -5,6 +5,7 @@ using AutoMapper;
 using Dal.Entities;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -59,14 +60,17 @@ public class AuthorizeController : ControllerBase
     ///
     /// !ПОКА ЧТО ВОЗВРАЩАЕТ ID СОЗДАННОГО ПОЛЬЗОВАТЕЛЯ
     /// </returns>
+    [Authorize(Roles = "boss")]
     [HttpPost("createUser")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
     {
         var user = _mapper.Map<UserDal>(model);
         
         var result = await _userManager.CreateAsync(user);
+
+        var roleResult = await _userManager.AddToRoleAsync(user, model.Role);
         
-        if (result.Succeeded)
+        if (result.Succeeded && roleResult.Succeeded)
         {
             await _signInManager.SignInAsync(user, isPersistent: false);
 
@@ -82,44 +86,28 @@ public class AuthorizeController : ControllerBase
         {
             BadRequest();
         }
-
+        
         var userDal = await _userManager.FindByEmailAsync(user.Email);
-        return Ok(new IdModelResponse(Guid.Parse(user.Id)));
-        
-        
-        // создание пользователя
-        var a = await _userManager.CreateAsync(new UserDal()
-        {
-            Email = "asc@mail.ru",
-            UserName = "ass",
-            PhoneNumber = "79221234820",
-            DepartamentId = 1,
-            Name = "Vasya"
-        });
-
-        // получение пользователя по айди
-        Log.Information("получение пользователя по id");
-        var b = await _userManager.FindByIdAsync("ff9a04b4-697c-42c0-92ce-2debdeadc059");
-        return Ok(b);
+        return Ok(userDal.Id);
     }
 
     private string GetToken(UserDal user, IEnumerable<Claim> principal)
     {
-        var claims = principal.ToList();
-        
-        claims.Add(new Claim(ClaimTypes.Name, user.Name));
-        
-        var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
-
-        var jwt = new JwtSecurityToken(
-            issuer: _options.Issuer,
-            audience: _options.Audience,
-            claims: claims,
-            notBefore: DateTime.UtcNow,
-            signingCredentials: new SigningCredentials(signInKey, SecurityAlgorithms.HmacSha256Signature));
-        
-
-        return new JwtSecurityTokenHandler().WriteToken(jwt);
+        var claims = new ClaimsIdentity(principal);
+        claims.Claims.Append(new Claim(ClaimTypes.Name, user.Name));
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_options.SecretKey);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Audience = _options.Audience,
+            Issuer = _options.Issuer,
+            Subject = claims,
+            Expires = DateTime.UtcNow.AddDays(30),
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 
     [HttpPost("register")]
