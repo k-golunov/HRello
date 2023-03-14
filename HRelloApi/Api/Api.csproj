@@ -17,6 +17,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.0" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+        <PackageReference Include="Fligoo.Framework.Base.Api" Version="3.0.1" />
         <PackageReference Include="IdentityServer4" Version="4.1.2" />
         <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
         <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
@@ -35,9 +38,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\Debug" />
-      <Folder Include="Controllers\Public\Example\Dto\Request" />
-      <Folder Include="Controllers\Public\Example\Dto\Response" />
       <Folder Include="wwwroot" />
     </ItemGroup>
 

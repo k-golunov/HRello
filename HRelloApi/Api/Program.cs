@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
+using AutoMapper;
+using HRelloApi.Controllers.Public.Auth.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +77,11 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserManager<UserDal>>();
+builder.Services.AddScoped(typeof(Logic.Managers.UserManager<>));
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
+
+builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
+builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
