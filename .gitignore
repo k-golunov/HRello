@@ -14,7 +14,9 @@
 *.userprefs
 
 # appsettings.Development.json
-appsettings.Development
+HRelloApi/Api/appsettings.Development.json
+HRelloApi/Dal/appsettings.Development.json
+HRelloApi/Logic/appsettings.Development.json
 
 # Mono auto generated files
 mono_crash.*
