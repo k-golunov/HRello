@@ -78,6 +78,7 @@ builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserManager<UserDal>>();
 builder.Services.AddScoped(typeof(Logic.Managers.UserManager<>));
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));

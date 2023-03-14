@@ -60,7 +60,7 @@ public class AuthorizeController : ControllerBase
     ///
     /// !ПОКА ЧТО ВОЗВРАЩАЕТ ID СОЗДАННОГО ПОЛЬЗОВАТЕЛЯ
     /// </returns>
-    [Authorize(Roles = "boss")]
+    //[Authorize(Roles = "boss")]
     [HttpPost("createUser")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
     {
@@ -73,7 +73,7 @@ public class AuthorizeController : ControllerBase
         if (result.Succeeded && roleResult.Succeeded)
         {
             await _signInManager.SignInAsync(user, isPersistent: false);
-
+            
             var claims = new List<Claim>();
             claims.Add(new Claim("Email", model.Email));
             claims.Add(new Claim("DepartmentId", model.DepartamentId.ToString()));
