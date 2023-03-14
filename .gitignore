@@ -14,7 +14,7 @@
 *.userprefs
 
 # appsettings.Development.json
-appsettings.Development.json
+appsettings.Development
 
 # Mono auto generated files
 mono_crash.*
