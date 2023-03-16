@@ -93,20 +93,21 @@ public class AuthorizeController : ControllerBase
 
     private string GetToken(UserDal user, IEnumerable<Claim> principal)
     {
-        var claims = new ClaimsIdentity(principal);
-        claims.Claims.Append(new Claim(ClaimTypes.Name, user.Name));
+        var claims = principal.ToList();
+        claims.Add(new Claim(ClaimTypes.Name, user.Name));
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_options.SecretKey);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Audience = _options.Audience,
-            Issuer = _options.Issuer,
-            Subject = claims,
-            Expires = DateTime.UtcNow.AddDays(30),
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
+        var token = new JwtSecurityToken
+        (
+            issuer: _options.Issuer,
+            audience: _options.Audience,
+            claims: claims,
+            notBefore: DateTime.UtcNow,
+            expires: DateTime.UtcNow.AddDays(30),
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+            
+        );
+
         return tokenHandler.WriteToken(token);
     }
 
