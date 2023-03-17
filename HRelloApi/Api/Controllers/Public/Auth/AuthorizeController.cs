@@ -104,7 +104,7 @@ public class AuthorizeController : ControllerBase
             claims: claims,
             notBefore: DateTime.UtcNow,
             expires: DateTime.UtcNow.AddDays(30),
-            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
             
         );
 

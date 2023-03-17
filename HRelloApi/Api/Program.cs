@@ -1,3 +1,4 @@
+using System.Text;
 using Dal;
 using Dal.Email;
 using Dal.Email.Interfaces;
@@ -12,9 +13,11 @@ using Serilog.Context;
 using Serilog.Events;
 using AutoMapper;
 using HRelloApi.Controllers.Public.Auth.Mapping;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Подключение логгера
 builder.Host.UseSerilog((cts, lc) =>
     lc
         .Enrich.WithThreadId()
@@ -29,19 +32,34 @@ builder.Host.UseSerilog((cts, lc) =>
 
 LogContext.PushProperty("Source", "Program");
 
+// Настройки аутентификации через JwtBearer
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddIdentityServerAuthentication(JwtBearerDefaults.AuthenticationScheme);
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWTSettings:Audience"],
+            ValidIssuer = builder.Configuration["JWTSettings:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:SecretKey"]))
+        };
+    });
 
+// подключение к бд
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+// добавление айдентити, тестовая
+// надо усложнить требования к паролю
 builder.Services.AddIdentity<UserDal, IdentityRole>(config =>
     {
         config.Password.RequiredLength = 4;
@@ -52,18 +70,16 @@ builder.Services.AddIdentity<UserDal, IdentityRole>(config =>
     .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddIdentityServer(options =>
-    {
-        options.AccessTokenJwtType = JwtBearerDefaults.AuthenticationScheme;
-    })
+// конфигурация айдентити 
+builder.Services.AddIdentityServer()
     .AddAspNetIdentity<UserDal>()
     .AddInMemoryApiResources(IdentityConfiguration.ApiResources)
     .AddInMemoryIdentityResources(IdentityConfiguration.IdentityResources)
     .AddInMemoryApiScopes(IdentityConfiguration.ApiScopes)
     .AddInMemoryClients(IdentityConfiguration.Clients)
-    .AddDeveloperSigningCredential()
-    .AddJwtBearerClientAuthentication();
-// TODO
+    .AddDeveloperSigningCredential();
+
+// TODO delete?
 // builder.Services.ConfigureApplicationCookie(config =>
 // {
 //     config.Cookie.Name = "Notes.Identity.Cookie";
@@ -74,12 +90,17 @@ builder.Services.AddIdentityServer(options =>
 
 builder.Services.AddControllers();
 
+// Тестовые репозиторий для бд почты. Требует удаления
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+// Репозиторий пользователя
 builder.Services.AddScoped<UserRepository>();
+// Мененджер пользователя
 builder.Services.AddScoped<UserManager<UserDal>>();
+// ???
 builder.Services.AddScoped(typeof(Logic.Managers.UserManager<>));
+// Мэненджер ролей из идентити
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
-
+// Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 
@@ -104,6 +125,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Подключаем авторизацию, аутентификацию и айдентити
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseIdentityServer();
