@@ -15,14 +15,7 @@ public record CreateUserModelRequest
     [EmailAddress]
     [JsonProperty("Email")]
     public string Email { get; init; }
-    
-    /// <summary>
-    /// Логин создаваемого пользователя
-    /// </summary>
-    [Required]
-    [JsonProperty("UserName")]
-    public string UserName { get; init; } 
-    
+
     /// <summary>
     /// Роль создаваемого пользователя
     /// </summary>

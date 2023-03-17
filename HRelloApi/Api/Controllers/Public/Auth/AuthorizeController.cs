@@ -23,7 +23,7 @@ namespace HRelloApi.Controllers.Public.Auth;
 public class AuthorizeController : ControllerBase
 {
     private readonly SignInManager<UserDal> _signInManager;
-    private readonly Logic.Managers.UserManager<UserDal> _userManager;
+    private readonly UserManager<UserDal> _userManager;
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
@@ -34,7 +34,7 @@ public class AuthorizeController : ControllerBase
     /// <param name="signInManager">Сервис логики работы с аутентификацией пользователей</param>
     /// <param name="options">Настройки уникального токена</param>
     /// <param name="mapper">Автомаппер</param>
-    public AuthorizeController(Logic.Managers.UserManager<UserDal> userManager, 
+    public AuthorizeController(UserManager<UserDal> userManager, 
         SignInManager<UserDal> signInManager, 
         IOptions<JWTSettings> options,
         IMapper mapper)
@@ -64,7 +64,8 @@ public class AuthorizeController : ControllerBase
     [HttpPost("createUser")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
     {
-        if (_userManager.FindByEmailAsync(model.Email) is not null)
+        var userByEmail = await _userManager.FindByEmailAsync(model.Email);
+        if (userByEmail is not null)
             return Conflict();
         
         var user = _mapper.Map<UserDal>(model);
@@ -81,17 +82,16 @@ public class AuthorizeController : ControllerBase
             claims.Add(new Claim("Email", model.Email));
             claims.Add(new Claim("DepartmentId", model.DepartamentId.ToString()));
             claims.Add(new Claim("Role", model.Role));
-            claims.Add(new Claim("UserName", model.UserName));
 
             await _userManager.AddClaimsAsync(user, claims);
         }
         else
         {
-            BadRequest();
+            return BadRequest();
         }
         
-        var userDal = await _userManager.FindByEmailAsync(user.Email);
-        return Ok(userDal.Id);
+        //var userDal = await _userManager.FindByEmailAsync(user.Email);
+        return Ok(user.Id);
     }
 
     private string GetToken(UserDal user, IEnumerable<Claim> principal)
@@ -119,18 +119,16 @@ public class AuthorizeController : ControllerBase
     {
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
         var user = _mapper.Map(model, unregisteredUser);
-        var passwordUpdateResult = await _userManager.UpdatePasswordAsync(user, model.Password);
-
+        //var passwordUpdateResult = await _userManager.UpdatePasswordAsync(user, model.Password);
+        var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
 
         if (result.Succeeded && passwordUpdateResult.Succeeded)
         {
             return Ok();
         }
-        else
-        {
-            return BadRequest();
-        }
+
+        return BadRequest();
 
     }
 
@@ -148,9 +146,7 @@ public class AuthorizeController : ControllerBase
 
             return Ok(token);
         }
-        else
-        {
-            return Unauthorized();
-        }
+
+        return Unauthorized();
     }
 }

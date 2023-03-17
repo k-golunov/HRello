@@ -97,7 +97,7 @@ builder.Services.AddScoped<UserRepository>();
 // Мененджер пользователя
 builder.Services.AddScoped<UserManager<UserDal>>();
 // ???
-builder.Services.AddScoped(typeof(Logic.Managers.UserManager<>));
+//builder.Services.AddScoped(typeof(Logic.Managers.UserManager<>));
 // Мэненджер ролей из идентити
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 // Маппинг 

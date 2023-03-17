@@ -16,7 +16,7 @@ public class CreateUserMappingProfile: Profile
     public CreateUserMappingProfile()
     {
         CreateMap<CreateUserModelRequest, UserDal>()
-            .ForMember(dst => dst.UserName, opt => opt.MapFrom(src => src.UserName))
+            .ForMember(dst => dst.UserName, opt => opt.MapFrom(src => src.Email))
             .ForMember(dst => dst.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dst => dst.DepartamentId, opt => opt.MapFrom(src => src.DepartamentId));
     }
