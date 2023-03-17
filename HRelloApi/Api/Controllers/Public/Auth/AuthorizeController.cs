@@ -64,6 +64,9 @@ public class AuthorizeController : ControllerBase
     [HttpPost("createUser")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
     {
+        if (_userManager.FindByEmailAsync(model.Email) is not null)
+            return Conflict();
+        
         var user = _mapper.Map<UserDal>(model);
         
         var result = await _userManager.CreateAsync(user);
