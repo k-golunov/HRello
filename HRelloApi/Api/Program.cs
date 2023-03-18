@@ -12,7 +12,11 @@ using Serilog;
 using Serilog.Context;
 using Serilog.Events;
 using AutoMapper;
+using Dal.User.Repositories.Interfaces;
 using HRelloApi.Controllers.Public.Auth.Mapping;
+using HRelloApi.Controllers.Public.Departament.Mapping;
+using Logic.Managers.Departament;
+using Logic.Managers.Departament.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -100,9 +104,13 @@ builder.Services.AddScoped<UserManager<UserDal>>();
 //builder.Services.AddScoped(typeof(Logic.Managers.UserManager<>));
 // Мэненджер ролей из идентити
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
+// работа с отдеклами
+builder.Services.AddScoped<IDepartamentManager, DepartamentManager>();
+builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
+builder.Services.AddAutoMapper(typeof(DepartamentProfiles));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
