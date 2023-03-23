@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using HRelloApi.Controllers.Public.Base;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -10,9 +11,7 @@ namespace HRelloApi.Controllers.Public.Example;
 /// <summary>
 /// Контроллер для выдачи токена авторизованным пользователям
 /// </summary>
-[ApiController]
-[Route("api/v1/public/[controller]")]
-public class AccountController: Controller
+public class AccountController: BasePublicController
 {
     /// <summary>
     /// параметры токена из appsettings

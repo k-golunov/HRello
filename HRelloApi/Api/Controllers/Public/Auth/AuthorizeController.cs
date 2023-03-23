@@ -6,6 +6,7 @@ using AutoMapper;
 using Dal.Entities;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
+using HRelloApi.Controllers.Public.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,7 @@ namespace HRelloApi.Controllers.Public.Auth;
 /// <summary>
 /// Контроллер, принимающий запросы на запросы, связанные с авторизацией пользователей
 /// </summary>
-[ApiController]
-[Route("api/v1/public/[controller]")]
-public class AuthorizeController : ControllerBase
+public class AuthorizeController : BasePublicController
 {
     private readonly SignInManager<UserDal> _signInManager;
     private readonly UserManager<UserDal> _userManager;

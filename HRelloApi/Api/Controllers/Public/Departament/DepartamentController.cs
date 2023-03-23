@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dal.Entities;
+using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Departament.Dto.Request;
 using Logic.Managers.Departament.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -9,8 +10,7 @@ namespace HRelloApi.Controllers.Public.Departament;
 /// <summary>
 /// Контроллер для работы с отделами
 /// </summary>
-[Route("api/v1/public/departament")]
-public class DepartamentController : ControllerBase
+public class DepartamentController : BasePublicController
 {
     private readonly IDepartamentManager _manager;
     private readonly IMapper _mapper;
