@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Dal.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230309172314_InitialCreate")]
+    [Migration("20230323173903_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -64,7 +64,7 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DepartamentDal");
+                    b.ToTable("Departament");
                 });
 
             modelBuilder.Entity("Dal.Entities.UserDal", b =>
@@ -146,6 +146,130 @@ namespace Dal.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.BossTaskResultDal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Result")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("BossTaskResults");
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.HistoryDal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("TaskDalId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskDalId");
+
+                    b.ToTable("History");
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.TaskDal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Block")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PlannedWeight")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quarter")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WaitResult")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Task");
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.UserTaskResultDal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("FactResult")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FactWeight")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("UserTaskResults");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -291,6 +415,44 @@ namespace Dal.Migrations
                     b.Navigation("Departament");
                 });
 
+            modelBuilder.Entity("Dal.Tasks.Entities.BossTaskResultDal", b =>
+                {
+                    b.HasOne("Dal.Tasks.Entities.TaskDal", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.HistoryDal", b =>
+                {
+                    b.HasOne("Dal.Tasks.Entities.TaskDal", null)
+                        .WithMany("History")
+                        .HasForeignKey("TaskDalId");
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.TaskDal", b =>
+                {
+                    b.HasOne("Dal.Entities.UserDal", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.UserTaskResultDal", b =>
+                {
+                    b.HasOne("Dal.Tasks.Entities.TaskDal", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -340,6 +502,11 @@ namespace Dal.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Dal.Tasks.Entities.TaskDal", b =>
+                {
+                    b.Navigation("History");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,7 +13,7 @@ namespace Dal.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "DepartamentDal",
+                name: "Departament",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -23,7 +23,7 @@ namespace Dal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DepartamentDal", x => x.Id);
+                    table.PrimaryKey("PK_Departament", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,9 +81,9 @@ namespace Dal.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_DepartamentDal_DepartamentId",
+                        name: "FK_Users_Departament_DepartamentId",
                         column: x => x.DepartamentId,
-                        principalTable: "DepartamentDal",
+                        principalTable: "Departament",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -107,6 +107,31 @@ namespace Dal.Migrations
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Task",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Year = table.Column<int>(type: "integer", nullable: false),
+                    Quarter = table.Column<int>(type: "integer", nullable: false),
+                    Category = table.Column<string>(type: "text", nullable: false),
+                    Block = table.Column<string>(type: "text", nullable: false),
+                    PlannedWeight = table.Column<int>(type: "integer", nullable: false),
+                    WaitResult = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Task", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Task_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -194,11 +219,83 @@ namespace Dal.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "BossTaskResults",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Result = table.Column<int>(type: "integer", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false),
+                    TaskId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BossTaskResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BossTaskResults_Task_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Task",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "History",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ActionType = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false),
+                    TaskDalId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_History", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_History_Task_TaskDalId",
+                        column: x => x.TaskDalId,
+                        principalTable: "Task",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTaskResults",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FactResult = table.Column<int>(type: "integer", nullable: false),
+                    Result = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    FactWeight = table.Column<int>(type: "integer", nullable: false),
+                    TaskId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTaskResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserTaskResults_Task_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Task",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BossTaskResults_TaskId",
+                table: "BossTaskResults",
+                column: "TaskId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Email_Email",
                 table: "Email",
                 column: "Email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_History_TaskDalId",
+                table: "History",
+                column: "TaskDalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -210,6 +307,11 @@ namespace Dal.Migrations
                 table: "Roles",
                 column: "NormalizedName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Task_UserId",
+                table: "Task",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaim_UserId",
@@ -241,13 +343,24 @@ namespace Dal.Migrations
                 table: "Users",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTaskResults_TaskId",
+                table: "UserTaskResults",
+                column: "TaskId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BossTaskResults");
+
+            migrationBuilder.DropTable(
                 name: "Email");
+
+            migrationBuilder.DropTable(
+                name: "History");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -262,16 +375,22 @@ namespace Dal.Migrations
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
+                name: "UserTaskResults");
+
+            migrationBuilder.DropTable(
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
+                name: "Task");
+
+            migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "DepartamentDal");
+                name: "Departament");
         }
     }
 }

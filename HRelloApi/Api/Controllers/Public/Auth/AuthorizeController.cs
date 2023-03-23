@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
@@ -62,6 +63,7 @@ public class AuthorizeController : ControllerBase
     /// </returns>
     //[Authorize(Roles = "boss")]
     [HttpPost("createUser")]
+    [ProducesResponseType(typeof(Guid), 200)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
     {
         var userByEmail = await _userManager.FindByEmailAsync(model.Email);

@@ -14,19 +14,19 @@ public record CreateUserModelRequest
     [Required]
     [EmailAddress]
     [JsonProperty("Email")]
-    public string Email { get; init; }
+    public required string Email { get; init; }
 
     /// <summary>
     /// Роль создаваемого пользователя
     /// </summary>
     [Required]
     [JsonProperty("Role")]
-    public string Role { get; init; }
+    public required string Role { get; init; }
     
     /// <summary>
     /// Id отдела создаваемого пользователя
     /// </summary>
     [Required]
     [JsonProperty("DepartmentId")]
-    public int DepartamentId { get; init; }
+    public required int DepartamentId { get; init; }
 }

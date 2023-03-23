@@ -15,7 +15,7 @@ public record SignInModelRequest
     [Required]
     [EmailAddress]
     [JsonProperty("Email")]
-    public string Email { get; init; }
+    public required string Email { get; init; }
     
     /// <summary>
     /// Пароль авторизируемого пользователя
@@ -23,7 +23,7 @@ public record SignInModelRequest
     [Required]
     [DataType(DataType.Password)]
     [JsonProperty("Password")]
-    public string Password { get; init; }
+    public required string Password { get; init; }
     
     /// <summary>
     /// Запомнить пароль?
@@ -31,5 +31,5 @@ public record SignInModelRequest
     [Required]
     [DefaultValue(false)]
     [JsonProperty("RememberMe")]
-    public bool RememberMe { get; init; }
+    public required bool RememberMe { get; init; }
 }

@@ -1,5 +1,6 @@
 ﻿using Dal.Email.Entities;
 using Dal.Entities;
+using Dal.Tasks.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,12 @@ public class DataContext : IdentityDbContext<UserDal>
 {
     
     public DbSet<EmailDal> Email { get; set; }
-    
+    public DbSet<HistoryDal> History { get; set; }
+    public DbSet<TaskDal> Task { get; set; }
+    public DbSet<BossTaskResultDal> BossTaskResults { get; set; }
+    public DbSet<UserTaskResultDal> UserTaskResults { get; set; }
+    public DbSet<DepartamentDal> Departament { get; set; }
+
     public async Task<int> SaveChangesAsync()
     {
         return await base.SaveChangesAsync();
