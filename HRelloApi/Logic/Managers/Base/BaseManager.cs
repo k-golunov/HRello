@@ -11,30 +11,30 @@ namespace Logic.Managers.Base;
 /// <typeparam name="TI">Тип Id (Guid или int)</typeparam>
 public class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
 {
-    private readonly IBaseRepository<T, TI> _repository;
+    protected readonly IBaseRepository<T, TI> Repository;
 
     public BaseManager(IBaseRepository<T, TI> repository)
     {
-        _repository = repository;
+        Repository = repository;
     }
 
     public async Task<TI> InsertAsync(T dal)
     {
-        return await _repository.InsertAsync(dal);
+        return await Repository.InsertAsync(dal);
     }
 
     public void DeleteAsync(TI id)
     {
-        _repository.DeleteAsync(id);
+        Repository.DeleteAsync(id);
     }
 
     public async Task<T?> GetAsync(TI id)
     {
-        return await _repository.GetAsync(id);
+        return await Repository.GetAsync(id);
     }
 
     public async Task<TI> UpdateAsync(T dal)
     {
-        return await _repository.UpdateAsync(dal);
+        return await Repository.UpdateAsync(dal);
     }
 }

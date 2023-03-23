@@ -12,11 +12,15 @@ using Serilog;
 using Serilog.Context;
 using Serilog.Events;
 using AutoMapper;
+using Dal.Tasks.Repositories;
+using Dal.Tasks.Repositories.Interfaces;
 using Dal.User.Repositories.Interfaces;
 using HRelloApi.Controllers.Public.Auth.Mapping;
 using HRelloApi.Controllers.Public.Departament.Mapping;
 using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
+using Logic.Managers.Task;
+using Logic.Managers.Task.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -107,6 +111,9 @@ builder.Services.AddScoped<RoleManager<IdentityRole>>();
 // работа с отдеклами
 builder.Services.AddScoped<IDepartamentManager, DepartamentManager>();
 builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
+//работа с задачами
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ITaskStatusManager, TaskManager>();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));

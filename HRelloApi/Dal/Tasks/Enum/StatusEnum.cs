@@ -1,7 +1,10 @@
 ﻿namespace Dal.Tasks.Enum;
 
-public enum StatusEnum
+public enum Status
 {
     OnEditing = 0,
-    InWork = 1,
+    UnderReview = 1,
+    Work = 2,
+    UserResult = 3,
+    BossResult = 4,
 }

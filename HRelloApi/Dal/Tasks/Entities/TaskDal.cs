@@ -49,7 +49,7 @@ public class TaskDal : BaseDal<Guid>
     /// <summary>
     /// 
     /// </summary>
-    public StatusEnum Status { get; set; }
+    public Status Status { get; set; }
 
     /// <summary>
     /// 
@@ -60,4 +60,20 @@ public class TaskDal : BaseDal<Guid>
     /// 
     /// </summary>
     public List<HistoryDal> History { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public TaskDal()
+    {
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    public TaskDal(UserDal user)
+    {
+        User = user;
+        Status = 0;
+    }
 }
