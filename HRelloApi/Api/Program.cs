@@ -114,6 +114,7 @@ builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 //работа с задачами
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskStatusManager, TaskManager>();
+builder.Services.AddScoped<ITaskManager, TaskManager>();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));

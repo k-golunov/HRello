@@ -6,6 +6,8 @@ using Dal.Tasks.Enum;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Task.dto.request;
 using Logic.Managers.Task.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +40,7 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Рест для создания задачи
     /// </summary>
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("create")]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
@@ -52,7 +55,8 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Рест для редактирования данных о задаче
     /// </summary>
-    [HttpPut("edit/task={id:guid}")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPut("edit/task={taskId:guid}")]
     public async Task<IActionResult> EditTask([FromRoute] Guid taskId, EditTaskRequest model)
     {
         var oldTask = await _taskManager.GetAsync(taskId);
@@ -60,7 +64,8 @@ public class TaskController: BasePublicController
             return NotFound();
         var task = _mapper.Map(model, oldTask);
         task.Status += 1;
-        return Ok();//здесь тоже можно редирект на страницу со всеми задачами
+        var response = await _taskManager.UpdateAsync(task);
+        return Ok(response);//здесь тоже можно редирект на страницу со всеми задачами
     }
     
     

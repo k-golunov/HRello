@@ -13,38 +13,38 @@ public class TaskDal : BaseDal<Guid>
     /// <summary>
     /// 
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
     
     /// <summary>
     /// 
     /// </summary>
-    public int Year { get; set; }
+    public int? Year { get; set; }
     
     /// <summary>
     /// 
     /// </summary>
     [Range(1,4)]
-    public int Quarter { get; set; }
+    public int? Quarter { get; set; }
     
     /// <summary>
     /// 
     /// </summary>
-    public string Category { get; set; }
+    public string? Category { get; set; }
     
     /// <summary>
     /// 
     /// </summary>
-    public string Block { get; set; }
+    public string? Block { get; set; }
     
     /// <summary>
     /// 
     /// </summary>
-    public int PlannedWeight { get; set; }
+    public int? PlannedWeight { get; set; }
     
     /// <summary>
     /// 
     /// </summary>
-    public string WaitResult { get; set; }
+    public string? WaitResult { get; set; }
     
     /// <summary>
     /// 
@@ -59,7 +59,7 @@ public class TaskDal : BaseDal<Guid>
     /// <summary>
     /// 
     /// </summary>
-    public List<HistoryDal> History { get; set; }
+    public List<HistoryDal>? History { get; set; }
 
     /// <summary>
     /// 
