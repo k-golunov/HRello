@@ -1,6 +1,6 @@
 ﻿using Dal.Tasks.Enum;
 
-namespace Logic.Managers.Task.StatusTree;
+namespace Logic.Managers.Task.StatusesTree;
 
 public class StatusTree
 {
@@ -23,5 +23,19 @@ public class StatusTree
         completed.AddNextStatus(new List<StatusNode>());
         awaitingCancellation.AddNextStatus(new List<StatusNode> { canceled, inWork });
         canceled.AddNextStatus(new List<StatusNode>());
+        
+        Statuses.Add(forRevision);
+        Statuses.Add(underReview);
+        Statuses.Add(inWork);
+        Statuses.Add(completionCheck);
+        Statuses.Add(completed);
+        Statuses.Add(awaitingCancellation);
+        Statuses.Add(canceled);
     }
+
+    public StatusNode GetStatusNode(Status status)
+    {
+        return Statuses.First(x => x.Status == status);
+    }
+    
 }

@@ -57,11 +57,4 @@ public class CreateTaskRequest
     [Required]
     [JsonProperty("WaitResult")]
     public required string WaitResult { get; init; }
-    
-    /// <summary>
-    /// Id сотрудника, создавшего задачу
-    /// </summary>
-    [Required]
-    [JsonProperty("UserId")]
-    public required Guid UserId { get; init; }
 }

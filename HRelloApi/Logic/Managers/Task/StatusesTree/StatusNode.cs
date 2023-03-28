@@ -1,6 +1,6 @@
 ﻿using Dal.Tasks.Enum;
 
-namespace Logic.Managers.Task.StatusTree;
+namespace Logic.Managers.Task.StatusesTree;
 
 public class StatusNode
 {
@@ -17,5 +17,10 @@ public class StatusNode
     public void AddNextStatus(List<StatusNode> nextStatuses)
     {
         NextStatuses = nextStatuses;
+    }
+
+    public bool IsNextStatus(Status status)
+    {
+        return NextStatuses.Select(x => x.Status).Contains(status);
     }
 }

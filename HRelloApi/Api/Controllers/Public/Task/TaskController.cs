@@ -69,10 +69,18 @@ public class TaskController: BasePublicController
         if (oldTask == null)
             return NotFound();
         var task = _mapper.Map(model, oldTask);
-        _statusManager.ChangeStatus(taskId, true);
+        try
+        {
+            _statusManager.ChangeStatus(task, Status.ForRevision);
+        }
+        catch
+        {
+            BadRequest();
+        }
         var response = await _taskManager.UpdateAsync(task);
         return Ok(response);
     }
+    
     
     
 }

@@ -21,6 +21,7 @@ using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
 using Logic.Managers.Task;
 using Logic.Managers.Task.Interfaces;
+using Logic.Managers.Task.StatusesTree;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,8 +114,9 @@ builder.Services.AddScoped<IDepartamentManager, DepartamentManager>();
 builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 //работа с задачами
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<ITaskStatusManager, TaskManager>();
+builder.Services.AddScoped<ITaskStatusManager, StatusManager>();
 builder.Services.AddScoped<ITaskManager, TaskManager>();
+builder.Services.AddSingleton<StatusTree>();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));

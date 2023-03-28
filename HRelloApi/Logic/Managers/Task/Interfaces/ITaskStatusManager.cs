@@ -1,9 +1,10 @@
 ﻿using Dal.Base.Interfaces;
 using Dal.Tasks.Entities;
+using Dal.Tasks.Enum;
 
 namespace Logic.Managers.Task.Interfaces;
 
 public interface ITaskStatusManager: IBaseRepository<TaskDal, Guid>
 {
-    public System.Threading.Tasks.Task ChangeStatus(Guid taskId, bool isNext);
+    public void ChangeStatus(TaskDal task, Status nextStatus);
 }
