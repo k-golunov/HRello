@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dal;
 
-public class DataContext : IdentityDbContext<UserDal>
+public sealed class DataContext : IdentityDbContext<UserDal>
 {
     
     public DbSet<EmailDal> Email { get; set; }
@@ -21,8 +21,18 @@ public class DataContext : IdentityDbContext<UserDal>
     {
         return await base.SaveChangesAsync();
     }
+
+    public DataContext()
+    {
+        Database.EnsureDeleted();   // удаляем бд со старой схемой
+        Database.EnsureCreated();   // создаем бд с новой схемой        
+    }
+    
     public DataContext(DbContextOptions<DataContext> options)
-        : base(options) { }
+        : base(options)
+    {
+
+    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
