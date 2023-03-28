@@ -2,9 +2,11 @@
 
 public enum Status
 {
-    OnEditing = 0,
+    ForRevision = 0,
     UnderReview = 1,
-    Work = 2,
-    UserResult = 3,
-    BossResult = 4,
+    InWork = 2,
+    CompletionCheck = 3,
+    Completed = 4,
+    AwaitingCancellation = 5,    
+    Canceled = 6,
 }

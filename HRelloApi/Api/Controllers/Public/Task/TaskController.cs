@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using AutoMapper;
 using Dal.Entities;
 using Dal.Tasks.Entities;
@@ -44,12 +45,16 @@ public class TaskController: BasePublicController
     [HttpPost("create")]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
+        var task = _mapper.Map<TaskDal>(model);
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadToken(Request.Headers["Authorization"].ToArray()[1]);
+        //todo!
         var user = await _userManager.FindByIdAsync(model.UserId.ToString());
         if (user == null)
             return BadRequest();
-        var task = new TaskDal(user);
+        task.User = user;
         var response = await _taskManager.InsertAsync(task);
-        return Ok(response); //вообще по идеи здесь можно сделать redirect на страницу с редактированием
+        return Ok(response);
     }
 
     /// <summary>
@@ -65,7 +70,7 @@ public class TaskController: BasePublicController
         var task = _mapper.Map(model, oldTask);
         task.Status += 1;
         var response = await _taskManager.UpdateAsync(task);
-        return Ok(response);//здесь тоже можно редирект на страницу со всеми задачами
+        return Ok(response);
     }
     
     
