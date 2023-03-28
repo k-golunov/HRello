@@ -47,9 +47,10 @@ public class TaskController: BasePublicController
     {
         var task = _mapper.Map<TaskDal>(model);
         var handler = new JwtSecurityTokenHandler();
-        var jwt = handler.ReadToken(Request.Headers["Authorization"].ToArray()[1]);
-        //todo!
-        var user = await _userManager.FindByIdAsync(model.UserId.ToString());
+        var auth = Request.Headers["Authorization"].ToString().Split(' ')[1];
+        var jwt = handler.ReadToken(auth) as JwtSecurityToken;
+        var email = jwt.Claims.First(x => x.Type == ClaimTypes.Email).Value;
+        var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
             return BadRequest();
         task.User = user;

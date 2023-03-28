@@ -98,7 +98,7 @@ public class AuthorizeController : BasePublicController
     private string GetToken(UserDal user, IEnumerable<Claim> principal)
     {
         var claims = principal.ToList();
-        claims.Add(new Claim(ClaimTypes.Name, user.Name));
+        claims.Add(new Claim(ClaimTypes.Email, user.Email));
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
         var token = new JwtSecurityToken
