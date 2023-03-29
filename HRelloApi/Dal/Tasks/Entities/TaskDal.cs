@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Dal.Base.Entitities;
 using Dal.Entities;
 using Dal.Tasks.Enum;
@@ -13,51 +14,57 @@ public class TaskDal : BaseDal<Guid>
     /// <summary>
     /// Название задачи
     /// </summary>
+    [MaxLength(255)]
     public string Name { get; set; }
     
     /// <summary>
-    /// Год создания задачи
+    /// Год задачи
     /// </summary>
+    [MaxLength(4)]
+    [MinLength(4)]
     public int Year { get; set; }
     
     /// <summary>
-    /// Квартал задачи
+    /// Квартал задачи, от 1 до 4
     /// </summary>
     [Range(1,4)]
     public int Quarter { get; set; }
     
     /// <summary>
-    /// Категория задачи
+    /// Категория задачи enum
     /// </summary>
-    public string Category { get; set; }
+    public CategoryEnum Category { get; set; }
     
     /// <summary>
-    /// Блок задачи
+    /// Блок задачи enum
     /// </summary>
-    public string Block { get; set; }
+    public BlockEnum Block { get; set; }
     
     /// <summary>
-    /// Планируемый вес задачи
+    /// Планируемый вес задачи, предполагаектся значение процента
+    /// Например если значение 50, то это означает, что вес 50%
     /// </summary>
+    [Range(0, 1000)]
     public int PlannedWeight { get; set; }
     
     /// <summary>
-    /// Ожидаемый результат
+    /// Ожидаемый результат по итогам задачи
     /// </summary>
+    [MaxLength(1023)]
     public string WaitResult { get; set; }
     
     /// <summary>
-    /// Текущий статус
+    /// Статус задачи
     /// </summary>
-    public Status Status { get; set; }
+    public StatusEnum Status { get; set; }
 
     /// <summary>
-    /// Сотрудник, выполняющий задачу
+    /// Сотрудник, отвественный за задачу
     /// </summary>
     public UserDal User { get; set; }
     
     /// <summary>
-    /// История изменений
+    /// История изменений задачи
     /// </summary>
     public List<HistoryDal> History { get; set; }
 }

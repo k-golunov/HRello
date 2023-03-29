@@ -22,6 +22,7 @@ using Logic.Managers.Departament.Interfaces;
 using Logic.Managers.Task;
 using Logic.Managers.Task.Interfaces;
 using Microsoft.IdentityModel.Tokens;
+using RollbarDotNet.Payloads;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +67,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 // добавление айдентити, тестовая
 // надо усложнить требования к паролю
 builder.Services.AddIdentity<UserDal, IdentityRole>(config =>
@@ -145,6 +147,21 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseIdentityServer();
+
+// Откючаем (комментируем) если не требуется отчистка бд 
+// т.к. все данные из бд будут удаленны
+#if DEBUG
+
+
+using (var scope = 
+       app.Services.CreateScope())
+using (var context = scope.ServiceProvider.GetService<DataContext>())
+{
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+}
+#endif        
+        
 
 app.MapControllers();
 
