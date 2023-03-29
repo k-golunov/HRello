@@ -113,7 +113,7 @@ builder.Services.AddScoped<IDepartamentManager, DepartamentManager>();
 builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 //работа с задачами
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<ITaskStatusManager, TaskManager>();
+builder.Services.AddScoped<ITaskStatusManager, StatusManager>();
 builder.Services.AddScoped<ITaskManager, TaskManager>();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
