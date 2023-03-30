@@ -41,9 +41,7 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Рест для создания задачи
     /// </summary>
-    #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    #endif
     [HttpPost("create")]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
