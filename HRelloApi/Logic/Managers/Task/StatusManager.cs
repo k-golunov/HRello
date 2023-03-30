@@ -15,7 +15,7 @@ public class StatusManager: BaseManager<TaskDal, Guid>, ITaskStatusManager
         _statusTree = statusTree;
     }
     
-    public void ChangeStatus(TaskDal task, Status nextStatus)
+    public void ChangeStatus(TaskDal task, StatusEnum nextStatus)
     {
         var statusNode = _statusTree.GetStatusNode(task.Status);
         if (statusNode.IsNextStatus(nextStatus))

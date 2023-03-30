@@ -6,5 +6,5 @@ namespace Logic.Managers.Task.Interfaces;
 
 public interface ITaskStatusManager: IBaseRepository<TaskDal, Guid>
 {
-    public void ChangeStatus(TaskDal task, Status nextStatus);
+    public void ChangeStatus(TaskDal task, StatusEnum nextStatus);
 }

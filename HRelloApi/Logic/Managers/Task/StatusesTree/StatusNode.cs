@@ -4,11 +4,11 @@ namespace Logic.Managers.Task.StatusesTree;
 
 public class StatusNode
 {
-    public Status Status { get; set; }
+    public StatusEnum Status { get; set; }
 
     public List<StatusNode> NextStatuses { get; set; }
 
-    public StatusNode(Status status)
+    public StatusNode(StatusEnum status)
     {
         Status = status;
         NextStatuses = new List<StatusNode>();
@@ -19,7 +19,7 @@ public class StatusNode
         NextStatuses = nextStatuses;
     }
 
-    public bool IsNextStatus(Status status)
+    public bool IsNextStatus(StatusEnum status)
     {
         return NextStatuses.Select(x => x.Status).Contains(status);
     }

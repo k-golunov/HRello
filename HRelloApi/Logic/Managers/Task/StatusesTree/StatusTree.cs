@@ -8,13 +8,13 @@ public class StatusTree
 
     public StatusTree()
     {
-        var forRevision = new StatusNode(Status.ForRevision);
-        var underReview = new StatusNode(Status.UnderReview);
-        var inWork = new StatusNode(Status.InWork);
-        var completionCheck = new StatusNode(Status.CompletionCheck);
-        var completed = new StatusNode(Status.Completed);
-        var awaitingCancellation = new StatusNode(Status.AwaitingCancellation);
-        var canceled = new StatusNode(Status.Canceled);
+        var forRevision = new StatusNode(StatusEnum.ForRevision);
+        var underReview = new StatusNode(StatusEnum.UnderReview);
+        var inWork = new StatusNode(StatusEnum.InWork);
+        var completionCheck = new StatusNode(StatusEnum.CompletionCheck);
+        var completed = new StatusNode(StatusEnum.Completed);
+        var awaitingCancellation = new StatusNode(StatusEnum.AwaitingCancellation);
+        var canceled = new StatusNode(StatusEnum.Canceled);
         
         forRevision.AddNextStatus(new List<StatusNode>{ underReview, inWork, canceled });
         underReview.AddNextStatus(new List<StatusNode> { forRevision });
@@ -33,7 +33,7 @@ public class StatusTree
         Statuses.Add(canceled);
     }
 
-    public StatusNode GetStatusNode(Status status)
+    public StatusNode GetStatusNode(StatusEnum status)
     {
         return Statuses.First(x => x.Status == status);
     }

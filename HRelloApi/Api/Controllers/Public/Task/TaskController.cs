@@ -73,7 +73,7 @@ public class TaskController: BasePublicController
         var task = _mapper.Map(model, oldTask);
         try
         {
-            _statusManager.ChangeStatus(task, Status.ForRevision);
+            _statusManager.ChangeStatus(task, StatusEnum.ForRevision);
         }
         catch
         {
