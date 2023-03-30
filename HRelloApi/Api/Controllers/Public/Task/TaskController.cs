@@ -41,7 +41,9 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Рест для создания задачи
     /// </summary>
+    #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    #endif
     [HttpPost("create")]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
@@ -61,7 +63,9 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Рест для редактирования данных о задаче
     /// </summary>
+    #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    #endif
     [HttpPut("edit/task={taskId:guid}")]
     public async Task<IActionResult> EditTask([FromRoute] Guid taskId, EditTaskRequest model)
     {

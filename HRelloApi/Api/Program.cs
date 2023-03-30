@@ -150,7 +150,7 @@ app.UseIdentityServer();
 
 // Откючаем (комментируем) если не требуется отчистка бд 
 // т.к. все данные из бд будут удаленны
-#if DEBUG
+/*#if DEBUG
 
 
 using (var scope = 
@@ -160,7 +160,7 @@ using (var context = scope.ServiceProvider.GetService<DataContext>())
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
 }
-#endif        
+#endif  */      
         
 
 app.MapControllers();

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Dal.Tasks.Enum;
 using Newtonsoft.Json;
 
 namespace HRelloApi.Controllers.Public.Task.dto.request;
@@ -6,7 +7,7 @@ namespace HRelloApi.Controllers.Public.Task.dto.request;
 /// <summary>
 /// Входная модель данных для создания сущности задачи
 /// </summary>
-public class CreateTaskRequest
+public record CreateTaskRequest
 {
     /// <summary>
     /// Название задачи
@@ -35,14 +36,14 @@ public class CreateTaskRequest
     /// </summary>
     [Required]
     [JsonProperty("Category")]
-    public required string Category { get; init; }
+    public required CategoryEnum Category { get; init; }
     
     /// <summary>
     /// Блок задачи
     /// </summary>
     [Required]
     [JsonProperty("Block")]
-    public required string Block { get; init; }
+    public required BlockEnum Block { get; init; }
     
     /// <summary>
     /// Планируемый вес задачи

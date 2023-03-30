@@ -1,6 +1,6 @@
 ﻿namespace Dal.Tasks.Enum;
 
-public enum Status
+public enum StatusEnum
 {
     ForRevision = 0,
     UnderReview = 1,
