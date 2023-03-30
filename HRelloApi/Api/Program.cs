@@ -23,6 +23,7 @@ using Logic.Managers.Task;
 using Logic.Managers.Task.Interfaces;
 using Logic.Managers.Task.StatusesTree;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using RollbarDotNet.Payloads;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -132,6 +133,34 @@ builder.Services.AddSwaggerGen(options =>
 
     var xmlPath = Path.Combine(basePath, "Api.xml");
     options.IncludeXmlComments(xmlPath);
+    // Авторизация через сваггер
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+
+            },
+            new List<string>()
+        }
+    });
 });
 
 var app = builder.Build();
