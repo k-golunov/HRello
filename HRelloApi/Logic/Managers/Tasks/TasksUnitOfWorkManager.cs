@@ -45,12 +45,13 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         var historyDal = new HistoryDal
         {
             Id = Guid.NewGuid(),
-            ActionType = ActionTypeEnum.OnChecking,
+            ActionType = ActionTypeEnum.Updated,
             Date = DateTime.UtcNow,
-            Comment = null
+            Comment = null,
+            Task = taskDal 
         };
-        taskDal.History.Add(historyDal);
         var taskId = await _taskRepository.UpdateAsync(taskDal);
+        await _historyRepository.InsertAsync(historyDal);
         return taskId;
     }
 }

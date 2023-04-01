@@ -21,4 +21,9 @@ public class HistoryDal : BaseDal<Guid>
     /// Комментарий к изменению
     /// </summary>
     public string? Comment { get; set; }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    public TaskDal Task { get; set; }
 }

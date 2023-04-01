@@ -46,4 +46,9 @@ public enum ActionTypeEnum
     /// Завершена
     /// </summary>
     Completion = 8,
+    
+    /// <summary>
+    /// Обновлена
+    /// </summary>
+    Updated = 9,
 }

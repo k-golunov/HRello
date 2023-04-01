@@ -85,7 +85,4 @@ public class TaskController: BasePublicController
         var response = await _manager.UpdateTaskAsync(task);
         return Ok(response);
     }
-    
-    
-    
 }
