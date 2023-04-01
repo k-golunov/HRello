@@ -1,6 +1,6 @@
 ﻿using Dal.Tasks.Enum;
 
-namespace Logic.Managers.Task.StatusesTree;
+namespace Logic.Managers.Tasks.StatusesTree;
 
 public class StatusTree
 {
@@ -8,7 +8,7 @@ public class StatusTree
 
     public StatusTree()
     {
-        var forRevision = new StatusNode(StatusEnum.ForRevision);
+        var forRevision = new StatusNode(StatusEnum.OnChecking);
         var underReview = new StatusNode(StatusEnum.UnderReview);
         var inWork = new StatusNode(StatusEnum.InWork);
         var completionCheck = new StatusNode(StatusEnum.CompletionCheck);

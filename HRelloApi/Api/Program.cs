@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
-using AutoMapper;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
 using Dal.User.Repositories.Interfaces;
@@ -19,12 +18,11 @@ using HRelloApi.Controllers.Public.Auth.Mapping;
 using HRelloApi.Controllers.Public.Departament.Mapping;
 using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
-using Logic.Managers.Task;
-using Logic.Managers.Task.Interfaces;
-using Logic.Managers.Task.StatusesTree;
+using Logic.Managers.Tasks;
+using Logic.Managers.Tasks.Interfaces;
+using Logic.Managers.Tasks.StatusesTree;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using RollbarDotNet.Payloads;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,6 +118,10 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskStatusManager, StatusManager>();
 builder.Services.AddScoped<ITaskManager, TaskManager>();
 builder.Services.AddSingleton<StatusTree>();
+builder.Services.AddScoped<ITaskUnitOfWorkManager, TaskUnitOfWorkManager>();
+builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
+builder.Services.AddScoped<IBossTaskResultsRepository, BossTaskResultsRepository>();
+builder.Services.AddScoped<IUserTaskResultsRepository, UserTaskResultsRepository>();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));

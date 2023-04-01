@@ -1,6 +1,6 @@
 ﻿using Dal.Tasks.Enum;
 
-namespace Logic.Managers.Task.StatusesTree;
+namespace Logic.Managers.Tasks.StatusesTree;
 
 public class StatusNode
 {

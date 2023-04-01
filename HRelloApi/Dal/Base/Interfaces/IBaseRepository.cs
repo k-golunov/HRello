@@ -16,7 +16,7 @@ public interface IBaseRepository<T, TI> where T : BaseDal<TI>
     /// Удаляет запись из бд по ее Id
     /// </summary>
     /// <param name="id">уникальный идентификатор записи</param>
-    public void DeleteAsync(TI id);
+    public Task DeleteAsync(TI id);
     
     /// <summary>
     /// Получает данные из таблицы по Id 

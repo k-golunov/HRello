@@ -2,7 +2,7 @@
 
 public enum StatusEnum
 {
-    ForRevision = 0,
+    OnChecking = 0,
     UnderReview = 1,
     InWork = 2,
     CompletionCheck = 3,

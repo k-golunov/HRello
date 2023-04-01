@@ -5,7 +5,7 @@ public enum ActionTypeEnum
     /// <summary>
     /// Отправлена на проверку
     /// </summary>
-    OnEditing = 0,
+    OnChecking = 0,
     
     /// <summary>
     /// Отправлена на доработку

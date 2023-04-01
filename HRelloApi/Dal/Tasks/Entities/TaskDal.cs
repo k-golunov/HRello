@@ -62,9 +62,9 @@ public class TaskDal : BaseDal<Guid>
     /// Сотрудник, отвественный за задачу
     /// </summary>
     public UserDal User { get; set; }
-    
+
     /// <summary>
     /// История изменений задачи
     /// </summary>
-    public List<HistoryDal> History { get; set; }
+    public List<HistoryDal> History { get; set; } = new();
 }

@@ -6,7 +6,7 @@ using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Task.dto.request;
-using Logic.Managers.Task.Interfaces;
+using Logic.Managers.Tasks.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +23,7 @@ public class TaskController: BasePublicController
     private readonly ITaskManager _taskManager;
     private readonly UserManager<UserDal> _userManager;
     private readonly IMapper _mapper;
+    private readonly ITaskUnitOfWorkManager _manager;
 
     /// <summary>
     /// Конструктор
@@ -30,12 +31,13 @@ public class TaskController: BasePublicController
     public TaskController(ITaskStatusManager statusManager, 
         UserManager<UserDal> userManager, 
         ITaskManager taskManager,
-        IMapper mapper)
+        IMapper mapper, ITaskUnitOfWorkManager manager)
     {
         _statusManager = statusManager;
         _userManager = userManager;
         _taskManager = taskManager;
         _mapper = mapper;
+        _manager = manager;
     }
 
     /// <summary>
@@ -54,7 +56,8 @@ public class TaskController: BasePublicController
         if (user == null)
             return BadRequest();
         task.User = user;
-        var response = await _taskManager.InsertAsync(task);
+        //var response = await _taskManager.InsertAsync(task);
+        var response = await _manager.CreateTaskAsync(task);
         return Ok(response);
     }
 
@@ -73,13 +76,13 @@ public class TaskController: BasePublicController
         var task = _mapper.Map(model, oldTask);
         try
         {
-            _statusManager.ChangeStatus(task, StatusEnum.ForRevision);
+            _statusManager.ChangeStatus(task, StatusEnum.OnChecking);
         }
         catch
         {
             BadRequest();
         }
-        var response = await _taskManager.UpdateAsync(task);
+        var response = await _manager.UpdateTaskAsync(task);
         return Ok(response);
     }
     

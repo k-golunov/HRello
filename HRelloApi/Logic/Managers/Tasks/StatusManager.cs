@@ -1,11 +1,11 @@
-﻿using Dal.Tasks.Entities;
+using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories.Interfaces;
 using Logic.Managers.Base;
-using Logic.Managers.Task.Interfaces;
-using Logic.Managers.Task.StatusesTree;
+using Logic.Managers.Tasks.Interfaces;
+using Logic.Managers.Tasks.StatusesTree;
 
-namespace Logic.Managers.Task;
+namespace Logic.Managers.Tasks;
 
 public class StatusManager: BaseManager<TaskDal, Guid>, ITaskStatusManager
 {

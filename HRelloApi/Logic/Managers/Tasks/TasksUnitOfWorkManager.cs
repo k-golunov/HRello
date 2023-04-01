@@ -1,7 +1,9 @@
-﻿using Dal.Tasks.Repositories.Interfaces;
-using Logic.Managers.Task.Interfaces;
+using Dal.Tasks.Entities;
+using Dal.Tasks.Enum;
+using Dal.Tasks.Repositories.Interfaces;
+using Logic.Managers.Tasks.Interfaces;
 
-namespace Logic.Managers.Task;
+namespace Logic.Managers.Tasks;
 
 /// <summary>
 /// Реализация паттерна UnitOfWork для task и всех связанных сущностей, кроме юзера
@@ -22,5 +24,33 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         _historyRepository = historyRepository;
         _userTaskResultsRepository = userTaskResultsRepository;
         _bossTaskResultsRepository = bossTaskResultsRepository;
+    }
+    
+    public async Task<Guid> CreateTaskAsync(TaskDal taskDal)
+    {
+        var historyDal = new HistoryDal
+        {
+            Id = Guid.NewGuid(),
+            ActionType = ActionTypeEnum.OnChecking,
+            Date = DateTime.UtcNow,
+            Comment = null
+        };
+        taskDal.History.Add(historyDal);
+        var taskId= await _taskRepository.InsertAsync(taskDal);
+        return taskId;
+    }
+
+    public async Task<Guid> UpdateTaskAsync(TaskDal taskDal)
+    {
+        var historyDal = new HistoryDal
+        {
+            Id = Guid.NewGuid(),
+            ActionType = ActionTypeEnum.OnChecking,
+            Date = DateTime.UtcNow,
+            Comment = null
+        };
+        taskDal.History.Add(historyDal);
+        var taskId = await _taskRepository.UpdateAsync(taskDal);
+        return taskId;
     }
 }

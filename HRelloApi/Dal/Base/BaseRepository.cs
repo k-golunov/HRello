@@ -37,7 +37,7 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
     /// Удаляет запись из бд по ее Id
     /// </summary>
     /// <param name="id">уникальный идентификатор записи</param>
-    public async void DeleteAsync(TI id)
+    public async Task DeleteAsync(TI id)
     {
         var entity = await _dbSet.FindAsync(id);
         if (entity != null)

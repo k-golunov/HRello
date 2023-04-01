@@ -2,7 +2,7 @@
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 
-namespace Logic.Managers.Task.Interfaces;
+namespace Logic.Managers.Tasks.Interfaces;
 
 public interface ITaskStatusManager: IBaseRepository<TaskDal, Guid>
 {

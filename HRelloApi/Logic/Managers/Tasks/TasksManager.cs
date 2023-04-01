@@ -1,9 +1,9 @@
-﻿using Dal.Tasks.Entities;
+using Dal.Tasks.Entities;
 using Dal.Tasks.Repositories.Interfaces;
 using Logic.Managers.Base;
-using Logic.Managers.Task.Interfaces;
+using Logic.Managers.Tasks.Interfaces;
 
-namespace Logic.Managers.Task;
+namespace Logic.Managers.Tasks;
 
 public class TaskManager: BaseManager<TaskDal, Guid>, ITaskManager
 {
