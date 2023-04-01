@@ -28,6 +28,7 @@ public class AccountController: BasePublicController
     /// </summary>
     /// <returns>jwt-token</returns>
     [HttpGet("getToken")]
+    [ProducesResponseType(typeof(string), 200)]
     public string GetToken(/* сюда добавить сущность,ссодержащую инфу, передающуюся в токен*/)
     {
         var claims = new List<Claim>();

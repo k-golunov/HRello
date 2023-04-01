@@ -19,6 +19,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(200)]
     public async Task<IActionResult> CreateUserRole(CreateRoleInternalRequest request)
     {
         var a = await _roleManager.CreateAsync(request.RoleName);

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Dal.Entities;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Departament.Dto.Request;
@@ -27,6 +28,7 @@ public class DepartamentController : BasePublicController
     /// <param name="request">входная модель для создания</param>
     /// <returns></returns>
     [HttpPost]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.Created)]
     public async Task<IActionResult> CreateDepartament(CreateDepartamentRequest request)
     {
         // TODO проверка, что BossId существует

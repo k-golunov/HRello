@@ -116,6 +116,7 @@ public class AuthorizeController : BasePublicController
     }
 
     [HttpPost("register")]
+    [ProducesResponseType(200)]
     public async Task<IActionResult> Register([FromQuery] Guid userId, [FromBody] RegisterModelRequest model)
     {
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
@@ -134,6 +135,7 @@ public class AuthorizeController : BasePublicController
     }
 
     [HttpPost("signin")]
+    [ProducesResponseType(typeof(string), 200)]
     public async Task<IActionResult> SignIn(SignInModelRequest model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
