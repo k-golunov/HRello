@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HRelloApi.Controllers.Debug.AuthTest;
+namespace HRelloApi.Controllers.Test;
 
 /// <summary>
 /// контроллер для тестирования авторизации

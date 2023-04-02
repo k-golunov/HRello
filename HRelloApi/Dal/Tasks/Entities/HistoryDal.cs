@@ -27,6 +27,11 @@ public class HistoryDal : BaseDal<Guid>
     /// </summary>
     public TaskDal Task { get; set; }
 
+    public HistoryDal()
+    {
+        
+    }
+    
     public HistoryDal(ActionTypeEnum type, TaskDal taskDal, string? comment = null)
     {
         Id = Guid.NewGuid();

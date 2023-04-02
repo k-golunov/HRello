@@ -12,14 +12,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HRelloApi.Controllers.Public.EmployeesTask;
+namespace HRelloApi.Controllers.Public.EmployeeTask;
 
 /// <summary>
 /// Контроллер для рестов связанных с задачами
 /// </summary>
 public class EmployeeTaskController: BasePublicController
 {
-    private readonly ITaskStatusManager _statusManager;
+    //private readonly ITaskStatusManager _statusManager;
     private readonly ITaskManager _taskManager;
     private readonly UserManager<UserDal> _userManager;
     private readonly IMapper _mapper;
@@ -28,12 +28,10 @@ public class EmployeeTaskController: BasePublicController
     /// <summary>
     /// Конструктор
     /// </summary>
-    public EmployeeTaskController(ITaskStatusManager statusManager, 
-        UserManager<UserDal> userManager, 
+    public EmployeeTaskController(UserManager<UserDal> userManager, 
         ITaskManager taskManager,
         IMapper mapper, ITaskUnitOfWorkManager manager)
     {
-        _statusManager = statusManager;
         _userManager = userManager;
         _taskManager = taskManager;
         _mapper = mapper;
@@ -76,7 +74,7 @@ public class EmployeeTaskController: BasePublicController
         var task = _mapper.Map(model, oldTask);
         try
         {
-            _statusManager.ChangeStatus(task, StatusEnum.OnChecking);
+            _manager.ChangeStatus(task, StatusEnum.OnChecking);
         }
         catch
         {
