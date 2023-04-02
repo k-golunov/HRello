@@ -38,7 +38,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\Public\EmployeesTask\dto\response" />
+      <Folder Include="Controllers\BossTask\dto\request" />
+      <Folder Include="Controllers\BossTask\dto\response" />
+      <Folder Include="Controllers\BossTask\mapping" />
+      <Folder Include="Controllers\Public\EmployeeTask\dto\response" />
       <Folder Include="wwwroot" />
     </ItemGroup>
 

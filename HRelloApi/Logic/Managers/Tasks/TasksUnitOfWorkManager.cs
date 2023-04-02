@@ -1,3 +1,4 @@
+using Dal.Base.Entitities;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories.Interfaces;
@@ -28,13 +29,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     
     public async Task<Guid> CreateTaskAsync(TaskDal taskDal)
     {
-        var historyDal = new HistoryDal
-        {
-            Id = Guid.NewGuid(),
-            ActionType = ActionTypeEnum.OnChecking,
-            Date = DateTime.UtcNow,
-            Comment = null
-        };
+        var historyDal = new HistoryDal(ActionTypeEnum.OnChecking, taskDal);
         taskDal.History.Add(historyDal);
         var taskId= await _taskRepository.InsertAsync(taskDal);
         return taskId;
@@ -42,14 +37,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
 
     public async Task<Guid> UpdateTaskAsync(TaskDal taskDal)
     {
-        var historyDal = new HistoryDal
-        {
-            Id = Guid.NewGuid(),
-            ActionType = ActionTypeEnum.Updated,
-            Date = DateTime.UtcNow,
-            Comment = null,
-            Task = taskDal 
-        };
+        var historyDal = new HistoryDal(ActionTypeEnum.Updated, taskDal);
         var taskId = await _taskRepository.UpdateAsync(taskDal);
         await _historyRepository.InsertAsync(historyDal);
         return taskId;

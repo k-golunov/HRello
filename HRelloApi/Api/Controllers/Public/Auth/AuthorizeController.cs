@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Context;
+using Serilog.Core;
 
 namespace HRelloApi.Controllers.Public.Auth;
 

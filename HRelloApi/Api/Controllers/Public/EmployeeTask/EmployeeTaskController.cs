@@ -12,12 +12,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HRelloApi.Controllers.Public.Task;
+namespace HRelloApi.Controllers.Public.EmployeesTask;
 
 /// <summary>
 /// Контроллер для рестов связанных с задачами
 /// </summary>
-public class TaskController: BasePublicController
+public class EmployeeTaskController: BasePublicController
 {
     private readonly ITaskStatusManager _statusManager;
     private readonly ITaskManager _taskManager;
@@ -28,7 +28,7 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Конструктор
     /// </summary>
-    public TaskController(ITaskStatusManager statusManager, 
+    public EmployeeTaskController(ITaskStatusManager statusManager, 
         UserManager<UserDal> userManager, 
         ITaskManager taskManager,
         IMapper mapper, ITaskUnitOfWorkManager manager)
