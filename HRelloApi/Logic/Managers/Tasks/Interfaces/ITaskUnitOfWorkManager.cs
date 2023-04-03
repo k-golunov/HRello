@@ -1,4 +1,5 @@
 using Dal.Base.Entitities;
+using Dal.Base.Interfaces;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 
@@ -10,5 +11,5 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
     public void ChangeStatus(TaskDal task, StatusEnum nextStatus);
 
-    public Task<BaseDal<Guid>> GetAsync<T>(Type type, Guid id);
+    public Task<TI?> GetAsync<T, TI>(Type type, Guid id) where TI : BaseDal<Guid>;
 }

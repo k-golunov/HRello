@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Reflection;
 using Dal;
 using Dal.Base;
@@ -67,7 +68,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         }
     }
 
-    public async Task<BaseDal<Guid>> GetAsync<T>(Type type, Guid id)
+    public async Task<TI?> GetAsync<T, TI>(Type type, Guid id) where TI : BaseDal<Guid>
     {
         var fieldInfo = this
             .GetType()
@@ -77,9 +78,12 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         var field = fieldInfo.GetValue(this);
         //вот тут надо юы передавать вместо TaskDal BaseDal<Guid>, но тогда репозиторий становится null
         //хуй знает почему, если field то уже по сути нужный нам объект, но при это апкаст приводит его к нулю
-        var repository = field as IBaseRepository<TaskDal, Guid>;
-        var instance = (T)Activator.CreateInstance(field.GetType(), _context)!;
-        var dal = await repository.GetAsync(id);
-        return dal;
+        //var repository = field as IBaseRepository<TaskDal, Guid>;
+        var instance = (BaseRepository<TI, Guid>)Activator.CreateInstance(field.GetType(), _context)!;
+        //instance = instance as IBaseRepository<BaseDal<Guid>, Guid>;
+        var result = await instance.GetAsync(id);
+        //var dal = await repository.GetAsync(id);
+        
+        return result;
     }
 }

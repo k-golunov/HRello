@@ -29,7 +29,7 @@ public class TaskManagerTestController : ControllerBase
     [HttpPost("test")]
     public async Task<IActionResult> Test(Guid id)
     {
-        var a = await _manager.GetAsync<HistoryRepository>(typeof(HistoryDal), id) as HistoryDal;
-        return Ok(a.Comment);
+        var a = await _manager.GetAsync<HistoryRepository, HistoryDal>(typeof(HistoryDal), id);
+        return Ok(a);
     }
 }
