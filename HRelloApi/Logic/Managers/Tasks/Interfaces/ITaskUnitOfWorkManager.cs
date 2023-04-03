@@ -10,5 +10,5 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
     public void ChangeStatus(TaskDal task, StatusEnum nextStatus);
 
-    public Task<BaseDal<Guid>> GetAsync(Type type, Guid id);
+    public Task<BaseDal<Guid>> GetAsync<T>(Type type, Guid id);
 }

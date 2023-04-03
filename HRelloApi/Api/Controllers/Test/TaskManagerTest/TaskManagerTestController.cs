@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dal.Tasks.Entities;
+using Dal.Tasks.Repositories;
 using HRelloApi.Controllers.Public.Task.dto.request;
 using Logic.Managers.Tasks.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,7 @@ public class TaskManagerTestController : ControllerBase
     [HttpPost("test")]
     public async Task<IActionResult> Test(Guid id)
     {
-        var a = await _manager.GetAsync(typeof(TaskDal), id) as TaskDal;
-        return Ok(a.Name);
+        var a = await _manager.GetAsync<HistoryRepository>(typeof(HistoryDal), id) as HistoryDal;
+        return Ok(a.Comment);
     }
 }

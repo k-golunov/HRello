@@ -1,8 +1,11 @@
 using System.Reflection;
+using Dal;
+using Dal.Base;
 using Dal.Base.Entitities;
 using Dal.Base.Interfaces;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
+using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
@@ -21,16 +24,18 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     private readonly IBossTaskResultsRepository _bossTaskResultsRepository;
     private readonly IUserTaskResultsRepository _userTaskResultsRepository;
     private readonly StatusTree _statusTree;
+    private readonly DataContext _context;
     
     public TaskUnitOfWorkManager(ITaskRepository taskRepository, IHistoryRepository historyRepository, 
         IBossTaskResultsRepository bossTaskResultsRepository, IUserTaskResultsRepository userTaskResultsRepository,
-        StatusTree statusTree)
+        StatusTree statusTree, DataContext context)
     {
         _taskRepository = taskRepository;
         _historyRepository = historyRepository;
         _userTaskResultsRepository = userTaskResultsRepository;
         _bossTaskResultsRepository = bossTaskResultsRepository;
         _statusTree = statusTree;
+        _context = context;
     }
     
     public async Task<Guid> CreateTaskAsync(TaskDal taskDal)
@@ -62,17 +67,18 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         }
     }
 
-    public async Task<BaseDal<Guid>> GetAsync(Type type, Guid id)
+    public async Task<BaseDal<Guid>> GetAsync<T>(Type type, Guid id)
     {
         var fieldInfo = this
             .GetType()
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)?
+            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.CreateInstance)?
             .FirstOrDefault(x =>
                 x.FieldType.GetInterfaces()[0].GenericTypeArguments.Contains(type));
         var field = fieldInfo.GetValue(this);
         //вот тут надо юы передавать вместо TaskDal BaseDal<Guid>, но тогда репозиторий становится null
         //хуй знает почему, если field то уже по сути нужный нам объект, но при это апкаст приводит его к нулю
         var repository = field as IBaseRepository<TaskDal, Guid>;
+        var instance = (T)Activator.CreateInstance(field.GetType(), _context)!;
         var dal = await repository.GetAsync(id);
         return dal;
     }
