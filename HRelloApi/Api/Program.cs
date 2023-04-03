@@ -116,7 +116,7 @@ builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 //работа с задачами
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 //builder.Services.AddScoped<ITaskStatusManager, StatusManager>();
-builder.Services.AddScoped<ITaskManager, TaskManager>();
+//builder.Services.AddScoped<ITaskManager, TaskManager>();
 builder.Services.AddSingleton<StatusTree>();
 builder.Services.AddScoped<ITaskUnitOfWorkManager, TaskUnitOfWorkManager>();
 builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();

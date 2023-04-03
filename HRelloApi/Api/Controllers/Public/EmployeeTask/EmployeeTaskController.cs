@@ -20,7 +20,6 @@ namespace HRelloApi.Controllers.Public.EmployeeTask;
 public class EmployeeTaskController: BasePublicController
 {
     //private readonly ITaskStatusManager _statusManager;
-    private readonly ITaskManager _taskManager;
     private readonly UserManager<UserDal> _userManager;
     private readonly IMapper _mapper;
     private readonly ITaskUnitOfWorkManager _manager;
@@ -28,12 +27,10 @@ public class EmployeeTaskController: BasePublicController
     /// <summary>
     /// Конструктор
     /// </summary>
-    public EmployeeTaskController(UserManager<UserDal> userManager, 
-        ITaskManager taskManager,
+    public EmployeeTaskController(UserManager<UserDal> userManager,
         IMapper mapper, ITaskUnitOfWorkManager manager)
     {
         _userManager = userManager;
-        _taskManager = taskManager;
         _mapper = mapper;
         _manager = manager;
     }
@@ -68,7 +65,7 @@ public class EmployeeTaskController: BasePublicController
     [HttpPut("edit/task={taskId:guid}")]
     public async Task<IActionResult> EditTask([FromRoute] Guid taskId, EditTaskRequest model)
     {
-        var oldTask = await _taskManager.GetAsync(taskId);
+        var oldTask = await _manager.GetAsync<TaskDal>(taskId);
         if (oldTask == null)
             return NotFound();
         var task = _mapper.Map(model, oldTask);

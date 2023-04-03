@@ -39,6 +39,11 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         _context = context;
     }
     
+    /// <summary>
+    /// Операция создания новой задачи
+    /// </summary>
+    /// <param name="taskDal">сущность, создаваемой задачи</param>
+    /// <returns>id созданной записи</returns>
     public async Task<Guid> CreateTaskAsync(TaskDal taskDal)
     {
         var historyDal = new HistoryDal(ActionTypeEnum.OnChecking, taskDal);
@@ -47,6 +52,11 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return taskId;
     }
 
+    /// <summary>
+    /// обновляет данные о задаче
+    /// </summary>
+    /// <param name="taskDal">сущность задачи с новыми данными</param>
+    /// <returns>id обновленной записи</returns>
     public async Task<Guid> UpdateTaskAsync(TaskDal taskDal)
     {
         var historyDal = new HistoryDal(ActionTypeEnum.Updated, taskDal);
@@ -55,6 +65,11 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return taskId;
     }
     
+    /// <summary>
+    /// изменяет статус задачи на входной
+    /// </summary>
+    /// <param name="task">задача</param>
+    /// <param name="nextStatus">новый статус</param>
     public void ChangeStatus(TaskDal task, StatusEnum nextStatus)
     { 
         var statusNode = _statusTree.GetStatusNode(task.Status);
@@ -68,22 +83,64 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         }
     }
 
-    public async Task<TI?> GetAsync<T, TI>(Type type, Guid id) where TI : BaseDal<Guid>
+    /// <summary>
+    /// возвращает передаваемую в дженерик параметре сущность с входным id
+    /// </summary>
+    public async Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>
+    {
+        var repository = GetRepository<T>();
+        var result = await repository.GetAsync(id);
+        return result;
+    }
+
+    /// <summary>
+    /// обновляет передаваемую в дженерик параметре сущность новой моделью
+    /// </summary>
+    /// <param name="dal">новая модель данных</param>
+    public async Task<Guid> UpdateAsync<T>(T dal) where T : BaseDal<Guid>
+    {
+        var repository = GetRepository<T>();
+        var id = await repository.UpdateAsync(dal);
+        return id;
+    }
+
+    /// <summary>
+    /// добавляет новую сущность
+    /// </summary>
+    /// <param name="dal">модель создаваемой сущности</param>
+    /// <typeparam name="T">тип создаваемой сущнсти</typeparam>
+    /// <returns>id новой записи</returns>
+    public async Task<Guid> InsertAsync<T>(T dal) where T : BaseDal<Guid>
+    {
+        var repository = GetRepository<T>();
+        var id = await repository.InsertAsync(dal);
+        return id;
+    }
+
+    /// <summary>
+    /// удаляет объект типа T с переданным id
+    /// </summary>
+    public async Task DeleteAsync<T>(Guid id) where T : BaseDal<Guid>
+    {
+        var repository = GetRepository<T>();
+        await repository.DeleteAsync(id);
+    }
+
+    /// <summary>
+    /// возвращает репозиторий, работающий с таблицей объектов типа T
+    /// </summary>
+    private BaseRepository<T, Guid> GetRepository<T>() where T : BaseDal<Guid>
     {
         var fieldInfo = this
             .GetType()
             .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.CreateInstance)?
             .FirstOrDefault(x =>
-                x.FieldType.GetInterfaces()[0].GenericTypeArguments.Contains(type));
-        var field = fieldInfo.GetValue(this);
-        //вот тут надо юы передавать вместо TaskDal BaseDal<Guid>, но тогда репозиторий становится null
-        //хуй знает почему, если field то уже по сути нужный нам объект, но при это апкаст приводит его к нулю
-        //var repository = field as IBaseRepository<TaskDal, Guid>;
-        var instance = (BaseRepository<TI, Guid>)Activator.CreateInstance(field.GetType(), _context)!;
-        //instance = instance as IBaseRepository<BaseDal<Guid>, Guid>;
-        var result = await instance.GetAsync(id);
-        //var dal = await repository.GetAsync(id);
-        
-        return result;
+                x.FieldType
+                    .GetInterfaces()
+                    .First()
+                    .GenericTypeArguments
+                    .Contains(typeof(T)));
+        var repository = fieldInfo.GetValue(this) as BaseRepository<T, Guid>;
+        return repository;
     }
 }

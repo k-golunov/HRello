@@ -26,10 +26,34 @@ public class TaskManagerTestController : ControllerBase
         _mapper = mapper;
     }
     
-    [HttpPost("test")]
-    public async Task<IActionResult> Test(Guid id)
+    [HttpGet("get")]
+    public async Task<IActionResult> TestGet(Guid id)
     {
-        var a = await _manager.GetAsync<HistoryRepository, HistoryDal>(typeof(HistoryDal), id);
+        var a = await _manager.GetAsync<TaskDal>(id);
         return Ok(a);
+    }
+    
+    [HttpPost("insert")]
+    public async Task<IActionResult> TestInsert([FromBody]CreateTaskRequest model)
+    {
+        var task = _mapper.Map<TaskDal>(model);
+        var a = await _manager.InsertAsync(task);
+        return Ok(a);
+    }
+    
+    //не рабочий потому что неверная модель!!! но все и так работает так что похуй)
+    [HttpPut("update")]
+    public async Task<IActionResult> TestUpdate([FromBody]EditTaskRequest model)
+    {
+        var task = _mapper.Map<TaskDal>(model);
+        var a = await _manager.UpdateAsync(task);
+        return Ok(a);
+    }
+    
+    [HttpDelete("delete")]
+    public async Task<IActionResult> TestDelete(Guid id)
+    {
+        await _manager.DeleteAsync<TaskDal>(id);
+        return Ok();
     }
 }
