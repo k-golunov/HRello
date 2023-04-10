@@ -127,6 +127,17 @@ builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 builder.Services.AddAutoMapper(typeof(DepartamentProfiles));
 
+// Add cors
+builder.Services.AddCors(options => options.AddDefaultPolicy(/*name: myOrigins,*/
+    policy =>
+    {
+        policy.WithOrigins("http://185.133.40.145:3033",
+                "http://185.133.40.145:7296")
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    }));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -174,6 +185,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 
 // Подключаем авторизацию, аутентификацию и айдентити
