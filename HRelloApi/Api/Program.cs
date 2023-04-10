@@ -128,7 +128,7 @@ builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 builder.Services.AddAutoMapper(typeof(DepartamentProfiles));
 
 // Add cors
-builder.Services.AddCors(options => options.AddDefaultPolicy(/*name: myOrigins,*/
+builder.Services.AddCors(options => options.AddDefaultPolicy(
     policy =>
     {
         policy.WithOrigins("http://185.133.40.145:3033",
@@ -175,6 +175,11 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+var clientPath = Path.Join(Directory.GetCurrentDirectory(), "..", "..", "ussc_frontend", "build");
+
+// ИСПОЛЬЗУЕМ SPA
+// Ебучее говно!
 
 var app = builder.Build();
 
