@@ -115,8 +115,8 @@ builder.Services.AddScoped<IDepartamentManager, DepartamentManager>();
 builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 //работа с задачами
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<ITaskStatusManager, StatusManager>();
-builder.Services.AddScoped<ITaskManager, TaskManager>();
+//builder.Services.AddScoped<ITaskStatusManager, StatusManager>();
+//builder.Services.AddScoped<ITaskManager, TaskManager>();
 builder.Services.AddSingleton<StatusTree>();
 builder.Services.AddScoped<ITaskUnitOfWorkManager, TaskUnitOfWorkManager>();
 builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
@@ -195,7 +195,7 @@ app.UseIdentityServer();
 
 // Откючаем (комментируем) если не требуется отчистка бд 
 // т.к. все данные из бд будут удаленны
-#if DEBUG
+/*#if DEBUG
 
 
 using (var scope = 
@@ -205,7 +205,7 @@ using (var context = scope.ServiceProvider.GetService<DataContext>())
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
 }
-#endif        
+#endif   */     
         
 
 app.MapControllers();
