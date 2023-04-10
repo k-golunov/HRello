@@ -203,13 +203,13 @@ app.UseIdentityServer();
 //#if DEBUG
 
 
-/*using (var scope = 
+using (var scope = 
        app.Services.CreateScope())
 using (var context = scope.ServiceProvider.GetService<DataContext>())
 {
     //context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
-}*/
+}
 //#endif        
         
 
