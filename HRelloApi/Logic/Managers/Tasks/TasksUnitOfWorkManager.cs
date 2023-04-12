@@ -125,6 +125,15 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         var repository = GetRepository<T>();
         await repository.DeleteAsync(id);
     }
+    
+    /// <summary>
+    /// Возвращает все объекты типа T из бд
+    /// </summary>
+    public List<T> GetAll<T>() where T : BaseDal<Guid>
+    {
+        var repository = GetRepository<T>();
+        return repository.GetAll();
+    }
 
     /// <summary>
     /// возвращает репозиторий, работающий с таблицей объектов типа T
