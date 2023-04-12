@@ -57,7 +57,7 @@ public class EmployeeTaskController: BasePublicController
     }
 
     /// <summary>
-    /// Рест для редактирования данных о задаче
+    /// Редактирования данных о задаче
     /// </summary>
     #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
