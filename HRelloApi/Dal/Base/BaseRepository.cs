@@ -70,4 +70,9 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
         await _context.SaveChangesAsync();
         return dal.Id;
     }
+
+    public List<T> GetAll()
+    {
+        return _dbSet.ToList();
+    }
 }

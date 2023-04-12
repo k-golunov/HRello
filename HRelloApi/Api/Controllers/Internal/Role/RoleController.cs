@@ -25,4 +25,15 @@ public class RoleController : ControllerBase
         var a = await _roleManager.CreateAsync(request.RoleName);
         return Ok(a.Succeeded);
     }
+
+    /// <summary>
+    /// Получение всех ролей
+    /// </summary>
+    /// <returns>все роли</returns>
+    [HttpGet("all")]
+    public IActionResult GetAllRole()
+    {
+        var roles = _roleManager.Roles.ToList();
+        return Ok(roles);
+    }
 }

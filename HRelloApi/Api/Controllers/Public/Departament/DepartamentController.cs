@@ -36,4 +36,15 @@ public class DepartamentController : BasePublicController
         var response = await _manager.InsertAsync(dal);
         return Ok(response);
     }
+
+    /// <summary>
+    /// Получение всех отделов
+    /// </summary>
+    /// <returns>все отделы</returns>
+    [HttpGet("all")]
+    public IActionResult GetAllDepartament()
+    {
+        var a = _manager.GetAll();
+        return Ok(a);
+    }
 }
