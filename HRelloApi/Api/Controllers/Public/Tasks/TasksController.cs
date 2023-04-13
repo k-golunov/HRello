@@ -17,7 +17,7 @@ namespace HRelloApi.Controllers.Public.EmployeeTask;
 /// <summary>
 /// Контроллер для рестов связанных с задачами
 /// </summary>
-public class EmployeeTaskController: BasePublicController
+public class TasksController: BasePublicController
 {
     //private readonly ITaskStatusManager _statusManager;
     private readonly UserManager<UserDal> _userManager;
@@ -27,7 +27,7 @@ public class EmployeeTaskController: BasePublicController
     /// <summary>
     /// Конструктор
     /// </summary>
-    public EmployeeTaskController(UserManager<UserDal> userManager,
+    public TasksController(UserManager<UserDal> userManager,
         IMapper mapper, ITaskUnitOfWorkManager manager)
     {
         _userManager = userManager;
@@ -39,15 +39,15 @@ public class EmployeeTaskController: BasePublicController
     /// Рест для создания задачи
     /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("create")]
+    [HttpPost]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
         var task = _mapper.Map<TaskDal>(model);
         var handler = new JwtSecurityTokenHandler();
         var auth = Request.Headers["Authorization"].ToString().Split(' ')[1];
         var jwt = handler.ReadToken(auth) as JwtSecurityToken;
-        var email = jwt.Claims.First(x => x.Type == ClaimTypes.Email).Value;
-        var user = await _userManager.FindByEmailAsync(email);
+        var userId = jwt.Claims.First(x => x.Type == "Id").Value;
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
             return BadRequest();
         task.User = user;
@@ -62,22 +62,32 @@ public class EmployeeTaskController: BasePublicController
     #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     #endif
-    [HttpPut("edit/task={taskId:guid}")]
+    [HttpPut("{taskId:guid}")]
     public async Task<IActionResult> EditTask([FromRoute] Guid taskId, EditTaskRequest model)
     {
         var oldTask = await _manager.GetAsync<TaskDal>(taskId);
         if (oldTask == null)
             return NotFound();
         var task = _mapper.Map(model, oldTask);
-        try
-        {
-            _manager.ChangeStatus(task, StatusEnum.OnChecking);
-        }
-        catch
-        {
-            BadRequest();
-        }
+       var result = await _manager.IsChangeStatus(task, StatusEnum.OnChecking);
+       if (!result)
+           return BadRequest(); 
         var response = await _manager.UpdateTaskAsync(task);
         return Ok(response);
+    }
+
+    /// <summary>
+    /// Рест на изменение статуса задачи
+    /// </summary>
+    [HttpPatch("change")]
+    public async Task<IActionResult> ChangeStatus(ChangeStatusRequest model)
+    {
+        var task = await _manager.GetAsync<TaskDal>(model.Id);
+        if (task == null)
+            return NotFound();
+        var result = await _manager.IsChangeStatus(task, model.NextStatus);
+        if (!result)
+            return BadRequest();
+        return Ok();
     }
 }
