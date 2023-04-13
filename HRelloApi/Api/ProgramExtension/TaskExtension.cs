@@ -4,7 +4,7 @@ using Logic.Managers.Tasks;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 
-namespace HRelloApi.ProgrammExtension;
+namespace HRelloApi.ProgramExtension;
 
 public static class TaskExtension
 {
