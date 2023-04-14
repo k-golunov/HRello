@@ -3,14 +3,15 @@
 /// <summary>
 /// Модель для отправки ошибки в контроллере
 /// </summary>
-public class BaseExceptionModel
+public record BaseExceptionModel(string Code, string Message)
 {
     /// <summary>
     /// Код ошибки
     /// </summary>
-    public required string Code { get; set; }
+    public string Code { get; set; } = Code;
+
     /// <summary>
     /// Сообщение ошибки
     /// </summary>
-    public required string Message { get; set; }
+    public string Message { get; set; } = Message;
 }

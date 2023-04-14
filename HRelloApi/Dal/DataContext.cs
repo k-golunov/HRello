@@ -1,5 +1,4 @@
-﻿using Dal.Email.Entities;
-using Dal.Entities;
+﻿using Dal.Entities;
 using Dal.Tasks.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,8 +8,6 @@ namespace Dal;
 
 public sealed class DataContext : IdentityDbContext<UserDal>
 {
-    
-    public DbSet<EmailDal> Email { get; set; }
     public DbSet<HistoryDal> History { get; set; }
     public DbSet<TaskDal> Task { get; set; }
     public DbSet<BossTaskResultDal> BossTaskResults { get; set; }
@@ -52,8 +49,6 @@ public sealed class DataContext : IdentityDbContext<UserDal>
             entity.ToTable("RoleClaims"));
 
         builder.ApplyConfiguration(new AuthConfiguration());
-        
-        builder.Entity<EmailDal>().HasIndex(u => u.Email).IsUnique();
 
         builder.Entity<UserDal>().HasOne(u => u.Departament);
         builder.Entity<UserDal>().Property(p => p.Name).IsRequired(false);

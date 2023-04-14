@@ -1,4 +1,5 @@
 ﻿using HRelloApi.Controllers.Internal.Role.Dto.Request;
+using HRelloApi.Controllers.Internal.Role.Dto.Response;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,5 +25,19 @@ public class RoleController : ControllerBase
     {
         var a = await _roleManager.CreateAsync(request.RoleName);
         return Ok(a.Succeeded);
+    }
+
+    /// <summary>
+    /// Получение всех ролей
+    /// </summary>
+    /// <returns>все роли</returns>
+    [HttpGet("all")]
+    public IActionResult GetAllRole()
+    {
+        var roles = _roleManager.Roles.ToList();
+        return Ok(new AllRolesResponse
+        {
+            Roles = roles
+        });
     }
 }
