@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HRelloApi.Controllers.Public.EmployeeTask;
+namespace HRelloApi.Controllers.Public.Tasks;
 
 /// <summary>
 /// Контроллер для рестов связанных с задачами
@@ -82,6 +82,7 @@ public class TasksController: BasePublicController
     /// <summary>
     /// Рест на изменение статуса задачи
     /// </summary>
+    /// todo! сделать добавление в историю и комментарий
     [HttpPatch("change")]
     public async Task<IActionResult> ChangeStatus(ChangeStatusRequest model)
     {
@@ -131,4 +132,19 @@ public class TasksController: BasePublicController
 
         return BadRequest();
     }
+    
+    /// <summary>
+    /// рест на получение конкретной задачи
+    /// </summary>
+    [HttpGet("{taskId:guid}")]
+    public async Task<IActionResult> GetTask([FromRoute] Guid taskId)
+    {
+        var task = await _manager.GetAsync<TaskDal>(taskId);
+        if (task == null)
+            return NotFound();
+        var taskResponse = _mapper.Map<TaskResponse>(task);
+        return Ok(taskResponse);
+    }
+    
+    //рест на получение всех задач с фильтрами
 }
