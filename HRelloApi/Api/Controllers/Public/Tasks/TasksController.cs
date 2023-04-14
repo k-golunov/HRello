@@ -5,7 +5,10 @@ using Dal.Entities;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using HRelloApi.Controllers.Public.Base;
+using HRelloApi.Controllers.Public.EmployeeTask.dto.response;
 using HRelloApi.Controllers.Public.Task.dto.request;
+using HRelloApi.Controllers.Public.Tasks.dto.request;
+using HRelloApi.Controllers.Public.Tasks.dto.response;
 using Logic.Managers.Tasks.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -52,7 +55,7 @@ public class TasksController: BasePublicController
             return BadRequest();
         task.User = user;
         //var response = await _taskManager.InsertAsync(task);
-        var response = await _manager.CreateTaskAsync(task);
+        var response =new TaskIdResponse { Id = await _manager.CreateTaskAsync(task) };
         return Ok(response);
     }
 
@@ -72,7 +75,7 @@ public class TasksController: BasePublicController
        var result = await _manager.IsChangeStatus(task, StatusEnum.OnChecking);
        if (!result)
            return BadRequest(); 
-        var response = await _manager.UpdateTaskAsync(task);
+        var response = new TaskIdResponse {Id = await _manager.UpdateTaskAsync(task) };
         return Ok(response);
     }
 
@@ -82,12 +85,50 @@ public class TasksController: BasePublicController
     [HttpPatch("change")]
     public async Task<IActionResult> ChangeStatus(ChangeStatusRequest model)
     {
+        if (model.NextStatus == StatusEnum.CompletionCheck || model.NextStatus == StatusEnum.Completed)
+            return BadRequest();//неправильный рест
         var task = await _manager.GetAsync<TaskDal>(model.Id);
         if (task == null)
-            return NotFound();
+            return NotFound();//задача не найдена
         var result = await _manager.IsChangeStatus(task, model.NextStatus);
         if (!result)
-            return BadRequest();
+            return BadRequest();//невозможно изменить статус
         return Ok();
+    }
+
+    /// <summary>
+    /// рест на завершение задачи сотрудником
+    /// </summary>
+    [HttpPost("review")]
+    public async Task<IActionResult> CheckCompletion(UserTaskCompletedRequest model)
+    {
+        var task = await _manager.GetAsync<TaskDal>(model.TaskId);
+        if (task?.Status == StatusEnum.InWork)
+        {
+            var userResult = _mapper.Map<UserTaskResultDal>(model);
+            var result = await _manager.InsertAsync(userResult);
+            await _manager.IsChangeStatus(task, StatusEnum.CompletionCheck);
+            return Ok(new TaskResultResponse { ResultId = result, TaskId = task.Id });
+        }
+
+        return BadRequest();//невозможно заврешить задачу с текущим статусом
+    }
+
+    /// <summary>
+    /// рест на полное завершение задачи
+    /// </summary>
+    [HttpPost("complete")]
+    public async Task<IActionResult> CompleteTask(BossTaskCompletedRequest model)
+    {
+        var task = await _manager.GetAsync<TaskDal>(model.TaskId);
+        if (task?.Status != StatusEnum.CompletionCheck)
+        {
+            var bossResult = _mapper.Map<BossTaskResultDal>(model);
+            var id =await _manager.InsertAsync(bossResult);
+            await _manager.IsChangeStatus(task, StatusEnum.Completed);
+            return Ok(new TaskResultResponse { ResultId = id, TaskId = task.Id });
+        }
+
+        return BadRequest();
     }
 }

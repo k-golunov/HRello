@@ -2,7 +2,7 @@
 using Dal.Tasks.Enum;
 using Newtonsoft.Json;
 
-namespace HRelloApi.Controllers.Public.Task.dto.request;
+namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 
 /// <summary>
 /// Модель запроса на изменение статуса задачи
@@ -14,12 +14,18 @@ public class ChangeStatusRequest
     /// </summary>
     [Required]
     [JsonProperty("Id")]
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
     
     /// <summary>
     /// Новый статус
     /// </summary>
     [Required]
     [JsonProperty("NextStatus")]
-    public StatusEnum NextStatus { get; init; }
+    public required StatusEnum NextStatus { get; init; }
+    
+    /// <summary>
+    /// Комментарий к изменению статуса
+    /// </summary>
+    [JsonProperty("Comment")]
+    public string? Comment { get; init; }
 }
