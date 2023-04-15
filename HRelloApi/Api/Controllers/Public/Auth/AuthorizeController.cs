@@ -122,7 +122,7 @@ public class AuthorizeController : BasePublicController
     /// <param name="userId"></param>
     /// <param name="model"></param>
     /// <returns></returns>
-    [HttpPost("register/{id:guid}")]
+    [HttpPost("register/{userId:guid}")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> Register([FromRoute] Guid userId, [FromBody] RegisterModelRequest model)
     {
