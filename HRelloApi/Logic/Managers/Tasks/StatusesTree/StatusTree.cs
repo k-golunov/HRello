@@ -9,7 +9,7 @@ public class StatusTree
     public StatusTree()
     {
         var forRevision = new StatusNode(StatusEnum.OnChecking);
-        var underReview = new StatusNode(StatusEnum.UnderReview);
+        var underReview = new StatusNode(StatusEnum.OnRework);
         var inWork = new StatusNode(StatusEnum.InWork);
         var completionCheck = new StatusNode(StatusEnum.CompletionCheck);
         var completed = new StatusNode(StatusEnum.Completed);

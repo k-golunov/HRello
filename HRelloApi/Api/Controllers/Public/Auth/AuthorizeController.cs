@@ -96,10 +96,9 @@ public class AuthorizeController : BasePublicController
         return Ok(user.Id);
     }
 
-    private string GetToken(UserDal user, IEnumerable<Claim> principal)
+    private string GetToken(UserDal user)
     {
-        var claims = principal.ToList();
-        claims.Add(new Claim(ClaimTypes.Email, user.Email));
+        var claims = new List<Claim> { new ("Id", user.Id) };
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
         var token = new JwtSecurityToken
@@ -146,7 +145,7 @@ public class AuthorizeController : BasePublicController
         if (result.Succeeded)
         {
             var claims = await _userManager.GetClaimsAsync(user);
-            var token = GetToken(user, claims);
+            var token = GetToken(user);
 
             return Ok(token);
         }

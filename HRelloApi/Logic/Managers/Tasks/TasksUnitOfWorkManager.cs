@@ -70,17 +70,17 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     /// <param name="task">задача</param>
     /// <param name="nextStatus">новый статус</param>
-    public void ChangeStatus(TaskDal task, StatusEnum nextStatus)
+    public async Task<bool> IsChangeStatus(TaskDal task, StatusEnum nextStatus)
     { 
         var statusNode = _statusTree.GetStatusNode(task.Status);
         if (statusNode.IsNextStatus(nextStatus))
         { 
             task.Status = nextStatus;
+            await _taskRepository.UpdateAsync(task);
+            return true;
         }
-        else
-        { 
-            throw new Exception();//?????Может какую-то другую обработку
-        }
+
+        return false;
     }
 
     /// <summary>
