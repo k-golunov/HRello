@@ -10,6 +10,11 @@ namespace HRelloApi.Controllers.Public.Task.dto.request;
 public record EditTaskRequest
 {
     /// <summary>
+    /// Идентификатор задачи
+    /// </summary>
+    public required Guid Id { get; init; } 
+    
+    /// <summary>
     /// Название задачи
     /// </summary>
     [Required]

@@ -115,9 +115,16 @@ public class AuthorizeController : BasePublicController
         return tokenHandler.WriteToken(token);
     }
 
-    [HttpPost("register")]
+    /// <summary>
+    /// Регистрация пользователя
+    /// не выдает токены, только заполняет данные в бд
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpPost("register/{id:guid}")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> Register([FromQuery] Guid userId, [FromBody] RegisterModelRequest model)
+    public async Task<IActionResult> Register([FromRoute] Guid userId, [FromBody] RegisterModelRequest model)
     {
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
         var user = _mapper.Map(model, unregisteredUser);
@@ -134,6 +141,12 @@ public class AuthorizeController : BasePublicController
 
     }
 
+    /// <summary>
+    /// Авторизация пользователя в системе
+    /// 
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns>access и refresh токены</returns>
     [HttpPost("signin")]
     [ProducesResponseType(typeof(string), 200)]
     public async Task<IActionResult> SignIn(SignInModelRequest model)

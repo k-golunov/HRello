@@ -19,6 +19,11 @@ public class RoleController : ControllerBase
         _roleManager = roleManager;
     }
 
+    /// <summary>
+    /// Создание роли
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(200)]
     public async Task<IActionResult> CreateUserRole(CreateRoleInternalRequest request)
