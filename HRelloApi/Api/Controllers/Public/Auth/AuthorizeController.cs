@@ -128,6 +128,7 @@ public class AuthorizeController : BasePublicController
     {
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
         var user = _mapper.Map(model, unregisteredUser);
+        user.EmailConfirmed = true;
         //var passwordUpdateResult = await _userManager.UpdatePasswordAsync(user, model.Password);
         var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
