@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Dal.Entities;
+using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
@@ -152,5 +153,24 @@ public class AuthorizeController : BasePublicController
         }
 
         return Unauthorized();
+    }
+
+    /// <summary>
+    /// Проверка, есть ли инвайт у пользователя
+    /// </summary>
+    /// <param name="userId">идентификатор пользователя</param>
+    /// <returns></returns>
+    [HttpGet("check-invite/{userId}")]
+    public async Task<IActionResult> CheckInvite([FromRoute] string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return NotFound(new BaseExceptionModel("404", "Пользователь не найден"));
+        
+        if (!user.EmailConfirmed)
+            return Forbid();
+        
+        return Ok(true);
+
     }
 }
