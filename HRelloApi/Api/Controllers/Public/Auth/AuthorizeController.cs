@@ -96,10 +96,9 @@ public class AuthorizeController : BasePublicController
         return Ok(user.Id);
     }
 
-    private string GetToken(UserDal user, IEnumerable<Claim> principal)
+    private string GetToken(UserDal user)
     {
-        var claims = principal.ToList();
-        claims.Add(new Claim(ClaimTypes.Email, user.Email));
+        var claims = new List<Claim> { new ("Id", user.Id) };
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
         var token = new JwtSecurityToken
@@ -116,12 +115,20 @@ public class AuthorizeController : BasePublicController
         return tokenHandler.WriteToken(token);
     }
 
-    [HttpPost("register")]
+    /// <summary>
+    /// Регистрация пользователя
+    /// не выдает токены, только заполняет данные в бд
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpPost("register/{userId:guid}")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> Register([FromQuery] Guid userId, [FromBody] RegisterModelRequest model)
+    public async Task<IActionResult> Register([FromRoute] Guid userId, [FromBody] RegisterModelRequest model)
     {
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
         var user = _mapper.Map(model, unregisteredUser);
+        user.EmailConfirmed = true;
         //var passwordUpdateResult = await _userManager.UpdatePasswordAsync(user, model.Password);
         var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
@@ -135,6 +142,12 @@ public class AuthorizeController : BasePublicController
 
     }
 
+    /// <summary>
+    /// Авторизация пользователя в системе
+    /// 
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns>access и refresh токены</returns>
     [HttpPost("signin")]
     [ProducesResponseType(typeof(string), 200)]
     public async Task<IActionResult> SignIn(SignInModelRequest model)
@@ -146,7 +159,7 @@ public class AuthorizeController : BasePublicController
         if (result.Succeeded)
         {
             var claims = await _userManager.GetClaimsAsync(user);
-            var token = GetToken(user, claims);
+            var token = GetToken(user);
 
             return Ok(token);
         }

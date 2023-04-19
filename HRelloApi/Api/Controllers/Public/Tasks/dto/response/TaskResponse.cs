@@ -2,59 +2,73 @@
 using Dal.Tasks.Enum;
 using Newtonsoft.Json;
 
-namespace HRelloApi.Controllers.Public.Task.dto.request;
+namespace HRelloApi.Controllers.Public.Tasks.dto.response;
 
 /// <summary>
-/// Входная модель данных для реста редактирования данных задачи
+/// 
 /// </summary>
-public record EditTaskRequest
+public class TaskResponse
 {
     /// <summary>
     /// Название задачи
     /// </summary>
     [Required]
     [JsonProperty("Name")]
+    [MaxLength(255)]
     public required string Name { get; init; }
-
+    
     /// <summary>
-    /// Текущий год
+    /// Год задачи
     /// </summary>
     [Required]
     [JsonProperty("Year")]
+    [MaxLength(4)]
+    [MinLength(4)]
     public required int Year { get; init; }
-
+    
     /// <summary>
-    /// Квартал
+    /// Квартал задачи, от 1 до 4
     /// </summary>
     [Required]
     [JsonProperty("Quarter")]
+    [Range(1,4)]
     public required int Quarter { get; init; }
-
+    
     /// <summary>
-    /// Категория задачи
+    /// Категория задачи enum
     /// </summary>
     [Required]
     [JsonProperty("Category")]
     public required CategoryEnum Category { get; init; }
-
+    
     /// <summary>
-    /// Блок
+    /// Блок задачи enum
     /// </summary>
     [Required]
     [JsonProperty("Block")]
     public required BlockEnum Block { get; init; }
-
+    
     /// <summary>
-    /// Планируемый вес задачи
+    /// Планируемый вес задачи, предполагаектся значение процента
+    /// Например если значение 50, то это означает, что вес 50%
     /// </summary>
+    [Range(0, 1000)]
     [Required]
     [JsonProperty("PlannedWeight")]
     public required int PlannedWeight { get; init; }
     
     /// <summary>
-    /// Ожидаемый результат
+    /// Ожидаемый результат по итогам задачи
     /// </summary>
+    [MaxLength(1023)]
     [Required]
     [JsonProperty("WaitResult")]
     public required string WaitResult { get; init; }
+    
+    /// <summary>
+    /// Статус задачи
+    /// </summary>
+    [Required]
+    [JsonProperty("Status")]
+    public required StatusEnum Status { get; init; }
 }

@@ -9,7 +9,7 @@ public interface ITaskUnitOfWorkManager
 {
     public Task<Guid> CreateTaskAsync(TaskDal taskDal);
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
-    public void ChangeStatus(TaskDal task, StatusEnum nextStatus);
+    public Task<bool> IsChangeStatus(TaskDal task, StatusEnum nextStatus);
 
     public Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>;
     public Task<Guid> UpdateAsync<T>(T dal) where T : BaseDal<Guid>;

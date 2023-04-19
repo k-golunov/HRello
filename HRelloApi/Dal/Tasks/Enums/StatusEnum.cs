@@ -3,7 +3,7 @@
 public enum StatusEnum
 {
     OnChecking = 0,
-    UnderReview = 1,
+    OnRework = 1,
     InWork = 2,
     CompletionCheck = 3,
     Completed = 4,
