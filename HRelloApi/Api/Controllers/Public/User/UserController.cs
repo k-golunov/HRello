@@ -53,10 +53,8 @@ public class UserController : BasePublicController
     public async Task<IActionResult> GetUserById(Guid id)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
-        return Ok(new GetUserResponse
-        {
-            User = user
-        });
+        var result = _mapper.Map<GetUserResponse>(user);
+        return Ok(result);
     }
 
     /// <summary>

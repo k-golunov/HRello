@@ -14,6 +14,7 @@ using Dal.Tasks.Repositories.Interfaces;
 using Dal.User.Repositories.Interfaces;
 using HRelloApi.Controllers.Public.Auth.Mapping;
 using HRelloApi.Controllers.Public.Departament.Mapping;
+using HRelloApi.Controllers.Public.User.Mapping;
 using HRelloApi.ProgramExtension;
 using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
@@ -61,6 +62,7 @@ builder.Services.AddTasks();
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 builder.Services.AddAutoMapper(typeof(DepartamentProfiles));
+builder.Services.AddAutoMapper(typeof(UserMapping));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
