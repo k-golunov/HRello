@@ -1,5 +1,6 @@
 using Dal.Base.Entitities;
 using Dal.Base.Interfaces;
+using Dal.Entities;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 
@@ -10,7 +11,8 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> CreateTaskAsync(TaskDal taskDal);
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
     public Task<bool> IsChangeStatus(TaskDal task, StatusEnum nextStatus);
-
+    public Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment);
+    public Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus);
     public Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>;
     public Task<Guid> UpdateAsync<T>(T dal) where T : BaseDal<Guid>;
     public Task<Guid> InsertAsync<T>(T dal) where T : BaseDal<Guid>;

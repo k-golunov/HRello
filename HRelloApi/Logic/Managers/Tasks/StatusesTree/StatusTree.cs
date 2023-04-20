@@ -16,13 +16,34 @@ public class StatusTree
         var awaitingCancellation = new StatusNode(StatusEnum.AwaitingCancellation);
         var canceled = new StatusNode(StatusEnum.Canceled);
         
-        forRevision.AddNextStatus(new List<StatusNode>{ underReview, inWork, canceled });
-        underReview.AddNextStatus(new List<StatusNode> { forRevision });
-        inWork.AddNextStatus(new List<StatusNode> { awaitingCancellation, completionCheck });
-        completionCheck.AddNextStatus(new List<StatusNode> { canceled, completed, inWork });
-        completed.AddNextStatus(new List<StatusNode>());
-        awaitingCancellation.AddNextStatus(new List<StatusNode> { canceled, inWork });
-        canceled.AddNextStatus(new List<StatusNode>());
+        forRevision.AddNextStatus(new Dictionary<StatusNode, ActionTypeEnum>
+        {
+            {underReview, ActionTypeEnum.OnRework},
+            {inWork, ActionTypeEnum.OnWork},
+            {canceled, ActionTypeEnum.Cancellation}
+        });
+        underReview.AddNextStatus(new Dictionary<StatusNode, ActionTypeEnum>
+        {
+            { forRevision, ActionTypeEnum.OnChecking },
+        });
+        inWork.AddNextStatus(new Dictionary<StatusNode, ActionTypeEnum> 
+        {
+            { awaitingCancellation, ActionTypeEnum.OnCancellation},
+            { completionCheck, ActionTypeEnum.OnCompletion }
+        });
+        completionCheck.AddNextStatus(new Dictionary<StatusNode, ActionTypeEnum>
+        {
+            {canceled, ActionTypeEnum.Cancellation},
+            {completed, ActionTypeEnum.Completion},
+            {inWork, ActionTypeEnum.CompletionDeviation}
+        });
+        completed.AddNextStatus(new Dictionary<StatusNode, ActionTypeEnum>());
+        awaitingCancellation.AddNextStatus(new Dictionary<StatusNode, ActionTypeEnum>
+        {
+            {canceled, ActionTypeEnum.Cancellation},
+            {inWork, ActionTypeEnum.CancellationDeviation}
+        });
+        canceled.AddNextStatus(new Dictionary<StatusNode, ActionTypeEnum>());
         
         Statuses.Add(forRevision);
         Statuses.Add(underReview);
@@ -37,5 +58,6 @@ public class StatusTree
     {
         return Statuses.First(x => x.Status == status);
     }
+    
     
 }

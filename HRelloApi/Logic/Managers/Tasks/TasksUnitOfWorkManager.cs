@@ -1,9 +1,11 @@
 using System.Dynamic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using Dal;
 using Dal.Base;
 using Dal.Base.Entitities;
 using Dal.Base.Interfaces;
+using Dal.Entities;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
@@ -74,13 +76,25 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     { 
         var statusNode = _statusTree.GetStatusNode(task.Status);
         if (statusNode.IsNextStatus(nextStatus))
-        { 
+        {
             task.Status = nextStatus;
             await _taskRepository.UpdateAsync(task);
+            var action = statusNode.GetAction(nextStatus);
             return true;
         }
 
         return false;
+    }
+
+    public async Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus)
+    {
+        var action = StatusesGraph.StatusesGraph.GetAction(task.Status, nextStatus);
+        if (action != ActionTypeEnum.None)
+        {
+            task.Status = nextStatus;
+            await _taskRepository.UpdateAsync(task);
+        }
+        return action;
     }
 
     /// <summary>
@@ -131,7 +145,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     public List<T> GetAll<T>() where T : BaseDal<Guid>
     {
-        var repository = GetRepository<T>();
+        var repository = GetRepository<T>() ;
         return repository.GetAll();
     }
 
@@ -151,5 +165,12 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
                     .Contains(typeof(T)));
         var repository = fieldInfo.GetValue(this) as BaseRepository<T, Guid>;
         return repository;
+    }
+
+    public async Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment)
+    {
+        var history = new HistoryDal(action, task, comment);
+        var id = await _historyRepository.InsertAsync(history);
+        return id;
     }
 }
