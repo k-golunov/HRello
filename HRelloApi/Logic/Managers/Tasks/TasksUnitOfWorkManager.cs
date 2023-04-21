@@ -70,17 +70,6 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
 
     public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, object filter)
     {
-        // foreach (var task in tasks)
-        // {
-        //     var a = typeof(TaskDal);
-        //     var b = a.GetProperty(field, BindingFlags.Instance | BindingFlags.NonPublic);
-        //     var f = b.GetValue(task);
-        //     if (f.Equals(filter))
-        //     {
-        //         var z = 1;
-        //     }
-        //
-        // }
         return tasks.Where(x => typeof(TaskDal).GetProperty(field).GetValue(x).Equals(filter)).ToList();
     }
 

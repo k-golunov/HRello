@@ -13,6 +13,6 @@ public class FiltersRequest
     public BlockEnum? Block { get; init; }
     
     [JsonProperty("User")]
-    public Guid? UserId { get; init; }
+    public Guid? User { get; init; }
     public int? DepartmentID { get; init; }
 }
