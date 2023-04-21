@@ -16,11 +16,13 @@ using HRelloApi.Controllers.Public.Auth.Mapping;
 using HRelloApi.Controllers.Public.Departament.Mapping;
 using HRelloApi.Controllers.Public.User.Mapping;
 using HRelloApi.ProgramExtension;
+using Logic.Exceptions.Base;
 using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
 using Logic.Managers.Tasks;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -96,5 +98,20 @@ using (var context = scope.ServiceProvider.GetService<DataContext>())
 }*/
 
 app.MapControllers();
-
+app.UseExceptionHandler(a => a.Run(async context =>
+{
+    var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+    var exception = exceptionHandlerPathFeature.Error;
+    if (exception is BaseException baseException)
+    {
+        context.Response.StatusCode = baseException.Status;
+        await context.Response.WriteAsJsonAsync(new { message = exception.Message, code = baseException.Code});
+    }
+    /*else
+    {
+       await context.Response.WriteAsJsonAsync(new { error = exception.Message }); 
+    }*/
+    
+}));
+//app.UseMiddleware<ErrorHandlerMiddleware>();
 app.Run();
