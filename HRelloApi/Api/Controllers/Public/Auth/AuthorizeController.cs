@@ -149,7 +149,7 @@ public class AuthorizeController : BasePublicController
     /// <param name="model"></param>
     /// <returns>access и refresh токены</returns>
     [HttpPost("signin")]
-    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(TokenResponse), 200)]
     public async Task<IActionResult> SignIn(SignInModelRequest model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
@@ -161,7 +161,11 @@ public class AuthorizeController : BasePublicController
             var claims = await _userManager.GetClaimsAsync(user);
             var token = GetToken(user);
 
-            return Ok(token);
+            return Ok(new TokenResponse
+            {
+                AccessToken = token,
+                RefreshToken = "нет реализации)))"
+            });
         }
 
         return Unauthorized();
