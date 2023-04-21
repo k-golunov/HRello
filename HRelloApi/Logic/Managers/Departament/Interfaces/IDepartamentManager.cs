@@ -8,5 +8,5 @@ namespace Logic.Managers.Departament.Interfaces;
 /// </summary>
 public interface IDepartamentManager : IBaseRepository<DepartamentDal, int>
 {
-    
+    public int Test();
 }

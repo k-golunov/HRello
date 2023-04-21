@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿/*using AutoMapper;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Repositories;
 using HRelloApi.Controllers.Public.Task.dto.request;
@@ -56,4 +56,4 @@ public class TaskManagerTestController : ControllerBase
         await _manager.DeleteAsync<TaskDal>(id);
         return Ok();
     }
-}
+}*/

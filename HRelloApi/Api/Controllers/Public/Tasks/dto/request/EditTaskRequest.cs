@@ -10,6 +10,11 @@ namespace HRelloApi.Controllers.Public.Task.dto.request;
 public record EditTaskRequest
 {
     /// <summary>
+    /// Идентификатор задачи
+    /// </summary>
+    public required Guid Id { get; init; } 
+    
+    /// <summary>
     /// Название задачи
     /// </summary>
     [Required]
@@ -35,6 +40,7 @@ public record EditTaskRequest
     /// </summary>
     [Required]
     [JsonProperty("Category")]
+    [Range(0,1)]
     public required CategoryEnum Category { get; init; }
 
     /// <summary>
@@ -42,6 +48,7 @@ public record EditTaskRequest
     /// </summary>
     [Required]
     [JsonProperty("Block")]
+    [Range(0,8)]
     public required BlockEnum Block { get; init; }
 
     /// <summary>

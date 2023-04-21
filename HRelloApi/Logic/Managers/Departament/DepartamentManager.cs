@@ -1,6 +1,7 @@
 ﻿using Dal.Base.Interfaces;
 using Dal.Entities;
 using Dal.User.Repositories.Interfaces;
+using Logic.Exceptions.Base;
 using Logic.Managers.Base;
 using Logic.Managers.Departament.Interfaces;
 
@@ -13,5 +14,10 @@ public class DepartamentManager : BaseManager<DepartamentDal, int>, IDepartament
 {
     public DepartamentManager(IDepartamentRepository repository) : base(repository)
     {
+    }
+
+    public int Test()
+    {
+        throw new BaseException("TestException.1234", "test exception", StatusCodes.Status409Conflict);
     }
 }

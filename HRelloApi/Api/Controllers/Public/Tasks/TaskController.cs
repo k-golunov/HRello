@@ -20,7 +20,7 @@ namespace HRelloApi.Controllers.Public.Tasks;
 /// <summary>
 /// Контроллер для рестов связанных с задачами
 /// </summary>
-public class TasksController: BasePublicController
+public class TaskController: BasePublicController
 {
     //private readonly ITaskStatusManager _statusManager;
     private readonly UserManager<UserDal> _userManager;
@@ -30,7 +30,7 @@ public class TasksController: BasePublicController
     /// <summary>
     /// Конструктор
     /// </summary>
-    public TasksController(UserManager<UserDal> userManager,
+    public TaskController(UserManager<UserDal> userManager,
         IMapper mapper, ITaskUnitOfWorkManager manager)
     {
         _userManager = userManager;
@@ -63,10 +63,10 @@ public class TasksController: BasePublicController
     #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     #endif
-    [HttpPut("{taskId:guid}")]
-    public async Task<IActionResult> EditTask([FromRoute] Guid taskId, EditTaskRequest model)
+    [HttpPut("")]
+    public async Task<IActionResult> EditTask(EditTaskRequest model)
     {
-        var oldTask = await _manager.GetAsync<TaskDal>(taskId);
+        var oldTask = await _manager.GetAsync<TaskDal>(model.Id);
         if (oldTask == null)
             return NotFound();
         var task = _mapper.Map(model, oldTask);
