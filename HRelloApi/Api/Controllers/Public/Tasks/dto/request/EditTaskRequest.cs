@@ -40,6 +40,7 @@ public record EditTaskRequest
     /// </summary>
     [Required]
     [JsonProperty("Category")]
+    [Range(0,1)]
     public required CategoryEnum Category { get; init; }
 
     /// <summary>
@@ -47,6 +48,7 @@ public record EditTaskRequest
     /// </summary>
     [Required]
     [JsonProperty("Block")]
+    [Range(0,8)]
     public required BlockEnum Block { get; init; }
 
     /// <summary>
