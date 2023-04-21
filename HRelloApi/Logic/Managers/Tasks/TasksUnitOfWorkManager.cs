@@ -28,7 +28,8 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     private readonly IUserTaskResultsRepository _userTaskResultsRepository;
     private readonly StatusTree _statusTree;
     private readonly DataContext _context;
-    
+    private ITaskUnitOfWorkManager _taskUnitOfWorkManagerImplementation;
+
     public TaskUnitOfWorkManager(ITaskRepository taskRepository, IHistoryRepository historyRepository, 
         IBossTaskResultsRepository bossTaskResultsRepository, IUserTaskResultsRepository userTaskResultsRepository,
         StatusTree statusTree, DataContext context)
@@ -66,7 +67,23 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         await _historyRepository.InsertAsync(historyDal);
         return taskId;
     }
-    
+
+    public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, object filter)
+    {
+        // foreach (var task in tasks)
+        // {
+        //     var a = typeof(TaskDal);
+        //     var b = a.GetProperty(field, BindingFlags.Instance | BindingFlags.NonPublic);
+        //     var f = b.GetValue(task);
+        //     if (f.Equals(filter))
+        //     {
+        //         var z = 1;
+        //     }
+        //
+        // }
+        return tasks.Where(x => typeof(TaskDal).GetProperty(field).GetValue(x).Equals(filter)).ToList();
+    }
+
     /// <summary>
     /// изменяет статус задачи на входной
     /// </summary>

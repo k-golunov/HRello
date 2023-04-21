@@ -160,12 +160,22 @@ public class TasksController: BasePublicController
     }
 
     /// <summary>
-    /// рест на получение всех задач
+    /// рест на получение задач по заданным фильтрам и по страницам по 10 штук
     /// </summary>
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAllTasks()
+    [HttpGet("all/{page:int?}")]
+    public async Task<IActionResult> GetAllTasks([FromRoute] int page,[FromQuery] FiltersRequest filters)
     {
-        return Ok(_manager.GetAll<TaskDal>());
+        var tasks = _manager.GetAll<TaskDal>();
+        foreach (var filter in filters.GetType().GetProperties())
+        {
+            var value = filter.GetValue(filters);
+            if(value != null)
+                tasks = _manager.ApplyFilter(tasks, filter.Name, filter.GetValue(filters));
+        }
+
+        var count = tasks.Count;
+        tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
+        return Ok(new AllTasksResponse(count, tasks));
     }
     
     [HttpGet("/all")]

@@ -36,4 +36,9 @@ public class UserDal : IdentityUser
     /// Хранит отдел пользователя и все данные по нему
     /// </summary>
     public DepartamentDal Departament { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        return Id == obj;
+    }
 }
