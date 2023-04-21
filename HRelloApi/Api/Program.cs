@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Dal;
 using Dal.Entities;
 using Dal.User.Repositories;
@@ -65,6 +66,9 @@ builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 builder.Services.AddAutoMapper(typeof(DepartamentProfiles));
 builder.Services.AddAutoMapper(typeof(UserMapping));
+
+builder.Services.AddControllers()
+    .AddJsonOptions(opt=> { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
