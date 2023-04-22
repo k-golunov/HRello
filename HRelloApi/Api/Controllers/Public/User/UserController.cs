@@ -90,7 +90,7 @@ public class UserController : BasePublicController
             .Concat(await _userManager.GetUsersInRoleAsync(RoleConstants.MainBoss)).ToList();
         return Ok(new GetAllUserResponse
         {
-            Users = allUsers
+            Users = allUsers.Select(_mapper.Map<GetUserResponse>).ToList()
         });
     }
     
@@ -109,7 +109,7 @@ public class UserController : BasePublicController
         var users = allUsers.Where(u => u.EmailConfirmed).ToList();
         return Ok(new GetAllUserResponse
         {
-            Users = users
+            Users = users.Select(_mapper.Map<GetUserResponse>).ToList()
         });
     }
     
@@ -127,7 +127,7 @@ public class UserController : BasePublicController
         var users = allUsers.Where(u => !u.EmailConfirmed).ToList();
         return Ok(new GetAllUserResponse
         {
-            Users = users
+            Users = users.Select(_mapper.Map<GetUserResponse>).ToList()
         });
     }
 }

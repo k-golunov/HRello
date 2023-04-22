@@ -177,11 +177,4 @@ public class TaskController: BasePublicController
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
         return Ok(new AllTasksResponse(count, tasks));
     }
-    
-    [HttpGet("/all")]
-    public async Task<IActionResult> GetAllTasksWithFilters()
-    {
-        return Ok(_manager.GetAll<TaskDal>());
-    }
-    //рест на получение всех задач с фильтрами
 }
