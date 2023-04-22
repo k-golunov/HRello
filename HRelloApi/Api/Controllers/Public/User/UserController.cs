@@ -88,10 +88,8 @@ public class UserController : BasePublicController
         var allUsersEmployee = await _userManager.GetUsersInRoleAsync(RoleConstants.Employee);
         var allUsers = allUsersEmployee.Concat(await _userManager.GetUsersInRoleAsync(RoleConstants.Boss))
             .Concat(await _userManager.GetUsersInRoleAsync(RoleConstants.MainBoss)).ToList();
-        return Ok(new GetAllUserResponse
-        {
-            Users = allUsers
-        });
+        var response = allUsers.Select(_mapper.Map<GetUserResponse>).ToList();
+        return Ok(response);
     }
     
     /// <summary>
@@ -107,10 +105,8 @@ public class UserController : BasePublicController
         var allUsers = allUsersEmployee.Concat(await _userManager.GetUsersInRoleAsync(RoleConstants.Boss))
             .Concat(await _userManager.GetUsersInRoleAsync(RoleConstants.MainBoss)).ToList();
         var users = allUsers.Where(u => u.EmailConfirmed).ToList();
-        return Ok(new GetAllUserResponse
-        {
-            Users = users
-        });
+        var response = users.Select(_mapper.Map<GetUserResponse>).ToList();
+        return Ok(response);
     }
     
     /// <summary>
@@ -125,9 +121,7 @@ public class UserController : BasePublicController
         var allUsers = allUsersEmployee.Concat(await _userManager.GetUsersInRoleAsync(RoleConstants.Boss))
             .Concat(await _userManager.GetUsersInRoleAsync(RoleConstants.MainBoss)).ToList();
         var users = allUsers.Where(u => !u.EmailConfirmed).ToList();
-        return Ok(new GetAllUserResponse
-        {
-            Users = users
-        });
+        var response = users.Select(_mapper.Map<GetUserResponse>).ToList();
+        return Ok(response);
     }
 }
