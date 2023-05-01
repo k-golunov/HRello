@@ -6,7 +6,7 @@ namespace HRelloApi.Controllers.Public.User.dto.Request;
 public record UpdateUserRequest()
 {
     /// <summary>
-    /// 
+    /// Идентификатор пользователя
     /// </summary>
     public required string Id { get; init; }
     
@@ -29,7 +29,7 @@ public record UpdateUserRequest()
     public required string Patronymic { get; init; }
 
     /// <summary>
-    /// 
+    /// Почта пользователя
     /// </summary>
     public required string Email { get; init; }
 }

@@ -21,6 +21,7 @@ public class ChangeStatusRequest
     /// </summary>
     [Required]
     [JsonProperty("NextStatus")]
+    [Range(0,6)]
     public required StatusEnum NextStatus { get; init; }
     
     /// <summary>
