@@ -8,6 +8,7 @@ using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
+using Logic.Exceptions.Tasks;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 
@@ -73,14 +74,14 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     public async Task<bool> IsChangeStatus(TaskDal task, StatusEnum nextStatus)
     { 
         var statusNode = _statusTree.GetStatusNode(task.Status);
-        if (statusNode.IsNextStatus(nextStatus))
-        { 
-            task.Status = nextStatus;
-            await _taskRepository.UpdateAsync(task);
-            return true;
+        if (!statusNode.IsNextStatus(nextStatus))
+        {
+            throw new StatusChangeException();
         }
+        task.Status = nextStatus;
+        await _taskRepository.UpdateAsync(task);
+        return true;
 
-        return false;
     }
 
     /// <summary>
