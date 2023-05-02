@@ -81,8 +81,7 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Рест на изменение статуса задачи
     /// </summary>
-    /// todo! сделать добавление в историю и комментарий
-    [HttpPatch("change")]
+    [HttpPatch("change-status")]
     public async Task<IActionResult> ChangeStatus(ChangeStatusRequest model)
     {
         if (model.NextStatus == StatusEnum.CompletionCheck || model.NextStatus == StatusEnum.Completed)
@@ -167,6 +166,7 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> GetAllTasks([FromRoute] int page,[FromQuery] FiltersRequest filters)
     {
         var tasks = _manager.GetAll<TaskDal>();
+        var allCount = tasks.Count;
         foreach (var filter in filters.GetType().GetProperties())
         {
             var value = filter.GetValue(filters);
@@ -176,6 +176,6 @@ public class TaskController: BasePublicController
 
         var count = tasks.Count;
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
-        return Ok(new AllTasksResponse(count, tasks));
+        return Ok(new AllTasksResponse(allCount, count, tasks));
     }
 }

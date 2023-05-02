@@ -10,6 +10,7 @@ using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
+using Logic.Exceptions.Tasks;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 
@@ -100,7 +101,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
             task.Status = nextStatus;
             await _taskRepository.UpdateAsync(task);
         }
-        return action;
+        throw new StatusChangeException();
     }
 
     /// <summary>

@@ -9,18 +9,14 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 /// </summary>
 public class FiltersRequest
 {
-    [Required]
     [JsonProperty("Year")]
-    public required string? Year { get; init; }
-    [Required]
+    public string? Year { get; init; }
     [JsonProperty("Quarter")]
-    public required string? Quarter { get; init; }
-    [Required]
+    public string? Quarter { get; init; }
     [JsonProperty("Block")]
-    public required string? Block { get; init; }
+    public string? Block { get; init; }
     [JsonProperty("User")]
-    public required string? User { get; init; }
-    [Required]
+    public string? User { get; init; }
     [JsonProperty("DepartmentId")]
-    public required string? DepartmentId { get; init; }
+    public string? DepartmentId { get; init; }
 }
