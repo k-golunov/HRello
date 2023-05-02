@@ -169,8 +169,8 @@ public class TaskController: BasePublicController
         foreach (var filter in filters.GetType().GetProperties())
         {
             var value = filter.GetValue(filters);
-            if(value != null)
-                tasks = _manager.ApplyFilter(tasks, filter.Name, filter.GetValue(filters));
+            if (value != null)
+                tasks = _manager.ApplyFilter(tasks, filter.Name, value.ToString().Split(", "));
         }
 
         var count = tasks.Count;

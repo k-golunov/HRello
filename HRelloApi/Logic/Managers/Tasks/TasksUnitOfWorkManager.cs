@@ -68,9 +68,9 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return taskId;
     }
 
-    public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, object filter)
+    public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
     {
-        return tasks.Where(x => typeof(TaskDal).GetProperty(field).GetValue(x).Equals(filter)).ToList();
+        return tasks.Where(x => filters.Contains(typeof(TaskDal).GetProperty(field).GetValue(x).ToString())).ToList();
     }
 
     /// <summary>

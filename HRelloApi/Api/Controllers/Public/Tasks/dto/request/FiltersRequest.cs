@@ -8,11 +8,11 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 /// </summary>
 public class FiltersRequest
 {
-    public int? Year { get; init; }
-    public int? Quarter { get; init; }
-    public BlockEnum? Block { get; init; }
+    public string? Year { get; init; }
+    public string? Quarter { get; init; }
+    public string? Block { get; init; }
     
     [JsonProperty("User")]
-    public Guid? User { get; init; }
-    public int? DepartmentID { get; init; }
+    public string? User { get; init; }
+    public string? DepartmentId { get; init; }
 }

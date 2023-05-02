@@ -10,7 +10,7 @@ public interface ITaskUnitOfWorkManager
 {
     public Task<Guid> CreateTaskAsync(TaskDal taskDal);
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
-    public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, object filter);
+    public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filter);
     public Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment);
     public Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus);
     public Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>;
