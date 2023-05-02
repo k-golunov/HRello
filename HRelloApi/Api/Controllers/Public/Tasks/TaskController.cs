@@ -163,6 +163,7 @@ public class TaskController: BasePublicController
     /// рест на получение задач по заданным фильтрам и по страницам по 10 штук
     /// </summary>
     [HttpGet("all/{page:int?}")]
+    [ProducesResponseType(typeof(AllTasksResponse), 200)]
     public async Task<IActionResult> GetAllTasks([FromRoute] int page,[FromQuery] FiltersRequest filters)
     {
         var tasks = _manager.GetAll<TaskDal>();

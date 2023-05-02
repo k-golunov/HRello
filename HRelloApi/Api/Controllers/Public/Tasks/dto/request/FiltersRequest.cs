@@ -1,4 +1,5 @@
-﻿using Dal.Tasks.Enum;
+﻿using System.ComponentModel.DataAnnotations;
+using Dal.Tasks.Enum;
 using Newtonsoft.Json;
 
 namespace HRelloApi.Controllers.Public.Tasks.dto.request;
@@ -8,11 +9,18 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 /// </summary>
 public class FiltersRequest
 {
-    public string? Year { get; init; }
-    public string? Quarter { get; init; }
-    public string? Block { get; init; }
-    
+    [Required]
+    [JsonProperty("Year")]
+    public required string? Year { get; init; }
+    [Required]
+    [JsonProperty("Quarter")]
+    public required string? Quarter { get; init; }
+    [Required]
+    [JsonProperty("Block")]
+    public required string? Block { get; init; }
     [JsonProperty("User")]
-    public string? User { get; init; }
-    public string? DepartmentId { get; init; }
+    public required string? User { get; init; }
+    [Required]
+    [JsonProperty("DepartmentId")]
+    public required string? DepartmentId { get; init; }
 }
