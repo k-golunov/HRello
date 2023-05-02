@@ -7,6 +7,7 @@ using Dal.Entities;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
+using HRelloApi.Notification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -91,7 +92,7 @@ public class AuthorizeController : BasePublicController
         {
             return BadRequest();
         }
-        
+        EmailSender.SendEmail("Success", "kostya.golunov2015@yandex.ru");
         //var userDal = await _userManager.FindByEmailAsync(user.Email);
         return Ok(user.Id);
     }
@@ -169,5 +170,14 @@ public class AuthorizeController : BasePublicController
         }
 
         return Unauthorized();
+    }
+
+    [HttpPost("token")]
+    [ProducesResponseType(200)]
+    public IActionResult RefreshToken()
+    {
+        //_signInManager.()
+        
+        return Ok();
     }
 }
