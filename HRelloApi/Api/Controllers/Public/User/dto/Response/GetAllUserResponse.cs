@@ -8,5 +8,5 @@ namespace HRelloApi.Controllers.Public.User.dto.Response;
 /// </summary>
 public record GetAllUserResponse
 {
-    public required IList<UserDal> Users { get; init; }
+    public required IList<GetUserResponse> Users { get; init; }
 }

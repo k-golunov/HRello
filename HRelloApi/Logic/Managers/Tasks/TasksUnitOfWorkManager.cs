@@ -1,13 +1,16 @@
 using System.Dynamic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using Dal;
 using Dal.Base;
 using Dal.Base.Entitities;
 using Dal.Base.Interfaces;
+using Dal.Entities;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
+using Logic.Exceptions.Tasks;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 
@@ -26,7 +29,8 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     private readonly IUserTaskResultsRepository _userTaskResultsRepository;
     private readonly StatusTree _statusTree;
     private readonly DataContext _context;
-    
+    private ITaskUnitOfWorkManager _taskUnitOfWorkManagerImplementation;
+
     public TaskUnitOfWorkManager(ITaskRepository taskRepository, IHistoryRepository historyRepository, 
         IBossTaskResultsRepository bossTaskResultsRepository, IUserTaskResultsRepository userTaskResultsRepository,
         StatusTree statusTree, DataContext context)
@@ -64,7 +68,12 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         await _historyRepository.InsertAsync(historyDal);
         return taskId;
     }
-    
+
+    public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
+    {
+        return tasks.Where(x => filters.Contains(typeof(TaskDal).GetProperty(field).GetValue(x).ToString())).ToList();
+    }
+
     /// <summary>
     /// изменяет статус задачи на входной
     /// </summary>
@@ -74,13 +83,25 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     { 
         var statusNode = _statusTree.GetStatusNode(task.Status);
         if (statusNode.IsNextStatus(nextStatus))
-        { 
+        {
             task.Status = nextStatus;
             await _taskRepository.UpdateAsync(task);
+            var action = statusNode.GetAction(nextStatus);
             return true;
         }
 
         return false;
+    }
+
+    public async Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus)
+    {
+        var action = StatusesGraph.StatusesGraph.GetAction(task.Status, nextStatus);
+        if (action != ActionTypeEnum.None)
+        {
+            task.Status = nextStatus;
+            await _taskRepository.UpdateAsync(task);
+        }
+        throw new StatusChangeException();
     }
 
     /// <summary>
@@ -131,7 +152,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     public List<T> GetAll<T>() where T : BaseDal<Guid>
     {
-        var repository = GetRepository<T>();
+        var repository = GetRepository<T>() ;
         return repository.GetAll();
     }
 
@@ -151,5 +172,12 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
                     .Contains(typeof(T)));
         var repository = fieldInfo.GetValue(this) as BaseRepository<T, Guid>;
         return repository;
+    }
+
+    public async Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment)
+    {
+        var history = new HistoryDal(action, task, comment);
+        var id = await _historyRepository.InsertAsync(history);
+        return id;
     }
 }

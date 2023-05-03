@@ -1,6 +1,8 @@
 ﻿using Dal.Base.Entitities;
 using Dal.Base.Interfaces;
 using Logic.Managers.Base.Interfaces;
+using Serilog;
+using Serilog.Events;
 
 namespace Logic.Managers.Base;
 
@@ -20,12 +22,14 @@ public class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
 
     public async Task<TI> InsertAsync(T dal)
     {
+        Log.Logger.Write(LogEventLevel.Information, $"entity {typeof(T)} with Id {dal.Id} created");
         return await Repository.InsertAsync(dal);
     }
 
     public async Task DeleteAsync(TI id)
     {
         await Repository.DeleteAsync(id);
+        Log.Logger.Write(LogEventLevel.Information, $"entity {typeof(TI)} with Id {id} delete");
     }
 
     public async Task<T?> GetAsync(TI id)
@@ -35,6 +39,7 @@ public class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
 
     public async Task<TI> UpdateAsync(T dal)
     {
+        Log.Logger.Write(LogEventLevel.Information, $"entity {typeof(TI)} with Id {dal.Id} updated");
         return await Repository.UpdateAsync(dal);
     }
     
