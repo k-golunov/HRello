@@ -2,6 +2,7 @@
 
 public enum ActionTypeEnum
 {
+    None = 10,
     /// <summary>
     /// Отправлена на проверку
     /// </summary>

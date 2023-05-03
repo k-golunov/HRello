@@ -46,16 +46,14 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
         var task = _mapper.Map<TaskDal>(model);
-        var handler = new JwtSecurityTokenHandler();
-        var auth = Request.Headers["Authorization"].ToString().Split(' ')[1];
-        var jwt = handler.ReadToken(auth) as JwtSecurityToken;
-        var userId = jwt.Claims.First(x => x.Type == "Id").Value;
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await GetUserFromTokenAsync();
         if (user == null)
             return BadRequest();
         task.User = user;
-        //var response = await _taskManager.InsertAsync(task);
-        var response =new TaskIdResponse { Id = await _manager.CreateTaskAsync(task) };
+        var result = await _manager.CreateTaskAsync(task);
+        task.Id = result;
+        await _manager.CreateNewHistoryEntry(task, ActionTypeEnum.OnChecking, "Создание задачи");
+        var response =new TaskIdResponse { Id = result};
         return Ok(response);
     }
 
@@ -72,18 +70,18 @@ public class TaskController: BasePublicController
         if (oldTask == null)
             return NotFound();
         var task = _mapper.Map(model, oldTask);
-       var result = await _manager.IsChangeStatus(task, StatusEnum.OnChecking);
-       if (!result)
+        var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.OnChecking);
+        if (action == ActionTypeEnum.None)
            return BadRequest(); 
         var response = new TaskIdResponse {Id = await _manager.UpdateTaskAsync(task) };
+        await _manager.CreateNewHistoryEntry(task, action, "Доработка задачи");
         return Ok(response);
     }
 
     /// <summary>
     /// Рест на изменение статуса задачи
     /// </summary>
-    /// todo! сделать добавление в историю и комментарий
-    [HttpPatch("change")]
+    [HttpPatch("change-status")]
     public async Task<IActionResult> ChangeStatus(ChangeStatusRequest model)
     {
         if (model.NextStatus == StatusEnum.CompletionCheck || model.NextStatus == StatusEnum.Completed)
@@ -91,9 +89,10 @@ public class TaskController: BasePublicController
         var task = await _manager.GetAsync<TaskDal>(model.Id);
         if (task == null)
             return NotFound();//задача не найдена
-        var result = await _manager.IsChangeStatus(task, model.NextStatus);
-        if (!result)
+        var action = await _manager.GetActionFromChangeStatus(task, model.NextStatus);
+        if (action == ActionTypeEnum.None)
             return BadRequest();//невозможно изменить статус
+        await _manager.CreateNewHistoryEntry(task, action, model.Comment);
         return Ok();
     }
 
@@ -108,7 +107,8 @@ public class TaskController: BasePublicController
         {
             var userResult = _mapper.Map<UserTaskResultDal>(model);
             var result = await _manager.InsertAsync(userResult);
-            await _manager.IsChangeStatus(task, StatusEnum.CompletionCheck);
+            var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.CompletionCheck);
+            await _manager.CreateNewHistoryEntry(task, action, model.Result);
             return Ok(new TaskResultResponse { ResultId = result, TaskId = task.Id });
         }
 
@@ -122,11 +122,12 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> CompleteTask(BossTaskCompletedRequest model)
     {
         var task = await _manager.GetAsync<TaskDal>(model.TaskId);
-        if (task?.Status != StatusEnum.CompletionCheck)
+        if (task != null && task?.Status == StatusEnum.CompletionCheck)
         {
             var bossResult = _mapper.Map<BossTaskResultDal>(model);
             var id =await _manager.InsertAsync(bossResult);
-            await _manager.IsChangeStatus(task, StatusEnum.Completed);
+            var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.Completed);
+            await _manager.CreateNewHistoryEntry(task, action, model.Comment);
             return Ok(new TaskResultResponse { ResultId = id, TaskId = task.Id });
         }
 
@@ -145,6 +146,36 @@ public class TaskController: BasePublicController
         var taskResponse = _mapper.Map<TaskResponse>(task);
         return Ok(taskResponse);
     }
-    
-    //рест на получение всех задач с фильтрами
+
+    [NonAction]
+    private async Task<UserDal> GetUserFromTokenAsync()
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var auth = Request.Headers["Authorization"].ToString().Split(' ')[1];
+        var jwt = handler.ReadToken(auth) as JwtSecurityToken;
+        var userId = jwt.Claims.First(x => x.Type == "Id").Value;
+        var user = await _userManager.FindByIdAsync(userId);
+        return user;
+    }
+
+    /// <summary>
+    /// рест на получение задач по заданным фильтрам и по страницам по 10 штук
+    /// </summary>
+    [HttpGet("all/{page:int?}")]
+    [ProducesResponseType(typeof(AllTasksResponse), 200)]
+    public async Task<IActionResult> GetAllTasks([FromRoute] int page,[FromQuery] FiltersRequest filters)
+    {
+        var tasks = _manager.GetAll<TaskDal>();
+        var allCount = tasks.Count;
+        foreach (var filter in filters.GetType().GetProperties())
+        {
+            var value = filter.GetValue(filters);
+            if (value != null)
+                tasks = _manager.ApplyFilter(tasks, filter.Name, value.ToString().Split(", "));
+        }
+
+        var count = tasks.Count;
+        tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
+        return Ok(new AllTasksResponse(allCount, count, tasks));
+    }
 }
