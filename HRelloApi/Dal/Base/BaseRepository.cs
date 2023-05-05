@@ -13,7 +13,7 @@ namespace Dal.Base;
 public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI>
 {
     private readonly DataContext _context;
-    private readonly DbSet<T> _dbSet;
+    protected readonly DbSet<T> _dbSet;
 
     public BaseRepository(DataContext context)
     {
@@ -53,7 +53,7 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
     /// </summary>
     /// <param name="id">уникальный идентификатор записи</param>
     /// <returns></returns>
-    public async Task<T?> GetAsync(TI id)
+    public virtual async Task<T?> GetAsync(TI id)
     {
         var entity = await _dbSet.FindAsync(id);
         return entity;

@@ -20,9 +20,9 @@ public class AllTasksResponse
     /// <summary>
     /// Задачи
     /// </summary>
-    public List<TaskDal> Tasks { get; init; }
+    public List<TaskResponse> Tasks { get; init; }
 
-    public AllTasksResponse(int allTasksCount, int pagesCount, List<TaskDal> tasks)
+    public AllTasksResponse(int allTasksCount, int pagesCount, List<TaskResponse> tasks)
     {
         AllTasksCount = allTasksCount;
         PagesCount = pagesCount;
