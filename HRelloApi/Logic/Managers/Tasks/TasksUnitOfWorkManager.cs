@@ -27,18 +27,25 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     private readonly IHistoryRepository _historyRepository;
     private readonly IBossTaskResultsRepository _bossTaskResultsRepository;
     private readonly IUserTaskResultsRepository _userTaskResultsRepository;
+    private readonly IBlockRepository _blockRepository;
     private readonly StatusTree _statusTree;
     private readonly DataContext _context;
     private ITaskUnitOfWorkManager _taskUnitOfWorkManagerImplementation;
 
-    public TaskUnitOfWorkManager(ITaskRepository taskRepository, IHistoryRepository historyRepository, 
-        IBossTaskResultsRepository bossTaskResultsRepository, IUserTaskResultsRepository userTaskResultsRepository,
-        StatusTree statusTree, DataContext context)
+    public TaskUnitOfWorkManager(
+        ITaskRepository taskRepository, 
+        IHistoryRepository historyRepository, 
+        IBossTaskResultsRepository bossTaskResultsRepository, 
+        IUserTaskResultsRepository userTaskResultsRepository,
+        IBlockRepository blockRepository,
+        StatusTree statusTree, 
+        DataContext context)
     {
         _taskRepository = taskRepository;
         _historyRepository = historyRepository;
         _userTaskResultsRepository = userTaskResultsRepository;
         _bossTaskResultsRepository = bossTaskResultsRepository;
+        _blockRepository = blockRepository;
         _statusTree = statusTree;
         _context = context;
     }

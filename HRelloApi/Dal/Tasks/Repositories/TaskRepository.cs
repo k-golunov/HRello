@@ -14,6 +14,9 @@ public class TaskRepository: BaseRepository<TaskDal, Guid>, ITaskRepository
 
     public override async Task<TaskDal?> GetAsync(Guid id)
     {
-        return await _dbSet.Include(x => x.User).FirstAsync(x => x.Id == id);
+        return await _dbSet
+            .Include(x => x.User)
+            .Include(x => x.Block)
+            .FirstAsync(x => x.Id == id);
     }
 }
