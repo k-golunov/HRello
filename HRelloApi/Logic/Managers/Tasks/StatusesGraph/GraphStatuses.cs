@@ -6,7 +6,7 @@ public static class StatusesGraph
 {
     private static readonly ActionTypeEnum[,] matrix = 
     {
-        { ActionTypeEnum.None, ActionTypeEnum.OnChecking, ActionTypeEnum.OnRework, ActionTypeEnum.OnWork, ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.None },
+        { ActionTypeEnum.OnChecking, ActionTypeEnum.OnChecking, ActionTypeEnum.OnRework, ActionTypeEnum.OnWork, ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.None },
         { ActionTypeEnum.OnChecking, ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.None },
         { ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.OnCompletion, ActionTypeEnum.None, ActionTypeEnum.OnCancellation, ActionTypeEnum.None },
         { ActionTypeEnum.None, ActionTypeEnum.None, ActionTypeEnum.CompletionDeviation, ActionTypeEnum.None, ActionTypeEnum.Completion, ActionTypeEnum.None, ActionTypeEnum.Cancellation },

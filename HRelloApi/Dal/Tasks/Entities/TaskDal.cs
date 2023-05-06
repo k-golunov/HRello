@@ -38,7 +38,7 @@ public class TaskDal : BaseDal<Guid>
     /// <summary>
     /// Блок задачи enum
     /// </summary>
-    public BlockEnum Block { get; set; }
+    public BlockDal Block { get; set; }
     
     /// <summary>
     /// Планируемый вес задачи, предполагаектся значение процента
