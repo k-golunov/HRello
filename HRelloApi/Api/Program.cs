@@ -97,13 +97,13 @@ app.UseCors();
 
 // Откючаем (комментируем) если не требуется отчистка бд 
 // т.к. все данные из бд будут удаленны
-/*using (var scope = 
+using (var scope = 
        app.Services.CreateScope())
 using (var context = scope.ServiceProvider.GetService<DataContext>())
 {
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
-}*/
+}
 
 app.MapControllers();
 app.UseExceptionHandler(a => a.Run(async context =>
