@@ -35,7 +35,7 @@ public class BlockController: BasePublicController
     /// <summary>
     /// рест на получение блока задачи
     /// </summary>
-    [HttpGet("/{id:guid}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(BlockResponse), 200)]
     public async Task<IActionResult> GetBlock([FromRoute] Guid id)
     {
@@ -63,7 +63,7 @@ public class BlockController: BasePublicController
     /// <summary>
     /// рест на удаление блока задач
     /// </summary>
-    [HttpDelete("/{id:guid}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteBlock([FromRoute] Guid id)
     {
         await _manager.DeleteAsync<BlockDal>(id);
