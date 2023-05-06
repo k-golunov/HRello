@@ -27,18 +27,25 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     private readonly IHistoryRepository _historyRepository;
     private readonly IBossTaskResultsRepository _bossTaskResultsRepository;
     private readonly IUserTaskResultsRepository _userTaskResultsRepository;
+    private readonly IBlockRepository _blockRepository;
     private readonly StatusTree _statusTree;
     private readonly DataContext _context;
     private ITaskUnitOfWorkManager _taskUnitOfWorkManagerImplementation;
 
-    public TaskUnitOfWorkManager(ITaskRepository taskRepository, IHistoryRepository historyRepository, 
-        IBossTaskResultsRepository bossTaskResultsRepository, IUserTaskResultsRepository userTaskResultsRepository,
-        StatusTree statusTree, DataContext context)
+    public TaskUnitOfWorkManager(
+        ITaskRepository taskRepository, 
+        IHistoryRepository historyRepository, 
+        IBossTaskResultsRepository bossTaskResultsRepository, 
+        IUserTaskResultsRepository userTaskResultsRepository,
+        IBlockRepository blockRepository,
+        StatusTree statusTree, 
+        DataContext context)
     {
         _taskRepository = taskRepository;
         _historyRepository = historyRepository;
         _userTaskResultsRepository = userTaskResultsRepository;
         _bossTaskResultsRepository = bossTaskResultsRepository;
+        _blockRepository = blockRepository;
         _statusTree = statusTree;
         _context = context;
     }
@@ -69,7 +76,19 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return taskId;
     }
 
-    public List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
+    public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasks)
+    {
+        foreach (var filter in filters.GetType().GetProperties())
+        {
+            var value = filter.GetValue(filters);
+            if (value != null)
+                tasks = ApplyFilter(tasks, filter.Name, value.ToString().Split(", "));
+        }
+
+        return tasks;
+    }
+
+    private List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
     {
         return tasks.Where(x => filters.Contains(typeof(TaskDal).GetProperty(field).GetValue(x).ToString())).ToList();
     }

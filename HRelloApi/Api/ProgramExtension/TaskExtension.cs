@@ -16,6 +16,7 @@ public static class TaskExtension
         services.AddScoped<IHistoryRepository, HistoryRepository>();
         services.AddScoped<IBossTaskResultsRepository, BossTaskResultsRepository>();
         services.AddScoped<IUserTaskResultsRepository, UserTaskResultsRepository>();
+        services.AddScoped<IBlockRepository, BlockRepository>();
         
         return services;
     }

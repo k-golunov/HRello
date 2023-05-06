@@ -9,11 +9,15 @@ using HRelloApi.Controllers.Public.EmployeeTask.dto.response;
 using HRelloApi.Controllers.Public.Task.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.response;
+using Logic.Exceptions.Tasks;
+using Logic.Exceptions.User;
+using Logic.Managers.Tasks.Filters;
 using Logic.Managers.Tasks.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Core;
 
 namespace HRelloApi.Controllers.Public.Tasks;
 
@@ -43,12 +47,11 @@ public class TaskController: BasePublicController
     /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost]
+    [ProducesResponseType(typeof(TaskIdResponse), 200)]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
         var task = _mapper.Map<TaskDal>(model);
         var user = await GetUserFromTokenAsync();
-        if (user == null)
-            return BadRequest();
         task.User = user;
         var result = await _manager.CreateTaskAsync(task);
         task.Id = result;
@@ -63,16 +66,15 @@ public class TaskController: BasePublicController
     #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     #endif
-    [HttpPut("")]
+    [HttpPut]
+    [ProducesResponseType(typeof(TaskIdResponse), 200)]
     public async Task<IActionResult> EditTask(EditTaskRequest model)
     {
         var oldTask = await _manager.GetAsync<TaskDal>(model.Id);
         if (oldTask == null)
-            return NotFound();
+            throw new TaskNotFoundException();
         var task = _mapper.Map(model, oldTask);
         var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.OnChecking);
-        if (action == ActionTypeEnum.None)
-           return BadRequest(); 
         var response = new TaskIdResponse {Id = await _manager.UpdateTaskAsync(task) };
         await _manager.CreateNewHistoryEntry(task, action, "Доработка задачи");
         return Ok(response);
@@ -85,13 +87,11 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> ChangeStatus(ChangeStatusRequest model)
     {
         if (model.NextStatus == StatusEnum.CompletionCheck || model.NextStatus == StatusEnum.Completed)
-            return BadRequest();//неправильный рест
+            throw new WrongUrlForChangeStatusException();
         var task = await _manager.GetAsync<TaskDal>(model.Id);
         if (task == null)
-            return NotFound();//задача не найдена
+            throw new TaskNotFoundException();
         var action = await _manager.GetActionFromChangeStatus(task, model.NextStatus);
-        if (action == ActionTypeEnum.None)
-            return BadRequest();//невозможно изменить статус
         await _manager.CreateNewHistoryEntry(task, action, model.Comment);
         return Ok();
     }
@@ -100,6 +100,7 @@ public class TaskController: BasePublicController
     /// рест на завершение задачи сотрудником
     /// </summary>
     [HttpPost("review")]
+    [ProducesResponseType(typeof(TaskResultResponse), 200)]
     public async Task<IActionResult> CheckCompletion(UserTaskCompletedRequest model)
     {
         var task = await _manager.GetAsync<TaskDal>(model.TaskId);
@@ -112,13 +113,14 @@ public class TaskController: BasePublicController
             return Ok(new TaskResultResponse { ResultId = result, TaskId = task.Id });
         }
 
-        return BadRequest();//невозможно заврешить задачу с текущим статусом
+        throw new WrongUrlForChangeStatusException();
     }
 
     /// <summary>
     /// рест на полное завершение задачи
     /// </summary>
     [HttpPost("complete")]
+    [ProducesResponseType(typeof(TaskResultResponse), 200)]
     public async Task<IActionResult> CompleteTask(BossTaskCompletedRequest model)
     {
         var task = await _manager.GetAsync<TaskDal>(model.TaskId);
@@ -131,18 +133,19 @@ public class TaskController: BasePublicController
             return Ok(new TaskResultResponse { ResultId = id, TaskId = task.Id });
         }
 
-        return BadRequest();
+        throw new WrongUrlForChangeStatusException();
     }
     
     /// <summary>
     /// рест на получение конкретной задачи
     /// </summary>
     [HttpGet("{taskId:guid}")]
+    [ProducesResponseType(typeof(TaskResponse), 200)]
     public async Task<IActionResult> GetTask([FromRoute] Guid taskId)
     {
         var task = await _manager.GetAsync<TaskDal>(taskId);
         if (task == null)
-            return NotFound();
+            throw new TaskNotFoundException();
         var taskResponse = _mapper.Map<TaskResponse>(task);
         return Ok(taskResponse);
     }
@@ -155,6 +158,8 @@ public class TaskController: BasePublicController
         var jwt = handler.ReadToken(auth) as JwtSecurityToken;
         var userId = jwt.Claims.First(x => x.Type == "Id").Value;
         var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            throw new UserNotFoundException();
         return user;
     }
 
@@ -163,19 +168,13 @@ public class TaskController: BasePublicController
     /// </summary>
     [HttpGet("all/{page:int?}")]
     [ProducesResponseType(typeof(AllTasksResponse), 200)]
-    public async Task<IActionResult> GetAllTasks([FromRoute] int page,[FromQuery] FiltersRequest filters)
+    public async Task<IActionResult> GetAllTasks([FromRoute] int page,[FromQuery] FiltersRequest filtersRequest)
     {
-        var tasks = _manager.GetAll<TaskDal>();
-        var allCount = tasks.Count;
-        foreach (var filter in filters.GetType().GetProperties())
-        {
-            var value = filter.GetValue(filters);
-            if (value != null)
-                tasks = _manager.ApplyFilter(tasks, filter.Name, value.ToString().Split(", "));
-        }
-
-        var count = tasks.Count;
+        var filters = _mapper.Map<Filters>(filtersRequest);
+        var tasksDals = _manager.GetAll<TaskDal>();
+        var filteredTasks = _manager.ApplyFilters(filters, tasksDals);
+        var tasks = tasksDals.Select(_mapper.Map<TaskResponse>).ToList();
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
-        return Ok(new AllTasksResponse(allCount, count, tasks));
+        return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10, tasks));
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Dal.Tasks.Enum;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
 
 namespace HRelloApi.Controllers.Public.Tasks.dto.response;
 
@@ -71,4 +72,8 @@ public class TaskResponse
     [Required]
     [JsonProperty("Status")]
     public required StatusEnum Status { get; init; }
+    
+    [Required]
+    [JsonProperty("UserId")]
+    public required Guid UserId { get; init; }
 }

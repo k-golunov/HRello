@@ -12,6 +12,7 @@ public sealed class DataContext : IdentityDbContext<UserDal>
     public DbSet<TaskDal> Task { get; set; }
     public DbSet<BossTaskResultDal> BossTaskResults { get; set; }
     public DbSet<UserTaskResultDal> UserTaskResults { get; set; }
+    public DbSet<BlockDal> Block { get; set; }
     public DbSet<DepartamentDal> Departament { get; set; }
 
     public async Task<int> SaveChangesAsync()
