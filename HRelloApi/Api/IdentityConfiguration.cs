@@ -9,23 +9,28 @@ public class IdentityConfiguration
     public static IEnumerable<ApiScope> ApiScopes =>
         new List<ApiScope>
         {
-            new ApiScope("HrelloWebAPI", "Web API")
+            new ApiScope("Api", "Web API")
         };
 
     public static IEnumerable<IdentityResource> IdentityResources =>
         new List<IdentityResource>
         {
             new IdentityResources.OpenId(),
-            new IdentityResources.Profile()
+            new IdentityResources.Profile(),
+            new IdentityResources.Email(),
         };
 
     public static IEnumerable<ApiResource> ApiResources =>
         new List<ApiResource>
         {
-            new ApiResource("HrelloWebAPI", "Web API", new []
+            new ApiResource("Api", "Web API", new []
                 { JwtClaimTypes.Name})
             {
-                Scopes = {"HrelloWebAPI"}
+                Scopes = {"write", "read"},
+                ApiSecrets = new List<Secret>
+                {
+                    new Secret("secret")
+                }
             }
         };
 
@@ -34,31 +39,39 @@ public class IdentityConfiguration
         {
             new Client
             {
-                ClientId = "hrello-web-api",
+                //IncludeJwtId = true,
+                ClientId = "client",
                 ClientName = "Hrello Web",
-                AllowedGrantTypes = new[] { OidcConstants.GrantTypes.JwtBearer, OidcConstants.GrantTypes.Password, OidcConstants.GrantTypes.RefreshToken },
+                ClientSecrets =
+                {
+                    new Secret("secret".Sha256())
+                },
+                AllowedGrantTypes = new[] { OidcConstants.GrantTypes.JwtBearer, OidcConstants.GrantTypes.Password, OidcConstants.GrantTypes.RefreshToken, OidcConstants.GrantTypes.ClientCredentials },
                 RequireClientSecret = false,
                 RequirePkce = true,
-                RedirectUris =
+                /*RedirectUris =
                 {
-                    "http://.../signin-oidc"
-                },
-                AllowedCorsOrigins =
+                    "http://localhost:5020/signin-oidc"
+                },*/
+                /*AllowedCorsOrigins =
                 {
-                    "http://..."
-                },
-                PostLogoutRedirectUris =
+                    "http://connect/token"
+                },*/
+                /*PostLogoutRedirectUris =
                 {
-                    "http:/.../signout-oidc"
-                },
+                    "http:/localhost:5020/signout-oidc"
+                },*/
                 AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
-                    "NotesWebAPI"
+                    //IdentityServerConstants.StandardScopes.Email,
+                    "HRello",
+                    "Api"
                 },
                 AllowAccessTokensViaBrowser = true,
-                AllowOfflineAccess = true
+                AllowOfflineAccess = true,
+                AccessTokenType = AccessTokenType.Jwt
             }
         };
 }

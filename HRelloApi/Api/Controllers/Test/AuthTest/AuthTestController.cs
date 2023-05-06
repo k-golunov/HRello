@@ -1,4 +1,5 @@
 ﻿using Logic.Managers.Departament.Interfaces;
+using Logic.Managers.Identity.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,13 @@ namespace HRelloApi.Controllers.Test;
 public class AuthTestController : ControllerBase
 {
     private readonly IDepartamentManager _departamentManager;
-    public AuthTestController(IDepartamentManager departamentManager)
+    private readonly IdentityHelper _identityHelper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public AuthTestController(IDepartamentManager departamentManager, IdentityHelper identityHelper, IHttpContextAccessor httpContextAccessor)
     {
         _departamentManager = departamentManager;
+        _identityHelper = identityHelper;
+        _httpContextAccessor = httpContextAccessor;
     }
     
     /// <summary>
@@ -23,7 +28,8 @@ public class AuthTestController : ControllerBase
     [HttpGet("test")]
     public IActionResult Test()
     {
-        _departamentManager.Test();
-        return Ok("Is it work!");
+        var userId = _httpContextAccessor.HttpContext.User.Identity.Name;
+        var id = _identityHelper.GetUserId();
+        return Ok(userId);
     }
 }

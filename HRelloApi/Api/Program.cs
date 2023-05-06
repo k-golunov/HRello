@@ -76,7 +76,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -87,9 +86,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Подключаем авторизацию, аутентификацию и айдентити
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
 app.UseIdentityServer();
+app.UseAuthorization();
 
 // Откючаем (комментируем) если не требуется отчистка бд 
 // т.к. все данные из бд будут удаленны

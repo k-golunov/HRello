@@ -8,6 +8,7 @@ using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Notification;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -82,9 +83,7 @@ public class AuthorizeController : BasePublicController
             await _signInManager.SignInAsync(user, isPersistent: false);
             
             var claims = new List<Claim>();
-            claims.Add(new Claim("Email", model.Email));
             claims.Add(new Claim("DepartmentId", model.DepartamentId.ToString()));
-            claims.Add(new Claim("Role", model.Role));
 
             await _userManager.AddClaimsAsync(user, claims);
         }
@@ -92,11 +91,12 @@ public class AuthorizeController : BasePublicController
         {
             return BadRequest();
         }
-        EmailSender.SendEmail("Success", "kostya.golunov2015@yandex.ru");
-        //var userDal = await _userManager.FindByEmailAsync(user.Email);
+        
+        EmailSender.SendEmail("Success", user.Email);
         return Ok(user.Id);
     }
 
+    [Obsolete("Используй connect/token")]
     private string GetToken(UserDal user)
     {
         var claims = new List<Claim> { new ("Id", user.Id) };
@@ -130,13 +130,13 @@ public class AuthorizeController : BasePublicController
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
         var user = _mapper.Map(model, unregisteredUser);
         user.EmailConfirmed = true;
-        //var passwordUpdateResult = await _userManager.UpdatePasswordAsync(user, model.Password);
         var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
 
+        var token = await _userManager.GetAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "refresh_token");
         if (result.Succeeded && passwordUpdateResult.Succeeded)
         {
-            return Ok();
+            return Ok(token);
         }
 
         return BadRequest();
@@ -144,11 +144,11 @@ public class AuthorizeController : BasePublicController
     }
 
     /// <summary>
-    /// Авторизация пользователя в системе
-    /// 
+    /// используй connect/token
     /// </summary>
     /// <param name="model"></param>
     /// <returns>access и refresh токены</returns>
+    [Obsolete("Используй connect/token")]
     [HttpPost("signin")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
     public async Task<IActionResult> SignIn(SignInModelRequest model)
@@ -170,14 +170,5 @@ public class AuthorizeController : BasePublicController
         }
 
         return Unauthorized();
-    }
-
-    [HttpPost("token")]
-    [ProducesResponseType(200)]
-    public IActionResult RefreshToken()
-    {
-        //_signInManager.()
-        
-        return Ok();
     }
 }

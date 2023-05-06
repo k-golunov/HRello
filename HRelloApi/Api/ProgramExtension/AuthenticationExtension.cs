@@ -1,9 +1,17 @@
-﻿using System.Text;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Dal;
 using Dal.Entities;
 using Dal.User.Repositories;
+using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Services;
+using Logic.Managers.Identity;
+using Logic.Managers.Identity.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HRelloApi.ProgramExtension;
@@ -20,13 +28,16 @@ public static class AuthenticationExtension
     /// <returns></returns>
     public static IServiceCollection AddIdentitySettings(this IServiceCollection services, ConfigurationManager configuration)
     {
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+        IdentityModelEventSource.ShowPII = true;
         services.AddAuthentication(options =>
             {
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options =>
+            /*.AddJwtBearer(options =>
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
@@ -38,7 +49,18 @@ public static class AuthenticationExtension
                     ValidIssuer = configuration["JWTSettings:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTSettings:SecretKey"]))
                 };
-            });
+            })*/.AddIdentityServerAuthentication(options =>
+            {
+                options.Authority = "https://localhost:5020";
+                options.RequireHttpsMetadata = false;
+                options.ApiName = "Api";
+                options.SupportedTokens = SupportedTokens.Jwt;
+                //options.ClaimsIssuer = "issuer";
+            })
+            ;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        //var handler = new HttpClientHandler();
+        ///handler.ClientCertificates.Add();
         
         // добавление айдентити, тестовая
         // надо усложнить требования к паролю
@@ -55,15 +77,20 @@ public static class AuthenticationExtension
         // конфигурация айдентити
         services.AddIdentityServer()
             .AddAspNetIdentity<UserDal>()
+            .AddDeveloperSigningCredential()
             .AddInMemoryApiResources(IdentityConfiguration.ApiResources)
             .AddInMemoryIdentityResources(IdentityConfiguration.IdentityResources)
             .AddInMemoryApiScopes(IdentityConfiguration.ApiScopes)
             .AddInMemoryClients(IdentityConfiguration.Clients)
-            .AddDeveloperSigningCredential();
+            .AddProfileService<IdentityProfileService>();
         
         services.AddScoped<RoleManager<IdentityRole>>();
         services.AddScoped<UserManager<UserDal>>();
         services.AddScoped<UserRepository>();
+        services.AddTransient<IdentityHelper>();
+        services.AddHttpContextAccessor();
+        
+        //services.AddSingleton<IProfileService, IdentityProfileService>();
         
         return services;
     }

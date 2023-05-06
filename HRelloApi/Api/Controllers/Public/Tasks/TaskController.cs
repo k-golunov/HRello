@@ -9,6 +9,7 @@ using HRelloApi.Controllers.Public.EmployeeTask.dto.response;
 using HRelloApi.Controllers.Public.Task.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.response;
+using IdentityServer4.AccessTokenValidation;
 using Logic.Managers.Tasks.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +42,7 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Рест для создания задачи
     /// </summary>
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
     [HttpPost]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
