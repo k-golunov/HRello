@@ -4,10 +4,10 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Dal.Entities;
+using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
-using HRelloApi.Notification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -92,14 +92,15 @@ public class AuthorizeController : BasePublicController
         {
             return BadRequest();
         }
-        EmailSender.SendEmail("Success", "kostya.golunov2015@yandex.ru");
+        
         //var userDal = await _userManager.FindByEmailAsync(user.Email);
         return Ok(user.Id);
     }
 
-    private string GetToken(UserDal user)
+    private string GetToken(UserDal user, IEnumerable<Claim> principal)
     {
-        var claims = new List<Claim> { new ("Id", user.Id) };
+        var claims = principal.ToList();
+        claims.Add(new Claim(ClaimTypes.Email, user.Email));
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
         var token = new JwtSecurityToken
@@ -116,20 +117,12 @@ public class AuthorizeController : BasePublicController
         return tokenHandler.WriteToken(token);
     }
 
-    /// <summary>
-    /// Регистрация пользователя
-    /// не выдает токены, только заполняет данные в бд
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    [HttpPost("register/{userId:guid}")]
+    [HttpPost("register")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> Register([FromRoute] Guid userId, [FromBody] RegisterModelRequest model)
+    public async Task<IActionResult> Register([FromQuery] Guid userId, [FromBody] RegisterModelRequest model)
     {
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
         var user = _mapper.Map(model, unregisteredUser);
-        user.EmailConfirmed = true;
         //var passwordUpdateResult = await _userManager.UpdatePasswordAsync(user, model.Password);
         var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
@@ -143,14 +136,8 @@ public class AuthorizeController : BasePublicController
 
     }
 
-    /// <summary>
-    /// Авторизация пользователя в системе
-    /// 
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns>access и refresh токены</returns>
     [HttpPost("signin")]
-    [ProducesResponseType(typeof(TokenResponse), 200)]
+    [ProducesResponseType(typeof(string), 200)]
     public async Task<IActionResult> SignIn(SignInModelRequest model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
@@ -160,24 +147,30 @@ public class AuthorizeController : BasePublicController
         if (result.Succeeded)
         {
             var claims = await _userManager.GetClaimsAsync(user);
-            var token = GetToken(user);
+            var token = GetToken(user, claims);
 
-            return Ok(new TokenResponse
-            {
-                AccessToken = token,
-                RefreshToken = "нет реализации)))"
-            });
+            return Ok(token);
         }
 
         return Unauthorized();
     }
 
-    [HttpPost("token")]
-    [ProducesResponseType(200)]
-    public IActionResult RefreshToken()
+    /// <summary>
+    /// Проверка, есть ли инвайт у пользователя
+    /// </summary>
+    /// <param name="userId">идентификатор пользователя</param>
+    /// <returns></returns>
+    [HttpGet("check-invite/{userId}")]
+    public async Task<IActionResult> CheckInvite([FromRoute] string userId)
     {
-        //_signInManager.()
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return NotFound(new BaseExceptionModel("404", "Пользователь не найден"));
         
-        return Ok();
+        if (!user.EmailConfirmed)
+            return Forbid();
+        
+        return Ok(true);
+
     }
 }
