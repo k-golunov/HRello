@@ -17,7 +17,9 @@ public class TaskResponseProfile: Profile
             .ForMember(dst => dst.PlannedWeight, opt => opt.MapFrom(src => src.PlannedWeight))
             .ForMember(dst => dst.WaitResult, opt => opt.MapFrom(src => src.WaitResult))
             .ForMember(dst => dst.Status, opt => opt.MapFrom(src => src.Status))
-            .ForMember(dst => dst.UserId, opt => opt.MapFrom(src => src.User.Id));
+            .ForMember(dst => dst.UserId, opt => opt.MapFrom(src => src.User.Id))
+            .ForMember(dst => dst.DepartamentId, opt => opt.MapFrom(src => src.DepartamentId));
+            
 
     }
 }
