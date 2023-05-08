@@ -8,6 +8,7 @@ using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
+using HRelloApi.Notification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -94,6 +95,7 @@ public class AuthorizeController : BasePublicController
         }
         
         //var userDal = await _userManager.FindByEmailAsync(user.Email);
+        EmailSender.SendEmail("You can register by link: ", model.Email);
         return Ok(user.Id);
     }
 
@@ -101,6 +103,7 @@ public class AuthorizeController : BasePublicController
     {
         var claims = principal.ToList();
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
+        claims.Add(new Claim("userId", user.Id));
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
         var token = new JwtSecurityToken
@@ -117,13 +120,18 @@ public class AuthorizeController : BasePublicController
         return tokenHandler.WriteToken(token);
     }
 
+    /// <summary>
+    /// регистраиция на сервисе
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpPost("register")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> Register([FromQuery] Guid userId, [FromBody] RegisterModelRequest model)
     {
         var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
         var user = _mapper.Map(model, unregisteredUser);
-        //var passwordUpdateResult = await _userManager.UpdatePasswordAsync(user, model.Password);
         var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
 
@@ -136,8 +144,13 @@ public class AuthorizeController : BasePublicController
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpPost("signin")]
-    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(TokenResponse), 200)]
     public async Task<IActionResult> SignIn(SignInModelRequest model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
@@ -149,7 +162,12 @@ public class AuthorizeController : BasePublicController
             var claims = await _userManager.GetClaimsAsync(user);
             var token = GetToken(user, claims);
 
-            return Ok(token);
+            return Ok(new TokenResponse
+            {
+                AccessToken = token,
+                RefreshToken = "Нет реализации)))",
+                UserId = user.Id
+            });
         }
 
         return Unauthorized();
@@ -160,17 +178,23 @@ public class AuthorizeController : BasePublicController
     /// </summary>
     /// <param name="userId">идентификатор пользователя</param>
     /// <returns></returns>
-    [HttpGet("check-invite/{userId}")]
-    public async Task<IActionResult> CheckInvite([FromRoute] string userId)
+    [HttpGet("check-invite/{userId:guid}")]
+    public async Task<IActionResult> CheckInvite([FromRoute] Guid userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
             return NotFound(new BaseExceptionModel("404", "Пользователь не найден"));
         
         if (!user.EmailConfirmed)
-            return Forbid();
+            return Ok(new CheckInviteResponse
+            {
+                IsInvite = true
+            });
         
-        return Ok(true);
+        return Ok(new CheckInviteResponse
+        {
+            IsInvite = false
+        });
 
     }
 }

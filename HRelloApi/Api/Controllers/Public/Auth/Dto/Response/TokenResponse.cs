@@ -18,4 +18,10 @@ public record TokenResponse
     /// </summary>
     [JsonProperty("refresh_token")]
     public string RefreshToken { get; init; }
+    
+    /// <summary>
+    /// Идентификатор пользователя
+    /// </summary>
+    [JsonProperty("userId")]
+    public required string UserId { get; init; }
 }
