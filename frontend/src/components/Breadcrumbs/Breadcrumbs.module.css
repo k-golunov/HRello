@@ -1,31 +1,32 @@
 .breadcrumbs {
-    font-family: SFPro, serif;
+    /*font-family: SFPro, serif;*/
     /*font-family: SFPro, serif;*/
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
-    align-items:end;
-    max-width: 486px;
-    margin: auto;
+    align-items:center;
+    max-width: 1272px;
+    margin: 25px 0;
     line-height: 24px;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 400;
     gap: 5px;
 }
 
 .breadcrumbsLink {
-    color:#ff63c3;
+    /*color:#ff63c3;*/
+    color: #818284;
 }
 
 .breadcrumbsLink:hover{
     text-decoration: underline;
     text-underline-offset: 3px;
-    color:#ff63c3;
+    /*color:#ff63c3;*/
     text-decoration-thickness: 0.5px;
 }
 
 .breadcrumbsLink:visited{
-    color:#ff63c3;
+    color: #818284;
 }
 
 .breadcrumbsIcon{

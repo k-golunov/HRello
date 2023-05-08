@@ -1,7 +1,0 @@
-.tags {
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    max-width: 600px;
-    flex-wrap: wrap;
-}

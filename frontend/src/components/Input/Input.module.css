@@ -1,41 +1,13 @@
 .inputBox {
-    border: 2px solid transparent;
-    background: rgba(255, 255, 255, 0.06);;
+    border: 1px solid rgba(129, 130, 132, 0.8);
+    background: white;
     padding-left: 1rem;
     padding-right: 1rem;
-    color: rgba(255, 255, 255, 0.92);
-    font-family: SFPro, serif;
+    /*color: rgba(255, 255, 255, 0.92);*/
+    font-family: OpenSans, sans-serif;
     line-height: 1.5;
     font-size: 1rem;
-    border-radius: 6px;
-    transition: all 0.2s ease 0s;
-
-    width: 100%;
-    min-height: 40px;
-    max-height: 200px;
-    max-width: 100%;
-    min-width: 100%;
-    margin-bottom: 20px;
-}
-
-.input textarea {
-    resize: none;
-    /*overflow:hidden;*/
-    min-height: 200px;
-    padding-top: 6px;
-    padding-bottom: 5px;
-}
-
-.bigInputBox {
-    border: 2px solid transparent;
-    background: rgba(255, 255, 255, 0.06);;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    color: rgba(255, 255, 255, 0.92);
-    font-family: Inter, sans-serif;
-    line-height: 1.5;
-    font-size: 20px;
-    border-radius: 6px;
+    border-radius: 5px;
     transition: all 0.2s ease 0s;
 
     width: 100%;
@@ -44,7 +16,16 @@
 }
 
 .input {
-    max-width: 400px;
+    /*max-width: 400px;*/
+    width: 100%;
+}
+
+.input textarea {
+    resize: none;
+    /*overflow:hidden;*/
+    min-height: 200px;
+    padding-top: 6px;
+    padding-bottom: 5px;
     width: 100%;
 }
 
@@ -62,9 +43,11 @@
     position: relative;
     text-align: left;
     margin-bottom: 4px;
-    font-family: SFPro, serif;
-    font-weight: 500;
+    font-family: OpenSans, serif;
+    font-style: normal;
+    font-weight: 400;
     font-size: 16px;
+    line-height: 20px;
 }
 
 .required {
@@ -78,5 +61,5 @@
 }
 
 .invalid {
-    border: #FC8181 1px solid;
+    border: #FC8181 2px solid;
 }

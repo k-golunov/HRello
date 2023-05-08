@@ -7,8 +7,8 @@ import classNames from "classnames/bind";
 
 function Tag(props) {
     return (
-        <div className={classNames(s.tag, s[props.type])}>
-            <p className={s.text}>{props.text}</p>
+        <div className={s.tag}>
+            <p>{props.children}</p>
         </div>
     )
 }

@@ -1,6 +1,18 @@
 .tag {
-    border-radius: 4px;
+    border-radius: 10px;
     width: max-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+
+    border: 2px solid;
+
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
 }
 
 .text {
@@ -11,16 +23,5 @@
     font-weight: 500;
     line-height: 12px;
     font-feature-settings: 'pnum' on, 'lnum' on;
-}
-
-.language {
-    background-color: rgba(247, 244, 166, 1);
-}
-
-.level {
-    background-color: #F7BCE2;
-}
-
-.role {
-    background-color: #A6BDF7;
+    border-color: #000000;
 }

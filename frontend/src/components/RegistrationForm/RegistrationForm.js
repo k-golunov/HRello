@@ -4,20 +4,21 @@ import Input from "../Input/Input";
 import Button from "../Button/Button";
 import Form from "react-bootstrap/Form";
 import {useForm} from "react-hook-form";
-import { signUpUser } from '../../store/slices/userSlice';
+import {signInUser, signUpUser} from '../../store/slices/userSlice';
 import {useDispatch} from "react-redux";
 import md5 from 'md5';
-
-const click = () => {console.log("click");};
+import {toast} from "react-toastify";
+import {Link} from "react-router-dom";
 
 function RegistrationForm(props) {
     const dispatch = useDispatch();
     const {register, handleSubmit, formState: {errors}} = useForm({
         defaultValues: {
-            registrationEmail: '',
-            registrationLogin: '',
+            registrationSurname: '',
+            registrationName: '',
+            registrationPatronymic: '',
             registrationPassword: '',
-            registrationRetryPassword: ''
+            registrationRetryPassword: '',
         },
         mode: "onBlur"
     });
@@ -32,42 +33,55 @@ function RegistrationForm(props) {
         payload.registrationPassword = md5(payload.registrationPassword);
 
         const data = {
-            email: payload.registrationEmail,
-            login: payload.registrationLogin,
+            userId: props.userId,
+            surname: payload.registrationSurname,
+            name: payload.registrationName,
+            patronymic: payload.registrationPatronymic,
             password: payload.registrationPassword
         }
+        console.log(data);
         dispatch(signUpUser(data));
     }
 
-
     return (
-        <>
-            <p className={s.header}>Добро пожаловать в Portfolio Hub</p>
-            <Form className={s.registrationForm} onSubmit={handleSubmit(onSubmit)}>
-                <p className={s.registration}>Регистрация</p>
+        <div className={s.createRoomForm}>
+            <p className={s.header}>Название сервиса</p>
+            <div>
+                <p className={s.authorization}>Регистрация</p>
+                <Form className={s.form} onSubmit={handleSubmit(onSubmit)}>
                     <Input register={register}
-                           registerName='registrationEmail'
+                           registerName='registrationSurname'
                            options={
                                {
                                    required: true
                                }
                            }
                            errors={errors}
-                           title="Почта"
+                           title="Фамилия"
                            require={true}
-                           type="email"/>
-
+                           type="text"/>
                     <Input register={register}
-                           registerName='registrationLogin'
+                           registerName='registrationName'
                            options={
                                {
                                    required: true
                                }
                            }
                            errors={errors}
-                           title="Логин"
-                           require={true}/>
-
+                           title="Имя"
+                           require={true}
+                           type="text"/>
+                    <Input register={register}
+                           registerName='registrationPatronymic'
+                           options={{}
+                               // {
+                               //     required: true
+                               // }
+                           }
+                           errors={errors}
+                           title="Отчество"
+                           // require={true}
+                           type="text"/>
                     <Input register={register}
                            registerName='registrationPassword'
                            options={
@@ -79,7 +93,6 @@ function RegistrationForm(props) {
                            title="Пароль"
                            require={true}
                            type="password"/>
-
                     <Input register={register}
                            registerName='registrationRetryPassword'
                            options={
@@ -92,9 +105,10 @@ function RegistrationForm(props) {
                            require={true}
                            type="password"/>
 
-                    <Button type="submit">Зарегестрироваться</Button>
-            </Form>
-        </>
+                    <Button type="submit">Войти</Button>
+                </Form>
+            </div>
+        </div>
     )
 }
 

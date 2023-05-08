@@ -1,19 +1,27 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Outlet} from 'react-router-dom';
-import Footer from './Footer/Footer';
-import MainContent from "./MainContent/MainContent";
-import NavBar from "./NavBar/NavBar";
-import {ToastContainer} from "react-toastify";
+import Header from './Header/Header';
+import {useDispatch} from 'react-redux';
+import {getProfile} from '../store/slices/profileSlice';
+import Footer from "./Footer/Footer"
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import WidthContent from "./WidthContent/WidthContent";
 
 const ProfileLayout = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getProfile());
+    }, [dispatch]);
+
     return (
-        <div>
-            <NavBar type="port"/>
+        <>
+            <Header/>
             <WidthContent>
                 <Outlet/>
             </WidthContent>
-            <Footer/>
 
             <ToastContainer
                 position="bottom-right"
@@ -27,7 +35,8 @@ const ProfileLayout = () => {
                 pauseOnHover
                 theme="colored"
             />
-        </div>
+            {/*<PageTitle/>*/}
+        </>
     );
 };
 
