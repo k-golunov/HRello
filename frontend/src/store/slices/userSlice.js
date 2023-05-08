@@ -1,13 +1,24 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-// import { useNavigate } from "react-router-dom";
-import API from '../../api/API';
-// import {getProfile} from "./profileSlice";
-// import {togglePopup} from "./popupSlice";
-
-import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import USER_API from '../../api/userAPI';
+import {getProfile} from "./profileSlice";
+import {togglePopup} from "./popupSlice";
+import jwt from 'jwt-decode'
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const loginNotify = () => toast.success('🦄 Вы успешно авторизовались!', {
+    position: "bottom-right",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+});
+
+const createNotify = () => toast.success('🦄 Приглашение успешно отправлено!', {
     position: "bottom-right",
     autoClose: 3000,
     hideProgressBar: true,
@@ -32,9 +43,14 @@ const registrationNotify = () => toast.success('🦄 Вы успешно зар�
 export const signInUser = createAsyncThunk(
     'user/signIn',
     async function (user, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
         try {
-            let response = await fetch(API.SIGN_IN, {
+
+            let response = await fetch(USER_API.SIGN_IN_USER_URL, {
                 method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(user),
             });
 
@@ -46,12 +62,60 @@ export const signInUser = createAsyncThunk(
                     }`
                 );
             }
-            response = await response.json();
 
-            dispatch(setUser(response.data));
+            response = await response.text();
+            // response.accessToken = response.accessToken.accessToken;
+
+            // debugger;
+            console.log(response)
+            dispatch(setUser({accessToken: response, email: user.email}));
             // dispatch(getProfile());
-
+            // dispatch(togglePopup("signIn"));
             loginNotify();
+
+            // navigate(`/profile`);
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const createUser = createAsyncThunk(
+    'user/createUser',
+    async function (user, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('accessToken');
+            let response = await fetch(USER_API.CREATE_USER_URL, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                },
+                body: JSON.stringify(user),
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.text();
+            // debugger;
+            console.log(response)
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            // dispatch(getProfile());
+            // dispatch(togglePopup("signIn"));
+            createNotify();
+
+            // navigate(`/profile`);
+
             return response;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -63,9 +127,12 @@ export const signUpUser = createAsyncThunk(
     'user/signUp',
     async function (user, {rejectWithValue, dispatch}) {
         try {
-            let response = await fetch(API.SIGN_UP, {
+            let response = await fetch(USER_API.SIGN_UP_USER_URL+'?userId='+user.userId, {
                 method: 'post',
-                body: JSON.stringify(user)
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
             });
             debugger;
             if (!response.ok) {
@@ -78,8 +145,8 @@ export const signUpUser = createAsyncThunk(
 
             response = await response.json();
 
-            dispatch(signInUser(user));
-            //dispatch(togglePopup("signUp"));
+            // dispatch(signInUser(user));
+            // dispatch(togglePopup("signUp"));
             registrationNotify();
 
             return response;
@@ -89,41 +156,12 @@ export const signUpUser = createAsyncThunk(
     }
 );
 
-export const activateUser = createAsyncThunk(
-    'user/activate',
-    async function (link, {rejectWithValue, dispatch}) {
-        try {
-            let response = await fetch(API.ACTIVATE, {
-                method: 'post',
-                body: JSON.stringify(link)
-            });
-
-            if (!response.ok) {
-                throw new Error(
-                    `${response.status}${
-                        response.statusText ? ' ' + response.statusText : ''
-                    }`
-                );
-            }
-
-            response = await response.json();
-            // console.log(response)
-
-            // dispatch(signInUser(user));
-            //dispatch(togglePopup("signUp"));
-            // registrationNotify();
-
-            return response;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
 const initialState = {
-    email: null,
     id: null,
-
+    email: null,
+    accessToken: null,
+    role: null,
+    // id: null,
     status: null,
     error: null,
 };
@@ -133,18 +171,31 @@ const userSlice = createSlice({
     initialState: initialState,
     reducers: {
         setUser(state, action) {
+            console.log(action)
             state.email = action.payload.email;
-            state.id = action.payload.id;
+            // state.id = action.payload.id;
+            state.accessToken = action.payload.accessToken;
+            state.id = jwt(action.payload.accessToken).Id;
+            state.role = jwt(action.payload.accessToken).Role;
+            // state.role = action.payload.role;
+            // const accessToken = action.payload.accessToken.json();
 
-            localStorage.setItem('PortfolioHub-userId', action.payload.id);
-            localStorage.setItem('PortfolioHub-email', action.payload.email);
+            localStorage.setItem('USSCHR-accessToken', action.payload.accessToken);
+            localStorage.setItem('USSCHR-userId', state.id);
+            // localStorage.setItem('userId', action.payload.id);
+            localStorage.setItem('USSCHR-email', action.payload.email);
+            // localStorage.setItem('role', action.payload.role);
         },
         removeUser(state) {
             state.email = null;
             state.id = null;
-
-            localStorage.removeItem('PortfolioHub-userId');
-            localStorage.removeItem('PortfolioHub-email');
+            state.accessToken = null;
+            // state.role = null;
+            localStorage.removeItem('USSCHR-accessToken');
+            localStorage.removeItem('USSCHR-userId');
+            // localStorage.removeItem('userId');
+            localStorage.removeItem('USSCHR-email');
+            // localStorage.removeItem('role');
         },
     },
     extraReducers: {
@@ -164,15 +215,15 @@ const userSlice = createSlice({
         },
         [signUpUser.rejected]: (state, action) => {
         },
-        [activateUser.pending]: (state, action) => {
+        [createUser.pending]: (state, action) => {
         },
-        [activateUser.fulfilled]: (state, action) => {
+        [createUser.fulfilled]: (state, action) => {
         },
-        [activateUser.rejected]: (state, action) => {
+        [createUser.rejected]: (state, action) => {
         },
     },
 });
-
+debugger;
 export const {setUser, removeUser} = userSlice.actions;
 
 export default userSlice.reducer;

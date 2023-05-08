@@ -1,8 +1,14 @@
 import { useSelector } from 'react-redux';
 
 export function useProfile() {
-  console.log("UseProfile");
   const profile = useSelector((state) => state.profile);
 
-  return {...profile, isFilledProfile: !!profile.name};
+  const isFilledProfile = () => {
+    for (let [_, value] of Object.entries(profile)) {
+      if (value === null) return false;
+    }
+    return true;
+  };
+
+  return [{ ...profile }, isFilledProfile];
 }

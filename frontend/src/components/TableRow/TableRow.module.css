@@ -1,0 +1,36 @@
+.tableRow {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid #B5B2B2;
+    cursor: pointer;
+}
+
+.tableRowHeader {
+    border-bottom: 2px solid #B5B2B2;
+    cursor:default;
+}
+
+.tableRow:hover {
+    border-bottom: 1px solid #F99D1D;
+}
+
+.tableRowHeader:hover {
+    border-bottom: 2px solid #B5B2B2;
+}
+
+.header {
+    /*font-family: 'Roboto', serif;*/
+    font-style: normal;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.text {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+
