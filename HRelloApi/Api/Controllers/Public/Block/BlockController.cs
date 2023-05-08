@@ -25,7 +25,7 @@ public class BlockController: BasePublicController
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> CreateBlock([FromBody] CreateBlockRequest request)
+    public async Task<IActionResult> CreateBlockAsync([FromBody] CreateBlockRequest request)
     {
         var block = new BlockDal(request.Value);
         var id = await _manager.InsertAsync(block);
@@ -37,7 +37,7 @@ public class BlockController: BasePublicController
     /// </summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> GetBlock([FromRoute] Guid id)
+    public async Task<IActionResult> GetBlockAsync([FromRoute] Guid id)
     {
         var block = await _manager.GetAsync<BlockDal>(id);
         if (block == null)
@@ -50,7 +50,7 @@ public class BlockController: BasePublicController
     /// </summary>
     [HttpPut]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> UpdateBlock([FromBody] UpdateBlockRequest request)
+    public async Task<IActionResult> UpdateBlockAsync([FromBody] UpdateBlockRequest request)
     {
         var block = await _manager.GetAsync<BlockDal>(request.Id);
         if (block == null)
@@ -64,9 +64,25 @@ public class BlockController: BasePublicController
     /// рест на удаление блока задач
     /// </summary>
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteBlock([FromRoute] Guid id)
+    public async Task<IActionResult> DeleteBlockAsync([FromRoute] Guid id)
     {
         await _manager.DeleteAsync<BlockDal>(id);
         return Ok();
+    }
+    
+    /// <summary>
+    /// рест на получение всех блоков задач
+    /// </summary>
+    [HttpGet("all")]
+    [ProducesResponseType(typeof(BlockResponse), 200)]
+    public IActionResult GetAllBlockAsync()
+    {
+        var blocks = _manager.GetAll<BlockDal>();
+        if (blocks == null)
+            throw new BlockNotFoundException();
+        return Ok(new AllBlockResponse
+        {
+            AllBlocks = blocks
+        });
     }
 }
