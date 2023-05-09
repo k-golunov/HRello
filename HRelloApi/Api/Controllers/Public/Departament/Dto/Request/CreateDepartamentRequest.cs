@@ -16,6 +16,6 @@ public record CreateDepartamentRequest
     /// <summary>
     /// Id начальника отдела
     /// </summary>
-    [Required]
-    public required Guid BossId { get; init; }
+    /*[Required]
+    public required Guid BossId { get; init; }*/
 }

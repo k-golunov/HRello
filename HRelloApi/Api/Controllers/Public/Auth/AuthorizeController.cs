@@ -60,8 +60,6 @@ public class AuthorizeController : BasePublicController
     /// <returns>
     /// При успешном создании пользователя отправляет электронное письмо на почту созданного пользователя
     /// для дальнейшей его регистрации на сервисе
-    ///
-    /// !ПОКА ЧТО ВОЗВРАЩАЕТ ID СОЗДАННОГО ПОЛЬЗОВАТЕЛЯ
     /// </returns>
     //[Authorize(Roles = "boss")]
     [HttpPost("createUser")]
@@ -145,7 +143,8 @@ public class AuthorizeController : BasePublicController
     }
 
     /// <summary>
-    /// 
+    /// Вход на сервис и получение токенов
+    /// пока что через это рест
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
