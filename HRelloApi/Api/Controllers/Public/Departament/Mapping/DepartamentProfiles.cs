@@ -10,7 +10,7 @@ public class DepartamentProfiles : Profile
     {
         CreateMap<CreateDepartamentRequest, DepartamentDal>()
             .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dst => dst.BossId, opt => opt.MapFrom(src => src.BossId))
+            .ForMember(dst => dst.BossId, opt => opt.Ignore())
             .ForMember(dst => dst.Id, opt => opt.Ignore())
             ;
     }
