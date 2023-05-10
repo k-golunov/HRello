@@ -92,9 +92,11 @@ public class AuthorizeController : BasePublicController
             return BadRequest();
         }
         
-        //var userDal = await _userManager.FindByEmailAsync(user.Email);
         EmailSender.SendEmail("You can register by link: ", model.Email);
-        return Ok(user.Id);
+        return Ok(new IdModelResponse
+        {
+            UserId = user.Id
+        });
     }
 
     private string GetToken(UserDal user, IEnumerable<Claim> principal)
@@ -143,8 +145,7 @@ public class AuthorizeController : BasePublicController
     }
 
     /// <summary>
-    /// Вход на сервис и получение токенов
-    /// пока что через это рест
+    /// Вход на сервис и получение токенов пока что через это рест
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
