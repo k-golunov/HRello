@@ -6,7 +6,7 @@ using Org.BouncyCastle.Ocsp;
 namespace HRelloApi.Controllers.Public.Tasks.dto.response;
 
 /// <summary>
-/// 
+/// Модель данных задачи для ответа 
 /// </summary>
 public class TaskResponse
 {
@@ -47,7 +47,7 @@ public class TaskResponse
     /// </summary>
     [Required]
     [JsonProperty("Block")]
-    public required BlockEnum Block { get; init; }
+    public required string Block { get; init; }
     
     /// <summary>
     /// Планируемый вес задачи, предполагаектся значение процента

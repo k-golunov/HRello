@@ -6,6 +6,9 @@ using Dal.Tasks.Enum;
 
 namespace Logic.Managers.Tasks.Interfaces;
 
+/// <summary>
+/// Интерфейс основного мэнэджера для логики запросов связанных с задачами
+/// </summary>
 public interface ITaskUnitOfWorkManager
 {
     public Task<Guid> CreateTaskAsync(TaskDal taskDal);

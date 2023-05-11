@@ -44,8 +44,7 @@ public record CreateTaskRequest
     /// </summary>
     [Required]
     [JsonProperty("Block")]
-    [Range(0,8)]
-    public required BlockEnum Block { get; init; }
+    public required Guid BlockId { get; init; }
     
     /// <summary>
     /// Планируемый вес задачи

@@ -2,9 +2,12 @@
 
 namespace Logic.Exceptions.Tasks;
 
+/// <summary>
+/// Ошибка при запросе на не правильный рест при смене статусов
+/// </summary>
 public class WrongUrlForChangeStatusException: BaseException
 {
-    public WrongUrlForChangeStatusException(): base("WrongUrlForChangeStatusException","Use a different url for this status change", 400)
+    public WrongUrlForChangeStatusException(string url): base("WrongUrlForChangeStatusException",$"Неверный адрес запроса для данной смены статуса. \n Используйте {url}", 400)
     {
         
     }

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace HRelloApi.Controllers.Public.Tasks.dto.response;
 
 /// <summary>
-/// 
+/// Модель данных для ответа на запросы итогов сотрудника и руководителя
 /// </summary>
 public class TaskResultResponse
 {

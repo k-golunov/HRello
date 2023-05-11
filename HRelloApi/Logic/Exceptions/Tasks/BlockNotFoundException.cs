@@ -2,9 +2,12 @@
 
 namespace Logic.Exceptions.Tasks;
 
-public class BlockNotFoundException: BaseException
+/// <summary>
+/// Ошибка при не найденном блоке
+/// </summary>
+public class BlockNotFoundException: BaseNotFoundException
 {
-    public BlockNotFoundException(): base("BlockNotFoundException", "Блок не найден", 404)
+    public BlockNotFoundException(Guid id): base("BlockNotFoundException", $"Блок с id - {id} не найден")
     {
         
     }

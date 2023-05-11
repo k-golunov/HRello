@@ -2,9 +2,12 @@
 
 namespace Logic.Exceptions.User;
 
-public class UserNotFoundException: BaseException
+/// <summary>
+/// Ошибка при не найденном пользователе
+/// </summary>
+public class UserNotFoundException: BaseNotFoundException
 {
-    public UserNotFoundException() : base("UserNotFoundException", "Пользователь не найден", 404)
+    public UserNotFoundException(string id) : base("UserNotFoundException", $"Пользователь с id - {id} не найден")
     {
         
     }

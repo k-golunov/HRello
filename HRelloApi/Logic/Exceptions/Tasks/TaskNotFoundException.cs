@@ -2,9 +2,12 @@
 
 namespace Logic.Exceptions.Tasks;
 
-public class TaskNotFoundException : BaseException
+/// <summary>
+/// Ошибка при не найденной задаче
+/// </summary>
+public class TaskNotFoundException : BaseNotFoundException
 {
-    public TaskNotFoundException() : base("TaskNotFoundException", "Пользователь не найден", 404)
+    public TaskNotFoundException(Guid id) : base("TaskNotFoundException", $"Задача с id - {id} не найдена")
     {
 
     }

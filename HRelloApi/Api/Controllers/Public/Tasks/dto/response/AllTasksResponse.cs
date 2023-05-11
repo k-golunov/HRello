@@ -22,6 +22,9 @@ public class AllTasksResponse
     /// </summary>
     public List<TaskResponse> Tasks { get; init; }
 
+    /// <summary>
+    /// Конструктор класса
+    /// </summary>
     public AllTasksResponse(int allTasksCount, int pagesCount, List<TaskResponse> tasks)
     {
         AllTasksCount = allTasksCount;

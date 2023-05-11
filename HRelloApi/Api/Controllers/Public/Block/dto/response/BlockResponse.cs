@@ -16,7 +16,7 @@ public class BlockResponse
     public string Value { get; init; }
 
     /// <summary>
-    /// 
+    /// Конструктор
     /// </summary>
     public BlockResponse(Guid id, string value)
     {

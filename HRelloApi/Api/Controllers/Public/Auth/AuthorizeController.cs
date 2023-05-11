@@ -8,6 +8,8 @@ using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Notification;
+using Logic.Exceptions.Department;
+using Logic.Managers.Departament.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +28,8 @@ public class AuthorizeController : BasePublicController
 {
     private readonly SignInManager<UserDal> _signInManager;
     private readonly UserManager<UserDal> _userManager;
+    private readonly RoleManager<UserDal> _roleManager;
+    private readonly IDepartamentManager _departamentManager;
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
@@ -37,13 +41,17 @@ public class AuthorizeController : BasePublicController
     /// <param name="options">Настройки уникального токена</param>
     /// <param name="mapper">Автомаппер</param>
     public AuthorizeController(UserManager<UserDal> userManager, 
-        SignInManager<UserDal> signInManager, 
+        SignInManager<UserDal> signInManager,
+        IDepartamentManager departamentManager,
+        RoleManager<UserDal> roleManager,
         IOptions<JWTSettings> options,
         IMapper mapper)
     {
         LogContext.PushProperty("Source", "Test Authorize Controller");
         _userManager = userManager;
         _signInManager = signInManager;
+        _departamentManager = departamentManager;
+        _roleManager = roleManager;
         _options = options.Value;
         _mapper = mapper;
     }
@@ -179,5 +187,13 @@ public class AuthorizeController : BasePublicController
         //_signInManager.()
         
         return Ok();
+    }
+
+    [NonAction]
+    public async System.Threading.Tasks.Task SetDepartmentAndRoleForUser(UserDal user, CreateUserModelRequest request)
+    {
+        var department = await _departamentManager.GetAsync(request.DepartamentId);
+        if (department == null)
+            throw new DepartmentNotFoundException(request.DepartamentId);
     }
 }

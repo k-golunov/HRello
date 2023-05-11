@@ -8,7 +8,7 @@ namespace Logic.Exceptions.Tasks;
 /// </summary>
 public class StatusChangeException : BaseException
 {
-    public StatusChangeException() : base("StatusChangeException", "Ошибка при смене статуса задачи", 400)
+    public StatusChangeException(string currentStatus, string nextStatus) : base("StatusChangeException", $"Невозможно сменить статус {currentStatus} на статус {nextStatus}", 400)
     {
         
     }

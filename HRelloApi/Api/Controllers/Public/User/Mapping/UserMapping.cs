@@ -25,8 +25,6 @@ public class UserMapping : Profile
             .ForMember(dst => dst.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dst => dst.EmailConfirmed, opt => opt.MapFrom(src => src.EmailConfirmed))
-            .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dst => dst.DepartamentId, opt => opt.MapFrom(src => src.DepartamentId))
-            ;
+            .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id));
     }
 }

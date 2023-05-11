@@ -4,8 +4,14 @@ using Logic.Managers.Tasks.Filters;
 
 namespace HRelloApi.Controllers.Public.Tasks.mapping;
 
+/// <summary>
+/// Класс отвечающий за маппинг фильтров
+/// </summary>
 public class FiltersProfile: Profile
 {
+    /// <summary>
+    /// конструктор-маппер
+    /// </summary>
     public FiltersProfile()
     {
         CreateMap<FiltersRequest, Filters>()

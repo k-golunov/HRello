@@ -23,15 +23,30 @@ namespace Logic.Managers.Tasks;
 /// </summary>
 public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
 {
+    /// <summary>
+    /// репозиторий задач
+    /// </summary>
     private readonly ITaskRepository _taskRepository;
+    /// <summary>
+    /// реапозиторий историй задач
+    /// </summary>
     private readonly IHistoryRepository _historyRepository;
+    /// <summary>
+    /// репозиторий итогов руководителя
+    /// </summary>
     private readonly IBossTaskResultsRepository _bossTaskResultsRepository;
+    /// <summary>
+    /// репозиторий итогов сотрудника
+    /// </summary>
     private readonly IUserTaskResultsRepository _userTaskResultsRepository;
+    /// <summary>
+    /// репозиторий блоков задач
+    /// </summary>
     private readonly IBlockRepository _blockRepository;
-    private readonly StatusTree _statusTree;
-    private readonly DataContext _context;
-    private ITaskUnitOfWorkManager _taskUnitOfWorkManagerImplementation;
 
+    /// <summary>
+    /// Конструтор
+    /// </summary>
     public TaskUnitOfWorkManager(
         ITaskRepository taskRepository, 
         IHistoryRepository historyRepository, 
@@ -46,8 +61,6 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         _userTaskResultsRepository = userTaskResultsRepository;
         _bossTaskResultsRepository = bossTaskResultsRepository;
         _blockRepository = blockRepository;
-        _statusTree = statusTree;
-        _context = context;
     }
     
     /// <summary>
@@ -76,6 +89,9 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return taskId;
     }
 
+    /// <summary>
+    /// Возвращает список задач, соотвествующих входящим фильтрам
+    /// </summary>
     public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasks)
     {
         foreach (var filter in filters.GetType().GetProperties())
@@ -88,30 +104,19 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return tasks;
     }
 
+    /// <summary>
+    /// Возвращает список задач, соответсвующих одному входящему фильтру
+    /// </summary>
     private List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
     {
         return tasks.Where(x => filters.Contains(typeof(TaskDal).GetProperty(field).GetValue(x).ToString())).ToList();
     }
 
     /// <summary>
-    /// изменяет статус задачи на входной
+    /// Проверяет возможность смены статуса задачи на входящий
+    /// Изменяет статус задачи при корректно заданном следующем статусе
+    /// Возвращет действие - изменение статуса задачи - для записи истории изменения задачи
     /// </summary>
-    /// <param name="task">задача</param>
-    /// <param name="nextStatus">новый статус</param>
-    public async Task<bool> IsChangeStatus(TaskDal task, StatusEnum nextStatus)
-    { 
-        var statusNode = _statusTree.GetStatusNode(task.Status);
-        if (statusNode.IsNextStatus(nextStatus))
-        {
-            task.Status = nextStatus;
-            await _taskRepository.UpdateAsync(task);
-            var action = statusNode.GetAction(nextStatus);
-            return true;
-        }
-
-        return false;
-    }
-
     public async Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus)
     {
         var action = StatusesGraph.StatusesGraph.GetAction(task.Status, nextStatus);
@@ -120,7 +125,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
             task.Status = nextStatus;
             await _taskRepository.UpdateAsync(task);
         }
-        throw new StatusChangeException();
+        throw new StatusChangeException(task.Status.ToString(), nextStatus.ToString());
     }
 
     /// <summary>
@@ -193,6 +198,9 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return repository;
     }
 
+    /// <summary>
+    /// Создает новую запись истории задач со входящими данным и возвращет id созданной записи в бд
+    /// </summary>
     public async Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment)
     {
         var history = new HistoryDal(action, task, comment);

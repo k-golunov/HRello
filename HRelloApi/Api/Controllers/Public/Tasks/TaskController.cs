@@ -26,9 +26,17 @@ namespace HRelloApi.Controllers.Public.Tasks;
 /// </summary>
 public class TaskController: BasePublicController
 {
-    //private readonly ITaskStatusManager _statusManager;
+    /// <summary>
+    /// мэнэджер для работы с пользователями
+    /// </summary>
     private readonly UserManager<UserDal> _userManager;
+    /// <summary>
+    /// маппер
+    /// </summary>
     private readonly IMapper _mapper;
+    /// <summary>
+    /// основной мэнэджер для работы со всеми сущностями связанных с задачами
+    /// </summary>
     private readonly ITaskUnitOfWorkManager _manager;
 
     /// <summary>
@@ -50,7 +58,8 @@ public class TaskController: BasePublicController
     [ProducesResponseType(typeof(TaskIdResponse), 200)]
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
-        var task = _mapper.Map<TaskDal>(model);
+        var task = _mapper.Map<CreateTaskRequest,TaskDal>(model);
+        await SetBlockForTask(task, model.BlockId);
         var user = await GetUserFromTokenAsync();
         task.User = user;
         var result = await _manager.CreateTaskAsync(task);
@@ -72,8 +81,9 @@ public class TaskController: BasePublicController
     {
         var oldTask = await _manager.GetAsync<TaskDal>(model.Id);
         if (oldTask == null)
-            throw new TaskNotFoundException();
+            throw new TaskNotFoundException(model.Id);
         var task = _mapper.Map(model, oldTask);
+        await SetBlockForTask(task, model.BlockId);
         var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.OnChecking);
         var response = new TaskIdResponse {Id = await _manager.UpdateTaskAsync(task) };
         await _manager.CreateNewHistoryEntry(task, action, "Доработка задачи");
@@ -87,10 +97,10 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> ChangeStatus(ChangeStatusRequest model)
     {
         if (model.NextStatus == StatusEnum.CompletionCheck || model.NextStatus == StatusEnum.Completed)
-            throw new WrongUrlForChangeStatusException();
+            throw new WrongUrlForChangeStatusException("/api/v1/public/task/review или  /api/v1/public/task/complete");
         var task = await _manager.GetAsync<TaskDal>(model.Id);
         if (task == null)
-            throw new TaskNotFoundException();
+            throw new TaskNotFoundException(model.Id);
         var action = await _manager.GetActionFromChangeStatus(task, model.NextStatus);
         await _manager.CreateNewHistoryEntry(task, action, model.Comment);
         return Ok();
@@ -113,7 +123,7 @@ public class TaskController: BasePublicController
             return Ok(new TaskResultResponse { ResultId = result, TaskId = task.Id });
         }
 
-        throw new WrongUrlForChangeStatusException();
+        throw new WrongUrlForChangeStatusException("/api/v1/public/task/change-status или /api/v1/public/task/complete");
     }
 
     /// <summary>
@@ -133,7 +143,7 @@ public class TaskController: BasePublicController
             return Ok(new TaskResultResponse { ResultId = id, TaskId = task.Id });
         }
 
-        throw new WrongUrlForChangeStatusException();
+        throw new WrongUrlForChangeStatusException("/api/v1/public/task/change-status или /api/v1/public/task/review");
     }
     
     /// <summary>
@@ -145,11 +155,14 @@ public class TaskController: BasePublicController
     {
         var task = await _manager.GetAsync<TaskDal>(taskId);
         if (task == null)
-            throw new TaskNotFoundException();
-        var taskResponse = _mapper.Map<TaskResponse>(task);
+            throw new TaskNotFoundException(taskId);
+        var taskResponse = _mapper.Map<TaskDal, TaskResponse>(task);
         return Ok(taskResponse);
     }
 
+    /// <summary>
+    /// определяет сущность авторизованного пользователя при помощи заголовка авторизации
+    /// </summary>
     [NonAction]
     private async Task<UserDal> GetUserFromTokenAsync()
     {
@@ -159,7 +172,7 @@ public class TaskController: BasePublicController
         var userId = jwt.Claims.First(x => x.Type == "Id").Value;
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-            throw new UserNotFoundException();
+            throw new UserNotFoundException(userId);
         return user;
     }
 
@@ -176,5 +189,14 @@ public class TaskController: BasePublicController
         var tasks = tasksDals.Select(_mapper.Map<TaskResponse>).ToList();
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
         return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10, tasks));
+    }
+
+    [NonAction]
+    private async System.Threading.Tasks.Task SetBlockForTask(TaskDal task, Guid blockId)
+    {
+        var block = await _manager.GetAsync<BlockDal>(blockId);
+        if (block == null)
+            throw new BlockNotFoundException(blockId);
+        task.Block = block;
     }
 }

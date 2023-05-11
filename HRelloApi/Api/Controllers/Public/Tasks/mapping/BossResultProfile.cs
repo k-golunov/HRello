@@ -4,8 +4,14 @@ using HRelloApi.Controllers.Public.Tasks.dto.request;
 
 namespace HRelloApi.Controllers.Public.Tasks.mapping;
 
+/// <summary>
+/// класс отвечающий за маппинг сущности итогов руководителя
+/// </summary>
 public class BossResultProfile: Profile
 {
+    /// <summary>
+    /// Конструтор и маппинг
+    /// </summary>
     public BossResultProfile()
     {
         CreateMap<BossTaskCompletedRequest, BossTaskResultDal>()
