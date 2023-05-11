@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Dal.Base.Entitities;
 
 namespace Dal.Entities;
@@ -19,5 +20,5 @@ public class DepartamentDal : BaseDal<int>
     /// <summary>
     /// Уникальный идентификатор начальника отдела
     /// </summary>
-    public string BossId { get; set; }
+    public string? BossId { get; set; }
 }

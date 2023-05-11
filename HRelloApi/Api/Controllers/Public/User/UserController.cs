@@ -20,6 +20,7 @@ public class UserController : BasePublicController
 {
     private readonly SignInManager<UserDal> _signInManager;
     private readonly UserManager<UserDal> _userManager;
+    private readonly RoleManager<UserDal> _roleManager;
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
@@ -33,19 +34,21 @@ public class UserController : BasePublicController
     public UserController(UserManager<UserDal> userManager, 
         SignInManager<UserDal> signInManager, 
         IOptions<JWTSettings> options,
-        IMapper mapper)
+        IMapper mapper,
+        RoleManager<UserDal> roleManager)
     {
         LogContext.PushProperty("Source", "Test Authorize Controller");
         _userManager = userManager;
         _signInManager = signInManager;
         _options = options.Value;
         _mapper = mapper;
+        _roleManager = roleManager;
     }
 
     /// <summary>
     /// Получение юзера по id
-    /// </summary>
     /// не тянет связанные данные
+    /// </summary>
     /// <param name="id">идентификатор юзера</param>
     /// <returns></returns>
     [HttpGet("{id}")]
@@ -77,7 +80,7 @@ public class UserController : BasePublicController
     }
 
     /// <summary>
-    /// Получение всех записей из бд юзера по роли
+    /// Получение всех записей из бд юзера
     /// не тянет связанные данные
     /// </summary>
     /// <returns></returns>
@@ -114,7 +117,7 @@ public class UserController : BasePublicController
     }
     
     /// <summary>
-    /// Пока не рабочий рест
+    /// выдает всех незарегистрированных пользователей
     /// </summary>
     /// <returns></returns>
     [HttpGet("all-unregister")]

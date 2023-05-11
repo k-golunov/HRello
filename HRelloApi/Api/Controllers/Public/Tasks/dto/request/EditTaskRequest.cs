@@ -63,4 +63,12 @@ public record EditTaskRequest
     [Required]
     [JsonProperty("WaitResult")]
     public required string WaitResult { get; init; }
+    
+    /// <summary>
+    /// идентификатор отдела задачи
+    /// </summary>
+    [Required]
+    [JsonProperty("UserId")]
+    public required Guid DepartamentId { get; init; }
+    
 }

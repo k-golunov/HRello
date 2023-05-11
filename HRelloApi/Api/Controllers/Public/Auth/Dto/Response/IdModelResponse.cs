@@ -12,11 +12,6 @@ public record IdModelResponse
     /// Id созданного пользователя
     /// </summary>
     [Required]
-    [JsonProperty("Id")]
-    public string Id;
-
-    public IdModelResponse(string id)
-    {
-        Id = id;
-    }
+    [JsonProperty("userId")]
+    public string UserId { get; init; }
 }

@@ -67,4 +67,15 @@ public class TaskDal : BaseDal<Guid>
     /// История изменений задачи
     /// </summary>
     public List<HistoryDal> History { get; set; } = new();
+    
+    /// <summary>
+    /// Идентификатор отдела пользователя
+    /// </summary>
+    public int DepartamentId { get; set; }
+    
+    /// <summary>
+    /// Поле, нужное для создания миграции через EF core
+    /// Хранит отдел пользователя и все данные по нему
+    /// </summary>
+    public DepartamentDal Departament { get; set; }
 }

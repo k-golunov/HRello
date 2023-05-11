@@ -76,4 +76,8 @@ public class TaskResponse
     [Required]
     [JsonProperty("UserId")]
     public required Guid UserId { get; init; }
+    
+    [Required]
+    [JsonProperty("UserId")]
+    public required Guid DepartamentId { get; init; }
 }

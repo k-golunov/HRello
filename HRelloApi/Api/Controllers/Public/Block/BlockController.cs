@@ -9,15 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace HRelloApi.Controllers.Public.Block;
 
 /// <summary>
-/// контроллер для работы с блоками задач
+/// 
 /// </summary>
 public class BlockController: BasePublicController
 {
     private readonly ITaskUnitOfWorkManager _manager;
 
-    /// <summary>
-    /// Конструктор
-    /// </summary>
     public BlockController(ITaskUnitOfWorkManager manager)
     {
         _manager = manager;
@@ -28,9 +25,9 @@ public class BlockController: BasePublicController
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> CreateBlock([FromQuery] string name)
+    public async Task<IActionResult> CreateBlockAsync([FromBody] CreateBlockRequest request)
     {
-        var block = new BlockDal(name);
+        var block = new BlockDal(request.Value);
         var id = await _manager.InsertAsync(block);
         return Ok(new BlockResponse(id, block.Value));
     }
@@ -38,13 +35,13 @@ public class BlockController: BasePublicController
     /// <summary>
     /// рест на получение блока задачи
     /// </summary>
-    [HttpGet("/{id:guid}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> GetBlock([FromRoute] Guid id)
+    public async Task<IActionResult> GetBlockAsync([FromRoute] Guid id)
     {
         var block = await _manager.GetAsync<BlockDal>(id);
         if (block == null)
-            throw new BlockNotFoundException(id);
+            throw new BlockNotFoundException();
         return Ok(new BlockResponse(block.Id, block.Value));
     }
 
@@ -53,23 +50,39 @@ public class BlockController: BasePublicController
     /// </summary>
     [HttpPut]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> UpdateBlock([FromBody] UpdateBlockRequest request)
+    public async Task<IActionResult> UpdateBlockAsync([FromBody] UpdateBlockRequest request)
     {
         var block = await _manager.GetAsync<BlockDal>(request.Id);
         if (block == null)
-            throw new BlockNotFoundException(request.Id);
+            throw new BlockNotFoundException();
         block.Value = request.Value;
-        var id = await _manager.UpdateAsync(block);
+        var id = _manager.UpdateAsync(block);
         return Ok(new BlockResponse(block.Id, block.Value));
     }
 
     /// <summary>
     /// рест на удаление блока задач
     /// </summary>
-    [HttpDelete("/{id:guid}")]
-    public async Task<IActionResult> DeleteBlock([FromRoute] Guid id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteBlockAsync([FromRoute] Guid id)
     {
         await _manager.DeleteAsync<BlockDal>(id);
         return Ok();
+    }
+    
+    /// <summary>
+    /// рест на получение всех блоков задач
+    /// </summary>
+    [HttpGet("all")]
+    [ProducesResponseType(typeof(BlockResponse), 200)]
+    public IActionResult GetAllBlockAsync()
+    {
+        var blocks = _manager.GetAll<BlockDal>();
+        if (blocks == null)
+            throw new BlockNotFoundException();
+        return Ok(new AllBlockResponse
+        {
+            AllBlocks = blocks
+        });
     }
 }

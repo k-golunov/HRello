@@ -79,6 +79,8 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddHost();
+
 builder.Services.AddSwagger();
 
 var app = builder.Build();
@@ -96,6 +98,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseIdentityServer();
+
+app.UseCors();
 
 // Откючаем (комментируем) если не требуется отчистка бд 
 // т.к. все данные из бд будут удаленны
