@@ -42,18 +42,31 @@ public class DbSettingsController : ControllerBase
 
     /// <summary>
     /// Заполнение дефолтных отделов
-    /// Требует предварительно создания всех руководителей
     /// </summary>
     /// <returns></returns>
-    [HttpPost]
-    public async Task<IActionResult> SetDefaultDepartamentAsync()
+    [HttpPost("set-default-department")]
+    public async Task<IActionResult> SetDefaultDepartmentAsync()
     {
-        var departament1 = new DepartamentDal
+        var department1 = new DepartamentDal
         {
-            Id = 0,
-            Name = "",
-            BossId = null
+            Name = DepartmentConstants.Development
         };
+        await _departamentManager.InsertAsync(department1);
+        var department2 = new DepartamentDal
+        {
+            Name = DepartmentConstants.Study
+        };
+        await _departamentManager.InsertAsync(department2);
+        var department3 = new DepartamentDal
+        {
+            Name = DepartmentConstants.CompensationBenefits
+        };
+        await _departamentManager.InsertAsync(department3);
+        var department4 = new DepartamentDal
+        {
+            Name = DepartmentConstants.IntegratorsManufacturers
+        };
+        await _departamentManager.InsertAsync(department4);
         return Ok();
     }
 }
