@@ -59,10 +59,8 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> CreateTask(CreateTaskRequest model)
     {
         var task = _mapper.Map<CreateTaskRequest,TaskDal>(model);
-        await SetBlockForTask(task, model.BlockId);
-        var user = await GetUserFromTokenAsync();
-        task.User = user;
-        var result = await _manager.CreateTaskAsync(task);
+        var token = Request.Headers["Authorization"].ToString().Split(' ')[1];
+        var result = await _manager.CreateTaskAsync(task, model.BlockId, token);
         task.Id = result;
         await _manager.CreateNewHistoryEntry(task, ActionTypeEnum.OnChecking, "Создание задачи");
         var response =new TaskIdResponse { Id = result};
@@ -161,22 +159,6 @@ public class TaskController: BasePublicController
     }
 
     /// <summary>
-    /// определяет сущность авторизованного пользователя при помощи заголовка авторизации
-    /// </summary>
-    [NonAction]
-    private async Task<UserDal> GetUserFromTokenAsync()
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var auth = Request.Headers["Authorization"].ToString().Split(' ')[1];
-        var jwt = handler.ReadToken(auth) as JwtSecurityToken;
-        var userId = jwt.Claims.First(x => x.Type == "Id").Value;
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-            throw new UserNotFoundException(userId);
-        return user;
-    }
-
-    /// <summary>
     /// рест на получение задач по заданным фильтрам и по страницам по 10 штук
     /// </summary>
     [HttpGet("all/{page:int?}")]
@@ -191,6 +173,13 @@ public class TaskController: BasePublicController
         return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10, tasks));
     }
 
+    /// <summary>
+    /// Проверяет наличие переданного блока задач в БД
+    /// При успешно найденном блоке присваивает ее задаче
+    /// </summary>
+    /// <param name="task">задача</param>
+    /// <param name="blockId">id блока задач</param>
+    /// <exception cref="BlockNotFoundException">ошибка при не найденном блоке</exception>
     [NonAction]
     private async System.Threading.Tasks.Task SetBlockForTask(TaskDal task, Guid blockId)
     {

@@ -31,7 +31,7 @@ namespace Dal.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    BossId = table.Column<string>(type: "text", nullable: false)
+                    BossId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -121,7 +121,8 @@ namespace Dal.Migrations
                     PlannedWeight = table.Column<int>(type: "integer", nullable: false),
                     WaitResult = table.Column<string>(type: "character varying(1023)", maxLength: 1023, nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: true)
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    DepartamentId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,6 +131,12 @@ namespace Dal.Migrations
                         name: "FK_Task_Block_BlockId",
                         column: x => x.BlockId,
                         principalTable: "Block",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Task_Departament_DepartamentId",
+                        column: x => x.DepartamentId,
+                        principalTable: "Departament",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -312,6 +319,11 @@ namespace Dal.Migrations
                 name: "IX_Task_BlockId",
                 table: "Task",
                 column: "BlockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Task_DepartamentId",
+                table: "Task",
+                column: "DepartamentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Task_UserId",

@@ -9,12 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace HRelloApi.Controllers.Public.Block;
 
 /// <summary>
-/// 
+/// Контролллер для работы с блоками задач
 /// </summary>
 public class BlockController: BasePublicController
 {
+    /// <summary>
+    /// 
+    /// </summary>
     private readonly ITaskUnitOfWorkManager _manager;
 
+    /// <summary>
+    /// Конструтор
+    /// </summary>
+    /// <param name="manager"></param>
     public BlockController(ITaskUnitOfWorkManager manager)
     {
         _manager = manager;
@@ -23,11 +30,11 @@ public class BlockController: BasePublicController
     /// <summary>
     /// рест на создание блока задач
     /// </summary>
-    [HttpPost]
+    [HttpPost("create")]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> CreateBlockAsync([FromBody] CreateBlockRequest request)
+    public async Task<IActionResult> CreateBlockAsync([FromBody] string request)
     {
-        var block = new BlockDal(request.Value);
+        var block = new BlockDal(request);
         var id = await _manager.InsertAsync(block);
         return Ok(new BlockResponse(id, block.Value));
     }
@@ -41,20 +48,20 @@ public class BlockController: BasePublicController
     {
         var block = await _manager.GetAsync<BlockDal>(id);
         if (block == null)
-            throw new BlockNotFoundException();
+            throw new BlockNotFoundException(id);
         return Ok(new BlockResponse(block.Id, block.Value));
     }
 
     /// <summary>
     /// рест на обновление блока задач
     /// </summary>
-    [HttpPut]
+    [HttpPut("edit")]
     [ProducesResponseType(typeof(BlockResponse), 200)]
     public async Task<IActionResult> UpdateBlockAsync([FromBody] UpdateBlockRequest request)
     {
         var block = await _manager.GetAsync<BlockDal>(request.Id);
         if (block == null)
-            throw new BlockNotFoundException();
+            throw new BlockNotFoundException(request.Id);
         block.Value = request.Value;
         var id = _manager.UpdateAsync(block);
         return Ok(new BlockResponse(block.Id, block.Value));
@@ -78,11 +85,8 @@ public class BlockController: BasePublicController
     public IActionResult GetAllBlockAsync()
     {
         var blocks = _manager.GetAll<BlockDal>();
-        if (blocks == null)
-            throw new BlockNotFoundException();
-        return Ok(new AllBlockResponse
-        {
-            AllBlocks = blocks
-        });
+        if (blocks.Count == 0)
+            return NoContent();
+        return Ok(blocks);
     }
 }

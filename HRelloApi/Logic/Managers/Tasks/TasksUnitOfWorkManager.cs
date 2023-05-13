@@ -11,8 +11,10 @@ using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
 using Logic.Exceptions.Tasks;
+using Logic.Exceptions.User;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
+using Microsoft.AspNetCore.Identity;
 
 namespace Logic.Managers.Tasks;
 
@@ -44,6 +46,8 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     private readonly IBlockRepository _blockRepository;
 
+    private readonly UserManager<UserDal> _userManager;
+
     /// <summary>
     /// Конструтор
     /// </summary>
@@ -53,14 +57,14 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         IBossTaskResultsRepository bossTaskResultsRepository, 
         IUserTaskResultsRepository userTaskResultsRepository,
         IBlockRepository blockRepository,
-        StatusTree statusTree, 
-        DataContext context)
+        UserManager<UserDal> userManager)
     {
         _taskRepository = taskRepository;
         _historyRepository = historyRepository;
         _userTaskResultsRepository = userTaskResultsRepository;
         _bossTaskResultsRepository = bossTaskResultsRepository;
         _blockRepository = blockRepository;
+        _userManager = userManager;
     }
     
     /// <summary>
@@ -68,8 +72,16 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     /// <param name="taskDal">сущность, создаваемой задачи</param>
     /// <returns>id созданной записи</returns>
-    public async Task<Guid> CreateTaskAsync(TaskDal taskDal)
+    public async Task<Guid> CreateTaskAsync(TaskDal taskDal, Guid blockId, string token)
     {
+        var user = await GetUserFromTokenAsync(token);
+        var claims = await _userManager.GetClaimsAsync(user);
+        taskDal.User = user;
+        var block = await _blockRepository.GetAsync(blockId);
+        if (block == null)
+            throw new BlockNotFoundException(blockId);
+        taskDal.Block = block;
+        taskDal.DepartamentId = int.Parse(claims.FirstOrDefault(x => x.Type == "DepartmentId").Value);
         var historyDal = new HistoryDal(ActionTypeEnum.OnChecking, taskDal);
         taskDal.History.Add(historyDal);
         var taskId= await _taskRepository.InsertAsync(taskDal);
@@ -206,5 +218,16 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         var history = new HistoryDal(action, task, comment);
         var id = await _historyRepository.InsertAsync(history);
         return id;
+    }
+    
+    private async Task<UserDal> GetUserFromTokenAsync(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadToken(token) as JwtSecurityToken;
+        var userId = jwt.Claims.First(x => x.Type == "userId").Value;
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            throw new UserNotFoundException(userId);
+        return user;
     }
 }

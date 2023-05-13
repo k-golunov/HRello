@@ -52,8 +52,9 @@ public class DbSettingsController : ControllerBase
         {
             Id = 0,
             Name = "",
-            BossId = null
+            BossId = "1"
         };
+        await _departamentManager.InsertAsync(departament1);
         return Ok();
     }
 }

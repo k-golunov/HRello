@@ -11,7 +11,7 @@ namespace Logic.Managers.Tasks.Interfaces;
 /// </summary>
 public interface ITaskUnitOfWorkManager
 {
-    public Task<Guid> CreateTaskAsync(TaskDal taskDal);
+    public Task<Guid> CreateTaskAsync(TaskDal taskDal, Guid blockId, string token);
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
     public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasks);
     public Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment);

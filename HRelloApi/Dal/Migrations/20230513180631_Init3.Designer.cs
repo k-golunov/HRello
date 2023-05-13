@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Dal.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230410175617_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230513180631_Init3")]
+    partial class Init3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,26 +25,6 @@ namespace Dal.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Dal.Email.Entities.EmailDal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.ToTable("Email");
-                });
-
             modelBuilder.Entity("Dal.Entities.DepartamentDal", b =>
                 {
                     b.Property<int>("Id")
@@ -54,7 +34,6 @@ namespace Dal.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BossId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -148,6 +127,21 @@ namespace Dal.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("Dal.Tasks.Entities.BlockDal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Block");
+                });
+
             modelBuilder.Entity("Dal.Tasks.Entities.BossTaskResultDal", b =>
                 {
                     b.Property<Guid>("Id")
@@ -202,10 +196,13 @@ namespace Dal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Block")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("BlockId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Category")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DepartamentId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -235,6 +232,10 @@ namespace Dal.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BlockId");
+
+                    b.HasIndex("DepartamentId");
 
                     b.HasIndex("UserId");
 
@@ -439,9 +440,25 @@ namespace Dal.Migrations
 
             modelBuilder.Entity("Dal.Tasks.Entities.TaskDal", b =>
                 {
+                    b.HasOne("Dal.Tasks.Entities.BlockDal", "Block")
+                        .WithMany()
+                        .HasForeignKey("BlockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dal.Entities.DepartamentDal", "Departament")
+                        .WithMany()
+                        .HasForeignKey("DepartamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Dal.Entities.UserDal", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Block");
+
+                    b.Navigation("Departament");
 
                     b.Navigation("User");
                 });

@@ -5,6 +5,8 @@ using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.User.dto.Request;
 using HRelloApi.Controllers.Public.User.dto.Response;
 using Logic.Constants;
+using Logic.Exceptions.User;
+using Logic.Managers.Departament.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +23,7 @@ public class UserController : BasePublicController
     private readonly SignInManager<UserDal> _signInManager;
     private readonly UserManager<UserDal> _userManager;
     private readonly RoleManager<UserDal> _roleManager;
+    private readonly IDepartamentManager _departamentManager;
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
@@ -56,6 +59,8 @@ public class UserController : BasePublicController
     public async Task<IActionResult> GetUserById(Guid id)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
+        if (user == null)
+            throw new UserNotFoundException(id.ToString());
         var result = _mapper.Map<GetUserResponse>(user);
         return Ok(result);
     }
@@ -71,9 +76,7 @@ public class UserController : BasePublicController
     {
         var user = await _userManager.FindByIdAsync(userUpdate.Id);
         if (user is null)
-        {
-            return NotFound(new BaseExceptionModel("404", $"User {userUpdate.Id} not found"));
-        }
+            throw new UserNotFoundException(userUpdate.Id);
         var userDal = _mapper.Map(userUpdate, user);
         await _userManager.UpdateAsync(userDal);
         return Ok();
