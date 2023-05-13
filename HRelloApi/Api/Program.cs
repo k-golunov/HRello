@@ -15,7 +15,6 @@ using Dal.Tasks.Repositories.Interfaces;
 using Dal.User.Repositories.Interfaces;
 using HRelloApi.Controllers.Public.Auth.Mapping;
 using HRelloApi.Controllers.Public.Departament.Mapping;
-using HRelloApi.Controllers.Public.Task.mapping;
 using HRelloApi.Controllers.Public.Tasks.mapping;
 using HRelloApi.Controllers.Public.User.Mapping;
 using HRelloApi.ProgramExtension;

@@ -8,5 +8,5 @@ namespace Dal.Tasks.Repositories.Interfaces;
 /// </summary>
 public interface IHistoryRepository : IBaseRepository<HistoryDal, Guid>
 {
-    
+    List<HistoryDal> GetAllHistoryByTaskId(Guid taskId);
 }

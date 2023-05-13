@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Dal.User.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Dal.Entities;

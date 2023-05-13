@@ -14,7 +14,7 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> CreateTaskAsync(TaskDal taskDal, Guid blockId, string token);
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
     public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasks);
-    public Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment);
+    public Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string? comment);
     public Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus);
     public Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>;
     public Task<Guid> UpdateAsync<T>(T dal) where T : BaseDal<Guid>;

@@ -213,7 +213,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <summary>
     /// Создает новую запись истории задач со входящими данным и возвращет id созданной записи в бд
     /// </summary>
-    public async Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment)
+    public async Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string? comment)
     {
         var history = new HistoryDal(action, task, comment);
         var id = await _historyRepository.InsertAsync(history);

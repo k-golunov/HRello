@@ -1,4 +1,5 @@
 ﻿using Dal.Entities;
+using Dal.User.Models;
 using Logic.Constants;
 using Logic.Managers.Departament.Interfaces;
 using Microsoft.AspNetCore.Identity;

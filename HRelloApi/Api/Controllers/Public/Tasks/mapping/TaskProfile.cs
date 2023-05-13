@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Dal.Tasks.Entities;
-using HRelloApi.Controllers.Public.Task.dto.request;
+using HRelloApi.Controllers.Public.Tasks.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.response;
 
-namespace HRelloApi.Controllers.Public.Task.mapping;
+namespace HRelloApi.Controllers.Public.Tasks.mapping;
 
 /// <summary>
 /// класс отвечающий за маппинг сущности задачи

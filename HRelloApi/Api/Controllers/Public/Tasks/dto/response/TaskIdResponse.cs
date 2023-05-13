@@ -1,4 +1,4 @@
-﻿namespace HRelloApi.Controllers.Public.EmployeeTask.dto.response;
+﻿namespace HRelloApi.Controllers.Public.Tasks.dto.response;
 
 /// <summary>
 /// Модель ответа на запросы создания или редактирования задачи

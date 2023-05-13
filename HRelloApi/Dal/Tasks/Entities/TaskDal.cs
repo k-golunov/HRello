@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Dal.Base.Entitities;
 using Dal.Entities;
 using Dal.Tasks.Enum;
+using Dal.User.Models;
 
 namespace Dal.Tasks.Entities;
 

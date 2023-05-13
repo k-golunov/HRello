@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Dal.Tasks.Entities;
 using Newtonsoft.Json;
 
-namespace HRelloApi.Controllers.Public.Task.dto.request;
+namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 
 /// <summary>
 /// Модель запроса на завершение задачи сотрудником

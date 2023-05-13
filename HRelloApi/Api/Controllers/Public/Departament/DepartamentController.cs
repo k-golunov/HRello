@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using AutoMapper;
 using Dal.Entities;
+using Dal.User.Models;
 using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Departament.Dto.Request;
