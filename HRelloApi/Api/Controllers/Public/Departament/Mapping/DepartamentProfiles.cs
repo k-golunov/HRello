@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dal.Entities;
+using Dal.User.Models;
 using HRelloApi.Controllers.Public.Departament.Dto.Request;
 
 namespace HRelloApi.Controllers.Public.Departament.Mapping;

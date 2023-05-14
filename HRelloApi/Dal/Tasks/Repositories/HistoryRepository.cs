@@ -12,4 +12,9 @@ public class HistoryRepository : BaseRepository<HistoryDal, Guid>, IHistoryRepos
     public HistoryRepository(DataContext context) : base(context)
     {
     }
+
+    public List<HistoryDal> GetAllHistoryByTaskId(Guid taskId)
+    {
+        return _dbSet.Where(h => h.Task.Id == taskId).ToList();
+    }
 }
