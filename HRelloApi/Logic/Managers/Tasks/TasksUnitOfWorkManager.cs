@@ -70,34 +70,31 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <summary>
     /// Операция создания новой задачи
     /// </summary>
-    /// <param name="taskDal">сущность, создаваемой задачи</param>
+    /// <param name="taskDal">сущность задачи с новыми данными</param>
+    /// <param name="blockId">id обновленного блока задачи</param>
+    /// <param name="token">jwt пользователя</param>
     /// <returns>id созданной записи</returns>
     public async Task<Guid> CreateTaskAsync(TaskDal taskDal, Guid blockId, string token)
     {
-        var user = await GetUserFromTokenAsync(token);
-        var claims = await _userManager.GetClaimsAsync(user);
-        taskDal.User = user;
-        var block = await _blockRepository.GetAsync(blockId);
-        if (block == null)
-            throw new BlockNotFoundException(blockId);
-        taskDal.Block = block;
-        taskDal.DepartamentId = int.Parse(claims.FirstOrDefault(x => x.Type == "DepartmentId").Value);
-        var historyDal = new HistoryDal(ActionTypeEnum.OnChecking, taskDal);
-        taskDal.History.Add(historyDal);
-        var taskId= await _taskRepository.InsertAsync(taskDal);
-        return taskId;
+        await CheckAndSetDataForTask(taskDal, token, blockId);
+        taskDal.Id = await _taskRepository.InsertAsync(taskDal);
+        await CreateNewHistoryEntry(taskDal, ActionTypeEnum.OnChecking);
+        return taskDal.Id;
     }
 
     /// <summary>
     /// обновляет данные о задаче
     /// </summary>
     /// <param name="taskDal">сущность задачи с новыми данными</param>
+    /// <param name="blockId">id обновленного блока задачи</param>
+    /// <param name="token">jwt пользователя</param>
     /// <returns>id обновленной записи</returns>
-    public async Task<Guid> UpdateTaskAsync(TaskDal taskDal)
+    public async Task<Guid> UpdateTaskAsync(TaskDal taskDal, Guid blockId, string token)
     {
-        var historyDal = new HistoryDal(ActionTypeEnum.Updated, taskDal);
+        await CheckAndSetDataForTask(taskDal, token, blockId);
         var taskId = await _taskRepository.UpdateAsync(taskDal);
-        await _historyRepository.InsertAsync(historyDal);
+        var action = await ChangeStatusAndGetAction(taskDal, StatusEnum.OnChecking);
+        await CreateNewHistoryEntry(taskDal, action);
         return taskId;
     }
 
@@ -121,7 +118,31 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     private List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
     {
-        return tasks.Where(x => filters.Contains(typeof(TaskDal).GetProperty(field).GetValue(x).ToString())).ToList();
+        return tasks
+            .Where(x => 
+                filters.Contains(typeof(TaskDal)
+                    .GetProperty(field)?
+                    .GetValue(x)?
+                    .ToString()))
+            .ToList();
+    }
+
+    public async Task<Guid> ChangeStatus(Guid taskId, StatusEnum nextStatus, string comment)
+    {
+        var task = await _taskRepository.GetAsync(taskId);
+        if (task == null)
+            throw new TaskNotFoundException(taskId);
+        var action = await ChangeStatusAndGetAction(task, nextStatus);
+        await CreateNewHistoryEntry(task, action, comment);
+        return task.Id;
+    }
+
+    public async Task<Guid> SendResultForTask<T>(T taskResult, TaskDal task, StatusEnum status, string comment = null) where T: BaseDal<Guid>
+    {
+        var result = await InsertAsync(taskResult);
+        var action = await ChangeStatusAndGetAction(task, status);
+        await CreateNewHistoryEntry(task, action, comment);
+        return result;
     }
 
     /// <summary>
@@ -129,15 +150,14 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// Изменяет статус задачи при корректно заданном следующем статусе
     /// Возвращет действие - изменение статуса задачи - для записи истории изменения задачи
     /// </summary>
-    public async Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus)
+    private async Task<ActionTypeEnum> ChangeStatusAndGetAction(TaskDal task, StatusEnum nextStatus)
     {
         var action = StatusesGraph.StatusesGraph.GetAction(task.Status, nextStatus);
-        if (action != ActionTypeEnum.None)
-        {
-            task.Status = nextStatus;
-            await _taskRepository.UpdateAsync(task);
-        }
-        throw new StatusChangeException(task.Status.ToString(), nextStatus.ToString());
+        if (action == ActionTypeEnum.None)
+            throw new StatusChangeException(task.Status.ToString(), nextStatus.ToString());
+        task.Status = nextStatus;
+        await _taskRepository.UpdateAsync(task);
+        return action;
     }
 
     /// <summary>
@@ -213,11 +233,10 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <summary>
     /// Создает новую запись истории задач со входящими данным и возвращет id созданной записи в бд
     /// </summary>
-    public async Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment)
+    private async Task CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string? comment=null)
     {
         var history = new HistoryDal(action, task, comment);
-        var id = await _historyRepository.InsertAsync(history);
-        return id;
+        await _historyRepository.InsertAsync(history);
     }
     
     private async Task<UserDal> GetUserFromTokenAsync(string token)
@@ -229,5 +248,17 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         if (user == null)
             throw new UserNotFoundException(userId);
         return user;
+    }
+
+    private async Task CheckAndSetDataForTask(TaskDal taskDal, string token, Guid blockId)
+    {
+        var user = await GetUserFromTokenAsync(token);
+        var claims = await _userManager.GetClaimsAsync(user);
+        taskDal.User = user;
+        var block = await _blockRepository.GetAsync(blockId);
+        if (block == null)
+            throw new BlockNotFoundException(blockId);
+        taskDal.Block = block;
+        taskDal.DepartamentId = int.Parse(claims.FirstOrDefault(x => x.Type == "DepartmentId").Value);
     }
 }

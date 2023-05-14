@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using Serilog.Core;
 
 namespace HRelloApi.Controllers.Public.Tasks;
@@ -61,9 +62,7 @@ public class TaskController: BasePublicController
         var task = _mapper.Map<CreateTaskRequest,TaskDal>(model);
         var token = Request.Headers["Authorization"].ToString().Split(' ')[1];
         var result = await _manager.CreateTaskAsync(task, model.BlockId, token);
-        task.Id = result;
-        await _manager.CreateNewHistoryEntry(task, ActionTypeEnum.OnChecking, "Создание задачи");
-        var response =new TaskIdResponse { Id = result};
+        var response =new TaskIdResponse { Id = result };
         return Ok(response);
     }
 
@@ -81,10 +80,8 @@ public class TaskController: BasePublicController
         if (oldTask == null)
             throw new TaskNotFoundException(model.Id);
         var task = _mapper.Map(model, oldTask);
-        await SetBlockForTask(task, model.BlockId);
-        var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.OnChecking);
-        var response = new TaskIdResponse {Id = await _manager.UpdateTaskAsync(task) };
-        await _manager.CreateNewHistoryEntry(task, action, "Доработка задачи");
+        var token = Request.Headers["Authorization"].ToString().Split(' ')[1];
+        var response = new TaskIdResponse { Id = await _manager.UpdateTaskAsync(task, model.BlockId, token) };
         return Ok(response);
     }
 
@@ -96,11 +93,7 @@ public class TaskController: BasePublicController
     {
         if (model.NextStatus == StatusEnum.CompletionCheck || model.NextStatus == StatusEnum.Completed)
             throw new WrongUrlForChangeStatusException("/api/v1/public/task/review или  /api/v1/public/task/complete");
-        var task = await _manager.GetAsync<TaskDal>(model.Id);
-        if (task == null)
-            throw new TaskNotFoundException(model.Id);
-        var action = await _manager.GetActionFromChangeStatus(task, model.NextStatus);
-        await _manager.CreateNewHistoryEntry(task, action, model.Comment);
+        await _manager.ChangeStatus(model.Id, model.NextStatus, model.Comment);
         return Ok();
     }
 
@@ -112,16 +105,13 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> CheckCompletion(UserTaskCompletedRequest model)
     {
         var task = await _manager.GetAsync<TaskDal>(model.TaskId);
-        if (task?.Status == StatusEnum.InWork)
-        {
-            var userResult = _mapper.Map<UserTaskResultDal>(model);
-            var result = await _manager.InsertAsync(userResult);
-            var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.CompletionCheck);
-            await _manager.CreateNewHistoryEntry(task, action, model.Result);
-            return Ok(new TaskResultResponse { ResultId = result, TaskId = task.Id });
-        }
+        if (task?.Status != StatusEnum.InWork)
+            throw new WrongUrlForChangeStatusException(
+                "/api/v1/public/task/change-status или /api/v1/public/task/complete");
+        var userResult = _mapper.Map<UserTaskResultDal>(model);
+        var result = await _manager.SendResultForTask(userResult, task, StatusEnum.CompletionCheck);
+        return Ok(new TaskResultResponse { ResultId = result, TaskId = task.Id });
 
-        throw new WrongUrlForChangeStatusException("/api/v1/public/task/change-status или /api/v1/public/task/complete");
     }
 
     /// <summary>
@@ -132,16 +122,15 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> CompleteTask(BossTaskCompletedRequest model)
     {
         var task = await _manager.GetAsync<TaskDal>(model.TaskId);
-        if (task != null && task?.Status == StatusEnum.CompletionCheck)
-        {
-            var bossResult = _mapper.Map<BossTaskResultDal>(model);
-            var id =await _manager.InsertAsync(bossResult);
-            var action = await _manager.GetActionFromChangeStatus(task, StatusEnum.Completed);
-            await _manager.CreateNewHistoryEntry(task, action, model.Comment);
-            return Ok(new TaskResultResponse { ResultId = id, TaskId = task.Id });
-        }
+        if (task == null)
+            throw new TaskNotFoundException(model.TaskId);
+        if (task?.Status != StatusEnum.CompletionCheck)
+            throw new WrongUrlForChangeStatusException(
+                "/api/v1/public/task/change-status или /api/v1/public/task/review");
+        var bossResult = _mapper.Map<BossTaskResultDal>(model);
+        var id = await _manager.SendResultForTask(bossResult, task, StatusEnum.Completed, model.Comment);
+        return Ok(new TaskResultResponse { ResultId = id, TaskId = task.Id });
 
-        throw new WrongUrlForChangeStatusException("/api/v1/public/task/change-status или /api/v1/public/task/review");
     }
     
     /// <summary>

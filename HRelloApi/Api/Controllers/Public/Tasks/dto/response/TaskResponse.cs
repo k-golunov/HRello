@@ -78,6 +78,6 @@ public class TaskResponse
     public required Guid UserId { get; init; }
     
     [Required]
-    [JsonProperty("UserId")]
-    public required Guid DepartamentId { get; init; }
+    [JsonProperty("DepartmentId")]
+    public required int DepartmentId { get; init; }
 }
