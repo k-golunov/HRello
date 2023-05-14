@@ -212,7 +212,7 @@ public class AuthorizeController : BasePublicController
     /// <exception cref="DepartmentNotFoundException">ошибка при неверном id отдела</exception>
     /// <exception cref="UserRoleNotFoundException">ошибка при неверно указанной роли пользователя</exception>
     [NonAction]
-    private async Task SetDepartmentAndRoleForUser(UserDal user, CreateUserModelRequest request)
+    private async System.Threading.Tasks.Task SetDepartmentAndRoleForUser(UserDal user, CreateUserModelRequest request)
     {
         var department = await _departamentManager.GetAsync(request.DepartamentId);
         if (department == null)
