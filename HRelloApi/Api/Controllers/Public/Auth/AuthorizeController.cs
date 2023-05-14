@@ -91,8 +91,8 @@ public class AuthorizeController : BasePublicController
         {
             return BadRequest();
         }
-        
-        EmailSender.SendEmail("You can register by link: ", model.Email);
+
+        EmailSender.SendEmail($"You can register by link: http://185.133.40.145:3000/register/{user.Id}", model.Email);
         return Ok(new IdModelResponse
         {
             UserId = user.Id
