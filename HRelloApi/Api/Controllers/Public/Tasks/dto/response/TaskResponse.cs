@@ -11,6 +11,13 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.response;
 public class TaskResponse
 {
     /// <summary>
+    /// Идентификатор задачи
+    /// </summary>
+    [Required]
+    [JsonProperty("id")]
+    public required Guid Id { get; init; }
+    
+    /// <summary>
     /// Название задачи
     /// </summary>
     [Required]
