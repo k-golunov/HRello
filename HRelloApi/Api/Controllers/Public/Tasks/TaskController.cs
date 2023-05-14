@@ -5,7 +5,6 @@ using Dal.Entities;
 using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using HRelloApi.Controllers.Public.Base;
-using HRelloApi.Controllers.Public.Task.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.response;
 using Logic.Exceptions.Tasks;
@@ -169,7 +168,7 @@ public class TaskController: BasePublicController
     /// <param name="blockId">id блока задач</param>
     /// <exception cref="BlockNotFoundException">ошибка при не найденном блоке</exception>
     [NonAction]
-    private async System.Threading.Tasks.Task SetBlockForTask(TaskDal task, Guid blockId)
+    private async Task SetBlockForTask(TaskDal task, Guid blockId)
     {
         var block = await _manager.GetAsync<BlockDal>(blockId);
         if (block == null)

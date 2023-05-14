@@ -2,7 +2,7 @@
 using Dal.Tasks.Enum;
 using Newtonsoft.Json;
 
-namespace HRelloApi.Controllers.Public.Task.dto.request;
+namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 
 /// <summary>
 /// Входная модель данных для реста редактирования данных задачи
