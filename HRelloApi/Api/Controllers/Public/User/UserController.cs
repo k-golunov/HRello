@@ -5,8 +5,6 @@ using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.User.dto.Request;
 using HRelloApi.Controllers.Public.User.dto.Response;
 using Logic.Constants;
-using Logic.Exceptions.User;
-using Logic.Managers.Departament.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +20,6 @@ public class UserController : BasePublicController
 {
     private readonly SignInManager<UserDal> _signInManager;
     private readonly UserManager<UserDal> _userManager;
-    private readonly RoleManager<UserDal> _roleManager;
-    private readonly IDepartamentManager _departamentManager;
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
@@ -37,15 +33,13 @@ public class UserController : BasePublicController
     public UserController(UserManager<UserDal> userManager, 
         SignInManager<UserDal> signInManager, 
         IOptions<JWTSettings> options,
-        IMapper mapper,
-        RoleManager<UserDal> roleManager)
+        IMapper mapper)
     {
-        LogContext.PushProperty("Source", "Test Authorize Controller");
+        LogContext.PushProperty("Source", "User Controller");
         _userManager = userManager;
         _signInManager = signInManager;
         _options = options.Value;
         _mapper = mapper;
-        _roleManager = roleManager;
     }
 
     /// <summary>
@@ -60,7 +54,9 @@ public class UserController : BasePublicController
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
         if (user == null)
-            throw new UserNotFoundException(id.ToString());
+        {
+            return NotFound(new BaseExceptionModel("User.404", "User not found"));
+        }
         var result = _mapper.Map<GetUserResponse>(user);
         return Ok(result);
     }
@@ -76,7 +72,9 @@ public class UserController : BasePublicController
     {
         var user = await _userManager.FindByIdAsync(userUpdate.Id);
         if (user is null)
-            throw new UserNotFoundException(userUpdate.Id);
+        {
+            return NotFound(new BaseExceptionModel("User.404", $"User {userUpdate.Id} not found"));
+        }
         var userDal = _mapper.Map(userUpdate, user);
         await _userManager.UpdateAsync(userDal);
         return Ok();
@@ -135,5 +133,22 @@ public class UserController : BasePublicController
         {
             Users = users.Select(_mapper.Map<GetUserResponse>).ToList()
         });
+    }
+
+    /// <summary>
+    /// Удаление пользователя
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete("{userId:guid}")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> DeleteUserAsync([FromRoute] Guid userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return NotFound(new BaseExceptionModel("User.404", "User not found"));
+        }
+        await _userManager.DeleteAsync(user);
+        return Ok();
     }
 }
