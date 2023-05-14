@@ -1,0 +1,26 @@
+.button {
+    font-family: OpenSans, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    border-radius: 10px;
+    transition: all 250ms ease 0s;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 14px 32px;
+    background-color: #F99D1D;
+    border: 2px solid transparent;
+    color: white;
+    box-sizing: content-box;
+}
+
+.button:hover {
+    cursor:pointer;
+    background-color: white;
+    border: 2px solid #F99D1D;
+    color: #F99D1D;
+}
+
+.button:active {
+    /*background-color: #F99D1D;*/
+}

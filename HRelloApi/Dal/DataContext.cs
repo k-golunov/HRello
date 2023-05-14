@@ -1,5 +1,6 @@
 ﻿using Dal.Entities;
 using Dal.Tasks.Entities;
+using Dal.User.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

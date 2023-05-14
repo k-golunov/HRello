@@ -6,13 +6,18 @@ using Dal.Tasks.Enum;
 
 namespace Logic.Managers.Tasks.Interfaces;
 
+/// <summary>
+/// Интерфейс основного мэнэджера для логики запросов связанных с задачами
+/// </summary>
 public interface ITaskUnitOfWorkManager
 {
-    public Task<Guid> CreateTaskAsync(TaskDal taskDal);
-    public Task<Guid> UpdateTaskAsync(TaskDal taskDal);
+    public Task<Guid> CreateTaskAsync(TaskDal taskDal, Guid blockId, string token);
+    public Task<Guid> UpdateTaskAsync(TaskDal taskDal,Guid blockId, string token);
     public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasks);
-    public Task<Guid> CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string comment);
-    public Task<ActionTypeEnum> GetActionFromChangeStatus(TaskDal task, StatusEnum nextStatus);
+    public Task<Guid> ChangeStatus(Guid taskId, StatusEnum nextStatus, string comment);
+
+    public Task<Guid> SendResultForTask<T>(T taskResult, TaskDal task, StatusEnum status, string comment = null)
+        where T : BaseDal<Guid>;
     public Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>;
     public Task<Guid> UpdateAsync<T>(T dal) where T : BaseDal<Guid>;
     public Task<Guid> InsertAsync<T>(T dal) where T : BaseDal<Guid>;

@@ -9,6 +9,9 @@ using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Notification;
+using Logic.Exceptions.Department;
+using Logic.Exceptions.User;
+using Logic.Managers.Departament.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +30,8 @@ public class AuthorizeController : BasePublicController
 {
     private readonly SignInManager<UserDal> _signInManager;
     private readonly UserManager<UserDal> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IDepartamentManager _departamentManager;
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
@@ -38,13 +43,17 @@ public class AuthorizeController : BasePublicController
     /// <param name="options">Настройки уникального токена</param>
     /// <param name="mapper">Автомаппер</param>
     public AuthorizeController(UserManager<UserDal> userManager, 
-        SignInManager<UserDal> signInManager, 
+        SignInManager<UserDal> signInManager,
+        IDepartamentManager departamentManager,
+        RoleManager<IdentityRole> roleManager,
         IOptions<JWTSettings> options,
         IMapper mapper)
     {
         LogContext.PushProperty("Source", "Test Authorize Controller");
         _userManager = userManager;
         _signInManager = signInManager;
+        _departamentManager = departamentManager;
+        _roleManager = roleManager;
         _options = options.Value;
         _mapper = mapper;
     }
@@ -71,12 +80,11 @@ public class AuthorizeController : BasePublicController
             return Conflict();
         
         var user = _mapper.Map<UserDal>(model);
+        await SetDepartmentAndRoleForUser(user, model);
         
         var result = await _userManager.CreateAsync(user);
-
-        var roleResult = await _userManager.AddToRoleAsync(user, model.Role);
-        
-        if (result.Succeeded && roleResult.Succeeded)
+        await _userManager.AddToRoleAsync(user, model.Role);
+        if (result.Succeeded)
         {
             await _signInManager.SignInAsync(user, isPersistent: false);
             
@@ -88,9 +96,7 @@ public class AuthorizeController : BasePublicController
             await _userManager.AddClaimsAsync(user, claims);
         }
         else
-        {
             return BadRequest();
-        }
         
         EmailSender.SendEmail("You can register by link: ", model.Email);
         return Ok(new IdModelResponse
@@ -128,20 +134,18 @@ public class AuthorizeController : BasePublicController
     /// <returns></returns>
     [HttpPost("register")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> Register([FromQuery] Guid userId, [FromBody] RegisterModelRequest model)
+    public async Task<IActionResult> Register([FromQuery] string userId, [FromBody] RegisterModelRequest model)
     {
-        var unregisteredUser = await _userManager.FindByIdAsync(userId.ToString());
+        var unregisteredUser = await _userManager.FindByIdAsync(userId);
+        if (unregisteredUser == null)
+            throw new UserNotFoundException(userId);
         var user = _mapper.Map(model, unregisteredUser);
         var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
 
-        if (result.Succeeded && passwordUpdateResult.Succeeded)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
-
+        return result.Succeeded && passwordUpdateResult.Succeeded ?
+                Ok():
+                BadRequest();
     }
 
     /// <summary>
@@ -154,7 +158,8 @@ public class AuthorizeController : BasePublicController
     public async Task<IActionResult> SignIn(SignInModelRequest model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
-        
+        if (user is null)
+            throw new UserNotFoundException(model.Email);
         var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
 
         if (result.Succeeded)
@@ -179,11 +184,11 @@ public class AuthorizeController : BasePublicController
     /// <param name="userId">идентификатор пользователя</param>
     /// <returns></returns>
     [HttpGet("check-invite/{userId:guid}")]
-    public async Task<IActionResult> CheckInvite([FromRoute] Guid userId)
+    public async Task<IActionResult> CheckInvite([FromRoute] string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
-            return NotFound(new BaseExceptionModel("404", "Пользователь не найден"));
+            throw new UserNotFoundException(userId);
         
         if (!user.EmailConfirmed)
             return Ok(new CheckInviteResponse
@@ -196,5 +201,25 @@ public class AuthorizeController : BasePublicController
             IsInvite = false
         });
 
+    }
+
+    /// <summary>
+    /// проверяет корректность переданной роли и id отдела
+    /// при успешной проверке присваивает их пользователю
+    /// </summary>
+    /// <param name="user">пользователь</param>
+    /// <param name="request">входные данные</param>
+    /// <exception cref="DepartmentNotFoundException">ошибка при неверном id отдела</exception>
+    /// <exception cref="UserRoleNotFoundException">ошибка при неверно указанной роли пользователя</exception>
+    [NonAction]
+    private async System.Threading.Tasks.Task SetDepartmentAndRoleForUser(UserDal user, CreateUserModelRequest request)
+    {
+        var department = await _departamentManager.GetAsync(request.DepartamentId);
+        if (department == null)
+            throw new DepartmentNotFoundException(request.DepartamentId);
+        var role = await _roleManager.FindByNameAsync(request.Role);
+        if (role == null)
+            throw new UserRoleNotFoundException(request.Role);
+        user.Departament = department;
     }
 }

@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
 using Dal.Tasks.Entities;
-using HRelloApi.Controllers.Public.Task.dto.request;
+using HRelloApi.Controllers.Public.Tasks.dto.request;
 
 namespace HRelloApi.Controllers.Public.Tasks.mapping;
 
 /// <summary>
-/// 
+/// Класс отвечающий зам маппинг сущности итогов сотрудника
 /// </summary>
 public class UserResultProfile: Profile
 {
     /// <summary>
-    /// 
+    /// конструтор-маппер
     /// </summary>
     public UserResultProfile()
     {

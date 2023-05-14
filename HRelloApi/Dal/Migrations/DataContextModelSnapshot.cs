@@ -31,7 +31,6 @@ namespace Dal.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BossId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -200,6 +199,9 @@ namespace Dal.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("integer");
 
+                    b.Property<int>("DepartamentId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -229,6 +231,8 @@ namespace Dal.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BlockId");
+
+                    b.HasIndex("DepartamentId");
 
                     b.HasIndex("UserId");
 
@@ -439,11 +443,19 @@ namespace Dal.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Dal.Entities.DepartamentDal", "Departament")
+                        .WithMany()
+                        .HasForeignKey("DepartamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Dal.Entities.UserDal", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("Block");
+
+                    b.Navigation("Departament");
 
                     b.Navigation("User");
                 });

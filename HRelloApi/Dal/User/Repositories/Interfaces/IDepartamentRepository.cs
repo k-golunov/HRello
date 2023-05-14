@@ -1,5 +1,6 @@
 ﻿using Dal.Base.Interfaces;
 using Dal.Entities;
+using Dal.User.Models;
 
 namespace Dal.User.Repositories.Interfaces;
 

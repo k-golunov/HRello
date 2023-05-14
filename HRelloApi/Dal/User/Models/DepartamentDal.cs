@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Dal.Base.Entitities;
 
-namespace Dal.Entities;
+namespace Dal.User.Models;
 
 /// <summary>
 /// Сущность для отделов в компании

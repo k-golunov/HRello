@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Dal.User.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Dal.Entities;
@@ -25,12 +26,7 @@ public class UserDal : IdentityUser
     /// </summary>
     [MaxLength(255)]
     public string Patronymic { get; set; }
-    
-    /// <summary>
-    /// Идентификатор отдела пользователя
-    /// </summary>
-    public int DepartamentId { get; set; }
-    
+
     /// <summary>
     /// Поле, нужное для создания миграции через EF core
     /// Хранит отдел пользователя и все данные по нему

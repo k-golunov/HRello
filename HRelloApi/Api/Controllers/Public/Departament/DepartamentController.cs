@@ -1,12 +1,16 @@
 ﻿using System.Net;
 using AutoMapper;
 using Dal.Entities;
+using Dal.User.Models;
 using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Departament.Dto.Request;
 using HRelloApi.Controllers.Public.Departament.Dto.Response;
 using Logic.Exceptions.Base;
+using Logic.Exceptions.Department;
+using Logic.Exceptions.User;
 using Logic.Managers.Departament.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRelloApi.Controllers.Public.Departament;
@@ -16,13 +20,18 @@ namespace HRelloApi.Controllers.Public.Departament;
 /// </summary>
 public class DepartamentController : BasePublicController
 {
-    private readonly IDepartamentManager _manager;
+    private readonly IDepartamentManager _departamentManager;
+    private readonly UserManager<UserDal> _userManager;
     private readonly IMapper _mapper;
 
-    public DepartamentController(IDepartamentManager manager, IMapper mapper)
+    /// <summary>
+    /// Конструтор
+    /// </summary>
+    public DepartamentController(IDepartamentManager departamentManager, UserManager<UserDal> userManager, IMapper mapper)
     {
         _mapper = mapper;
-        _manager = manager;
+        _userManager = userManager;
+        _departamentManager = departamentManager;
     }
     
     /// <summary>
@@ -38,7 +47,7 @@ public class DepartamentController : BasePublicController
         var dal = _mapper.Map<DepartamentDal>(request);
         var response = new CreateIdResponse
         {
-            Id = await _manager.InsertAsync(dal)
+            Id = await _departamentManager.InsertAsync(dal)
         };
         return Ok(response);
     }
@@ -52,11 +61,17 @@ public class DepartamentController : BasePublicController
     [ProducesResponseType(200)]
     public async Task<IActionResult> UpdateBossIdAsync(SetBossIdRequest request)
     {
-        var departament = await _manager.GetAsync(request.DepartamentId);
+        var departament = await _departamentManager.GetAsync(request.DepartamentId);
         if (departament == null)
-            return NotFound(new BaseExceptionModel("Department.404", "Отдел не найден"));
+            throw new DepartmentNotFoundException(request.DepartamentId);
+        var boss = await _userManager.FindByIdAsync(request.BossId);
+        if (boss == null)
+            throw new UserNotFoundException(request.BossId);
+        var roles = await _userManager.GetRolesAsync(boss);
+        if (!roles.Contains("boss") && !roles.Contains("mainboss"))
+            throw new BadRoleForDepartmentBossException();
         departament.BossId = request.BossId;
-        await _manager.UpdateAsync(departament);
+        await _departamentManager.UpdateAsync(departament);
         return Ok();
     }
 
@@ -65,9 +80,9 @@ public class DepartamentController : BasePublicController
     /// </summary>
     /// <returns>все отделы</returns>
     [HttpGet("all")]
-    public IActionResult GetAllDepartament()
+    public IActionResult GetAllDepartment()
     {
-        var a = _manager.GetAll();
+        var a = _departamentManager.GetAll();
         return Ok(a);
     }
 }

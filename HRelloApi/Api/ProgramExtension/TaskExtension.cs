@@ -1,5 +1,7 @@
 ﻿using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
+using Logic.Managers.History;
+using Logic.Managers.History.Interfaces;
 using Logic.Managers.Tasks;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
@@ -17,6 +19,8 @@ public static class TaskExtension
         services.AddScoped<IBossTaskResultsRepository, BossTaskResultsRepository>();
         services.AddScoped<IUserTaskResultsRepository, UserTaskResultsRepository>();
         services.AddScoped<IBlockRepository, BlockRepository>();
+        services.AddScoped<IHistoryManager, HistoryManager>();
+        services.AddScoped<IHistoryRepository, HistoryRepository>();
         
         return services;
     }
