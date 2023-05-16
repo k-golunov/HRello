@@ -82,9 +82,9 @@ public class BlockController: BasePublicController
     /// </summary>
     [HttpGet("all")]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public IActionResult GetAllBlockAsync()
+    public async Task<IActionResult> GetAllBlockAsync()
     {
-        var blocks = _manager.GetAll<BlockDal>();
+        var blocks = await _manager.GetAllAsync<BlockDal>();
         if (blocks.Count == 0)
             return NoContent();
         return Ok(blocks);

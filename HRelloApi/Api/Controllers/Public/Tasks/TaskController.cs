@@ -153,7 +153,7 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> GetAllTasks([FromRoute] int page,[FromQuery] FiltersRequest filtersRequest)
     {
         var filters = _mapper.Map<Filters>(filtersRequest);
-        var tasksDals = _manager.GetAll<TaskDal>();
+        var tasksDals = await _manager.GetAllAsync<TaskDal>();
         var filteredTasks = _manager.ApplyFilters(filters, tasksDals);
         var tasks = tasksDals.Select(_mapper.Map<TaskResponse>).ToList();
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();

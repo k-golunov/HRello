@@ -206,10 +206,10 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <summary>
     /// Возвращает все объекты типа T из бд
     /// </summary>
-    public List<T> GetAll<T>() where T : BaseDal<Guid>
+    public async Task<List<T>> GetAllAsync<T>() where T : BaseDal<Guid>
     {
         var repository = GetRepository<T>() ;
-        return repository.GetAll();
+        return await repository.GetAllAsync();
     }
 
     /// <summary>

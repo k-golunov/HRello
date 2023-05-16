@@ -22,5 +22,5 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> UpdateAsync<T>(T dal) where T : BaseDal<Guid>;
     public Task<Guid> InsertAsync<T>(T dal) where T : BaseDal<Guid>;
     public Task DeleteAsync<T>(Guid id) where T : BaseDal<Guid>;
-    public List<T> GetAll<T>() where T : BaseDal<Guid>;
+    public Task<List<T>> GetAllAsync<T>() where T : BaseDal<Guid>;
 }

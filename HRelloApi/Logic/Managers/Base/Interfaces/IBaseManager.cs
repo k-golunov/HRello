@@ -13,4 +13,5 @@ public interface IBaseManager<T, TI> where T : BaseDal<TI>
     public Task DeleteAsync(TI id);
     public Task<T?> GetAsync(TI id);
     public Task<TI> UpdateAsync(T dal);
+    public Task<List<T>> GetAllAsync();
 }
