@@ -22,7 +22,7 @@ public class UserController : BasePublicController
 {
     private readonly SignInManager<UserDal> _signInManager;
     private readonly UserManager<UserDal> _userManager;
-    private readonly RoleManager<UserDal> _roleManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IDepartamentManager _departamentManager;
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
@@ -38,7 +38,7 @@ public class UserController : BasePublicController
         SignInManager<UserDal> signInManager, 
         IOptions<JWTSettings> options,
         IMapper mapper,
-        RoleManager<UserDal> roleManager)
+        RoleManager<IdentityRole> roleManager)
     {
         LogContext.PushProperty("Source", "Test Authorize Controller");
         _userManager = userManager;
