@@ -20,11 +20,11 @@ public class TaskRepository: BaseRepository<TaskDal, Guid>, ITaskRepository
             .FirstAsync(x => x.Id == id);
     }
 
-    public override List<TaskDal> GetAll()
+    public override async Task<List<TaskDal>> GetAllAsync()
     {
-        return _dbSet
+        return await _dbSet
                 .Include(x => x.Block)
                 .Include(x => x.User)
-                .ToList();
+                .ToListAsync();
     }
 }

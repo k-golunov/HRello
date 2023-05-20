@@ -118,13 +118,14 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     private List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
     {
-        return tasks
+        var filteredTasks = tasks
             .Where(x => 
                 filters.Contains(typeof(TaskDal)
                     .GetProperty(field)?
                     .GetValue(x)?
                     .ToString()))
             .ToList();
+        return filteredTasks;
     }
 
     public async Task<Guid> ChangeStatus(Guid taskId, StatusEnum nextStatus, string comment)
@@ -206,10 +207,10 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <summary>
     /// Возвращает все объекты типа T из бд
     /// </summary>
-    public List<T> GetAll<T>() where T : BaseDal<Guid>
+    public async Task<List<T>> GetAllAsync<T>() where T : BaseDal<Guid>
     {
         var repository = GetRepository<T>() ;
-        return repository.GetAll();
+        return await repository.GetAllAsync();
     }
 
     /// <summary>

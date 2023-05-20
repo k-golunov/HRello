@@ -75,14 +75,14 @@ public class DepartamentController : BasePublicController
         return Ok();
     }
 
-        /// <summary>
+    /// <summary>
     /// Получение всех отделов
     /// </summary>
     /// <returns>все отделы</returns>
     [HttpGet("all")]
-    public IActionResult GetAllDepartment()
+    public async Task<IActionResult> GetAllDepartment()
     {
-        var a = _departamentManager.GetAll();
+        var a = await _departamentManager.GetAllAsync();
         return Ok(a);
     }
 }

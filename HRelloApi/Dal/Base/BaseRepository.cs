@@ -71,8 +71,8 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
         return dal.Id;
     }
 
-    public virtual List<T> GetAll()
+    public virtual async Task<List<T>> GetAllAsync()
     {
-        return _dbSet.ToList();
+        return await _dbSet.ToListAsync();
     }
 }
