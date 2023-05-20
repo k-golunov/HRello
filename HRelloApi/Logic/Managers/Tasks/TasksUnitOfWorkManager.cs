@@ -118,13 +118,14 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     private List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
     {
-        return tasks
+        var filteredTasks = tasks
             .Where(x => 
                 filters.Contains(typeof(TaskDal)
                     .GetProperty(field)?
                     .GetValue(x)?
                     .ToString()))
             .ToList();
+        return filteredTasks;
     }
 
     public async Task<Guid> ChangeStatus(Guid taskId, StatusEnum nextStatus, string comment)

@@ -155,9 +155,9 @@ public class TaskController: BasePublicController
         var filters = _mapper.Map<Filters>(filtersRequest);
         var tasksDals = await _manager.GetAllAsync<TaskDal>();
         var filteredTasks = _manager.ApplyFilters(filters, tasksDals);
-        var tasks = tasksDals.Select(_mapper.Map<TaskResponse>).ToList();
+        var tasks = filteredTasks.Select(_mapper.Map<TaskResponse>).ToList();
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
-        return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10, tasks));
+        return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10 + 1, tasks));
     }
 
     /// <summary>
