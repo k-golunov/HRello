@@ -1,6 +1,7 @@
 using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using AutoMapper;
 using Dal;
 using Dal.Base;
 using Dal.Base.Entitities;
@@ -12,6 +13,7 @@ using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
 using Logic.Exceptions.Tasks;
 using Logic.Exceptions.User;
+using Logic.Managers.Tasks.Filters;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 using Microsoft.AspNetCore.Identity;
@@ -47,6 +49,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     private readonly IBlockRepository _blockRepository;
 
     private readonly UserManager<UserDal> _userManager;
+    private readonly IMapper _mapper;
 
     /// <summary>
     /// Конструтор
@@ -57,7 +60,8 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         IBossTaskResultsRepository bossTaskResultsRepository, 
         IUserTaskResultsRepository userTaskResultsRepository,
         IBlockRepository blockRepository,
-        UserManager<UserDal> userManager)
+        UserManager<UserDal> userManager,
+        IMapper mapper)
     {
         _taskRepository = taskRepository;
         _historyRepository = historyRepository;
@@ -65,6 +69,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         _bossTaskResultsRepository = bossTaskResultsRepository;
         _blockRepository = blockRepository;
         _userManager = userManager;
+        _mapper = mapper;
     }
     
     /// <summary>
@@ -101,8 +106,9 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <summary>
     /// Возвращает список задач, соотвествующих входящим фильтрам
     /// </summary>
-    public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasks)
+    public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasksDals)
     {
+        var tasks = tasksDals.Select(_mapper.Map<FilteredTask>).ToList();
         foreach (var filter in filters.GetType().GetProperties())
         {
             var value = filter.GetValue(filters);
@@ -110,17 +116,19 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
                 tasks = ApplyFilter(tasks, filter.Name, value.ToString().Split(", "));
         }
 
-        return tasks;
+        var filteredTasksId = tasks.Select(x => x.Id).ToList();
+        var f = tasksDals.Where(t => filteredTasksId.Contains(t.Id)).ToList();
+        return f;
     }
 
     /// <summary>
     /// Возвращает список задач, соответсвующих одному входящему фильтру
     /// </summary>
-    private List<TaskDal> ApplyFilter(List<TaskDal> tasks, string field, string[] filters)
+    private List<FilteredTask> ApplyFilter(List<FilteredTask> tasks, string field, string[] filters)
     {
         var filteredTasks = tasks
             .Where(x => 
-                filters.Contains(typeof(TaskDal)
+                filters.Contains(typeof(FilteredTask)
                     .GetProperty(field)?
                     .GetValue(x)?
                     .ToString()))

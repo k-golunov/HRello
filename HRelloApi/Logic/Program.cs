@@ -1,4 +1,5 @@
 
+using Logic.Managers.Tasks.Filters.mapping;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
 using Serilog.Context;
@@ -27,6 +28,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped(typeof(UserManager<>));
+builder.Services.AddAutoMapper(typeof(FilteredTaskProfile));
 
 var app = builder.Build();
 
