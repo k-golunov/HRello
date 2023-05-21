@@ -22,6 +22,7 @@ using Logic.Exceptions.Base;
 using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
 using Logic.Managers.Tasks;
+using Logic.Managers.Tasks.Filters.mapping;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 using Microsoft.AspNetCore.Diagnostics;
@@ -71,6 +72,7 @@ builder.Services.AddAutoMapper(typeof(UserResultProfile));
 builder.Services.AddAutoMapper(typeof(BossResultProfile));
 builder.Services.AddAutoMapper(typeof(TaskProfile));
 builder.Services.AddAutoMapper(typeof(FiltersProfile));
+builder.Services.AddAutoMapper(typeof(FilteredTaskProfile));
 
 builder.Services.AddControllers()
     .AddJsonOptions(opt=> { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
