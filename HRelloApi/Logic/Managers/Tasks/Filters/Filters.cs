@@ -26,4 +26,8 @@ public class Filters
     /// Фильтр по департаменту
     /// </summary>
     public string? DepartmentId { get; init; } 
+    /// <summary>
+    /// Фильтр по статусу
+    /// </summary>
+    public int? Status { get; init; }
 }
