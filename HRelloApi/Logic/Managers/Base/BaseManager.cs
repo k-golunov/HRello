@@ -1,5 +1,6 @@
 ﻿using Dal.Base.Entitities;
 using Dal.Base.Interfaces;
+using Logic.Exceptions.Base;
 using Logic.Managers.Base.Interfaces;
 using Serilog;
 using Serilog.Events;
@@ -34,7 +35,13 @@ public class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
 
     public async Task<T?> GetAsync(TI id)
     {
-        return await Repository.GetAsync(id);
+        var response = await Repository.GetAsync(id);
+        if (response is null)
+        {
+            throw new NotFoundEntitiesException(typeof(T).Name);
+        }
+        
+        return response;
     }
 
     public async Task<TI> UpdateAsync(T dal)
@@ -45,6 +52,23 @@ public class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
     
     public async Task<List<T>> GetAllAsync()
     {
-        return await Repository.GetAllAsync();
+        var response = await Repository.GetAllAsync();
+        if (response.Count == 0)
+        {
+            throw new NotFoundEntitiesException(typeof(T).Name);
+        }
+        
+        return response;
+    }
+
+    public async Task<List<T>> GetByListIdAsync(List<TI> listId)
+    {
+        var response = await Repository.GetByListIdAsync(listId);
+        if (response.Count == 0)
+        {
+            throw new NotFoundEntitiesException(typeof(T).Name);
+        }
+        
+        return response;
     }
 }

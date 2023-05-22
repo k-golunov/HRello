@@ -180,6 +180,19 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return result;
     }
 
+    public async Task<List<T>> GetByListIdAsync<T>(List<Guid> listId) where T : BaseDal<Guid>
+    {
+        var repository = GetRepository<T>();
+        var response = await repository.GetByListIdAsync(listId);
+
+        if (response.Count == 0)
+        {
+            throw new BaseException("EntitiesNotFound", "данных не найдено", 400);
+        }
+
+        return response;
+    }
+
     /// <summary>
     /// обновляет передаваемую в дженерик параметре сущность новой моделью
     /// </summary>

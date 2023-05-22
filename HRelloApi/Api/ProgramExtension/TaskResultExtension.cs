@@ -1,6 +1,5 @@
-﻿using Dal.TaskResult.Entities;
-using Dal.TaskResult.Repositories;
-using Dal.TaskResult.Repositories.Interfaces;
+﻿using Dal.Results.Repositories;
+using Dal.Results.Repositories.Interfaces;
 using HRelloApi.Controllers.Public.Results.mapping;
 using Logic.Managers.Result;
 using Logic.Managers.Result.Interfaces;
@@ -12,9 +11,9 @@ public static class TaskResultExtension
 {
     public static IServiceCollection AddTasksResults(this IServiceCollection services)
     {
-        services.TryAddScoped<ITaskResultRepository, TaskResultRepository>();
-        services.TryAddScoped<ITaskResultManager, TaskResultManager>();
-        services.AddAutoMapper(typeof(TaskResultMapping));
+        services.TryAddScoped<IResultRepository, ResultRepository>();
+        services.TryAddScoped<IResultManager, ResultManager>();
+        services.AddAutoMapper(typeof(ResultMapping));
 
         return services;
     }

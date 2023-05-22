@@ -91,7 +91,7 @@ public class AuthorizeController : BasePublicController
             var claims = new List<Claim>();
             claims.Add(new Claim("Email", model.Email));
             claims.Add(new Claim("DepartmentId", model.DepartamentId.ToString()));
-            claims.Add(new Claim("Role", model.Role));
+            claims.Add(new Claim(ClaimTypes.Role, model.Role));
 
             await _userManager.AddClaimsAsync(user, claims);
         }
@@ -105,11 +105,16 @@ public class AuthorizeController : BasePublicController
         });
     }
 
-    private string GetToken(UserDal user, IEnumerable<Claim> principal)
+    private async Task<string> GetToken(UserDal user, IEnumerable<Claim> principal)
     {
         var claims = principal.ToList();
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
         claims.Add(new Claim("userId", user.Id));
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+           claims.Add(new Claim(ClaimTypes.Role, role)); 
+        }
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
         var token = new JwtSecurityToken
@@ -169,7 +174,7 @@ public class AuthorizeController : BasePublicController
 
             return Ok(new TokenResponse
             {
-                AccessToken = token,
+                AccessToken = await token,
                 RefreshToken = "Нет реализации)))",
                 UserId = user.Id
             });
