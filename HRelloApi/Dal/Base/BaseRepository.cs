@@ -26,7 +26,7 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
     /// </summary>
     /// <param name="dal">Сущность, которую нужно вставить</param>
     /// <returns>Id новой записи</returns>
-    public async Task<TI> InsertAsync(T dal)
+    public virtual async Task<TI> InsertAsync(T dal)
     {
         var entity = await _dbSet.AddAsync(dal);
         await _context.SaveChangesAsync();
@@ -37,7 +37,7 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
     /// Удаляет запись из бд по ее Id
     /// </summary>
     /// <param name="id">уникальный идентификатор записи</param>
-    public async Task DeleteAsync(TI id)
+    public virtual async Task DeleteAsync(TI id)
     {
         var entity = await _dbSet.FindAsync(id);
         if (entity != null)
@@ -64,15 +64,15 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
     /// </summary>
     /// <param name="dal">Сущность для обновления</param>
     /// <returns>Id записи</returns>
-    public async Task<TI> UpdateAsync(T dal)
+    public virtual async Task<TI> UpdateAsync(T dal)
     {
         _context.Entry(dal).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return dal.Id;
     }
 
-    public List<T> GetAll()
+    public virtual async Task<List<T>> GetAllAsync()
     {
-        return _dbSet.ToList();
+        return await _dbSet.ToListAsync();
     }
 }

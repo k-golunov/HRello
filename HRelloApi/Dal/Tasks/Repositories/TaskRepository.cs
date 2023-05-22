@@ -19,4 +19,12 @@ public class TaskRepository: BaseRepository<TaskDal, Guid>, ITaskRepository
             .Include(x => x.Block)
             .FirstAsync(x => x.Id == id);
     }
+
+    public override async Task<List<TaskDal>> GetAllAsync()
+    {
+        return await _dbSet
+                .Include(x => x.Block)
+                .Include(x => x.User)
+                .ToListAsync();
+    }
 }

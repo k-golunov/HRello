@@ -1,5 +1,6 @@
 ﻿using Dal.Base.Interfaces;
 using Dal.Entities;
+using Dal.User.Models;
 using Dal.User.Repositories.Interfaces;
 using Logic.Exceptions.Base;
 using Logic.Managers.Base;

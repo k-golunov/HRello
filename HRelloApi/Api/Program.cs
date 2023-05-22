@@ -15,12 +15,14 @@ using Dal.Tasks.Repositories.Interfaces;
 using Dal.User.Repositories.Interfaces;
 using HRelloApi.Controllers.Public.Auth.Mapping;
 using HRelloApi.Controllers.Public.Departament.Mapping;
+using HRelloApi.Controllers.Public.Tasks.mapping;
 using HRelloApi.Controllers.Public.User.Mapping;
 using HRelloApi.ProgramExtension;
 using Logic.Exceptions.Base;
 using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
 using Logic.Managers.Tasks;
+using Logic.Managers.Tasks.Filters.mapping;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 using Microsoft.AspNetCore.Diagnostics;
@@ -66,12 +68,19 @@ builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
 builder.Services.AddAutoMapper(typeof(DepartamentProfiles));
 builder.Services.AddAutoMapper(typeof(UserMapping));
+builder.Services.AddAutoMapper(typeof(UserResultProfile));
+builder.Services.AddAutoMapper(typeof(BossResultProfile));
+builder.Services.AddAutoMapper(typeof(TaskProfile));
+builder.Services.AddAutoMapper(typeof(FiltersProfile));
+builder.Services.AddAutoMapper(typeof(FilteredTaskProfile));
 
 builder.Services.AddControllers()
     .AddJsonOptions(opt=> { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddHost();
 
 builder.Services.AddSwagger();
 
@@ -90,6 +99,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseIdentityServer();
+
+app.UseCors();
 
 // Откючаем (комментируем) если не требуется отчистка бд 
 // т.к. все данные из бд будут удаленны

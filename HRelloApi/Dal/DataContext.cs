@@ -1,5 +1,7 @@
 ﻿using Dal.Entities;
+using Dal.TaskResult.Entities;
 using Dal.Tasks.Entities;
+using Dal.User.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +16,7 @@ public sealed class DataContext : IdentityDbContext<UserDal>
     public DbSet<UserTaskResultDal> UserTaskResults { get; set; }
     public DbSet<BlockDal> Block { get; set; }
     public DbSet<DepartamentDal> Departament { get; set; }
+    public DbSet<TaskResultDal> TaskResult { get; set; }
 
     public async Task<int> SaveChangesAsync()
     {

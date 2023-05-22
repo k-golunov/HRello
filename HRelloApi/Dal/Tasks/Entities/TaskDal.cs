@@ -2,7 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using Dal.Base.Entitities;
 using Dal.Entities;
+using Dal.TaskResult.Entities;
 using Dal.Tasks.Enum;
+using Dal.User.Models;
 
 namespace Dal.Tasks.Entities;
 
@@ -78,4 +80,9 @@ public class TaskDal : BaseDal<Guid>
     /// Хранит отдел пользователя и все данные по нему
     /// </summary>
     public DepartamentDal Departament { get; set; }
+    
+    /// <summary>
+    /// итоги от руководителя, к которым привязанна задача
+    /// </summary>
+    public List<TaskResultDal> TaskResults { get; set; }
 }

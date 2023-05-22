@@ -2,7 +2,7 @@
 using Dal.Tasks.Enum;
 using Newtonsoft.Json;
 
-namespace HRelloApi.Controllers.Public.Task.dto.request;
+namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 
 /// <summary>
 /// Входная модель данных для создания сущности задачи
@@ -44,8 +44,7 @@ public record CreateTaskRequest
     /// </summary>
     [Required]
     [JsonProperty("Block")]
-    [Range(0,8)]
-    public required BlockEnum Block { get; init; }
+    public required Guid BlockId { get; init; }
     
     /// <summary>
     /// Планируемый вес задачи
@@ -60,11 +59,4 @@ public record CreateTaskRequest
     [Required]
     [JsonProperty("WaitResult")]
     public required string WaitResult { get; init; }
-    
-    /// <summary>
-    /// идентификатор отдела задачи
-    /// </summary>
-    [Required]
-    [JsonProperty("UserId")]
-    public required Guid DepartamentId { get; init; }
 }
