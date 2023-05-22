@@ -63,6 +63,7 @@ builder.Services.AddScoped<IDepartamentManager, DepartamentManager>();
 builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 //работа с задачами
 builder.Services.AddTasks();
+builder.Services.AddTasksResults();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));
