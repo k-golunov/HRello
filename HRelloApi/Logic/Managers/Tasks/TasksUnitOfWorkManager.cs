@@ -11,6 +11,7 @@ using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
+using Logic.Exceptions.Base;
 using Logic.Exceptions.Tasks;
 using Logic.Exceptions.User;
 using Logic.Managers.Tasks.Filters;
@@ -217,8 +218,14 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// </summary>
     public async Task<List<T>> GetAllAsync<T>() where T : BaseDal<Guid>
     {
-        var repository = GetRepository<T>() ;
-        return await repository.GetAllAsync();
+        var repository = GetRepository<T>();
+        var allData = await repository.GetAllAsync();
+        if (allData.Count == 0)
+        {
+            throw new BaseException("EntityNotFoundException", "ни одной сущности не найдено", 400);
+        }
+        
+        return allData;
     }
 
     /// <summary>
