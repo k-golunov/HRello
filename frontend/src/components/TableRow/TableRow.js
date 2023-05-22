@@ -42,7 +42,7 @@ function TableRow(props) {
                     </TableCell>
 
                     if(cell.type === "percent")
-                        return <TableCell width={cell.width}>{cell.percent}%</TableCell>
+                        return <TableCell width={cell.width}>{cell.percent === -1? "-":cell.percent+"%"}</TableCell>
 
                     if(cell.type === "header")
                         return <TableCell width={cell.width} alignment={cell.alignment}>
@@ -62,6 +62,11 @@ function TableRow(props) {
                         return <TableCell width={cell.width} alignment={cell.alignment}>
                             <Status type={cell.status}/>
                         </TableCell>
+
+                    if(cell.type === "copyLink")
+                    return <TableCell width={cell.width} alignment={cell.alignment}>
+                        <div className={s.copyLink}>Скопировать</div>
+                    </TableCell>
                 })
             }
         </div>

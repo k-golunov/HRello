@@ -66,3 +66,21 @@
     border-color: #5FCF65;
     fill: #5FCF65;
 }
+
+.Wait svg,
+.Wait {
+    border-color: #F8A34D;
+    fill: #F8A34D;
+}
+
+.NotWorking svg,
+.NotWorking {
+    border-color: #F96057;
+    fill: #F96057;
+}
+
+.Registr svg,
+.Registr {
+    border-color: #5FCF65;
+    fill: #5FCF65;
+}

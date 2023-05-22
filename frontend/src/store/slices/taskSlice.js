@@ -1,24 +1,8 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {useNavigate} from "react-router-dom";
-import USER_API from '../../api/userAPI';
-import {getProfile} from "./profileSlice";
-import {togglePopup} from "./popupSlice";
-import jwt from 'jwt-decode'
-import {ToastContainer, toast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import TASK_API, {GET_TASK_URL, UPDATE_TASK_URL} from "../../api/taskAPI";
+import TASK_API, {GET_TASK_USER_URL} from "../../api/taskAPI";
+import {toast} from "react-toastify";
 
-const loginNotify = () => toast.success('🦄 Вы успешно авторизовались!', {
-    position: "bottom-right",
-    autoClose: 3000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "colored",
-});
-
+let createTaskToast;
 
 export const getTask = createAsyncThunk(
     'task/get',
@@ -60,16 +44,100 @@ export const getTask = createAsyncThunk(
     }
 );
 
+export const getTaskUser = createAsyncThunk(
+    'task/get/user',
+    async function (userId, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+
+            let response = await fetch(TASK_API.GET_TASK_USER_URL+userId, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.json();
+            // response.accessToken = response.accessToken.accessToken;
+
+            // debugger;
+            console.log(response);
+            dispatch(setTaskUser(response));
+            // dispatch(getProfile());
+            // dispatch(togglePopup("signIn"));
+            //loginNotify();
+
+            // navigate(`/profile`);
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const createTask = createAsyncThunk(
+    'task/create',
+    async function (task, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            console.log("CreateTask")
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            console.log(accessToken)
+            let response = await fetch(TASK_API.CREATE_TASK_URL, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                },
+                body: JSON.stringify(task),
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.json();
+            // debugger;
+            console.log(response)
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            // dispatch(getProfile());
+            // dispatch(togglePopup("signIn"));
+            // createNotify();
+
+            // navigate(`/profile`);
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const updateTask = createAsyncThunk(
     'task/update',
     async function (task, {rejectWithValue, dispatch}) {
         // let navigate = useNavigate();
         try {
-
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
             let response = await fetch(TASK_API.UPDATE_TASK_URL, {
                 method: 'put',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: accessToken
                 },
                 body: JSON.stringify(task)
             });
@@ -87,12 +155,6 @@ export const updateTask = createAsyncThunk(
 
             // debugger;
             console.log(response);
-            //dispatch(setTask(response));
-            // dispatch(getProfile());
-            // dispatch(togglePopup("signIn"));
-            //loginNotify();
-
-            // navigate(`/profile`);
 
             return response;
         } catch (error) {
@@ -103,6 +165,9 @@ export const updateTask = createAsyncThunk(
 
 const initialState = {
     id: null,
+    departmentID: null,
+    userID: null,
+    userName: null,
     name: null,
     year: null,
     quarter: null,
@@ -110,7 +175,8 @@ const initialState = {
     block: null,
     plannedWeight: null,
     waitResult: null,
-    taskStatus: null
+    taskStatus: null,
+    isLoading: true,
 };
 
 const taskSlice = createSlice({
@@ -119,18 +185,24 @@ const taskSlice = createSlice({
     reducers: {
         setTask(state, action) {
             console.log(action)
-            state.id = action.payload.id
-            state.name = action.payload.name
-            state.year = action.payload.year
-            state.quarter = action.payload.quarter
-            state.category = action.payload.category
-            state.block = action.payload.block
-            state.plannedWeight = action.payload.plannedWeight
-            state.waitResult = action.payload.waitResult
-            state.taskStatus = action.payload.status
+            state.id = action.payload.id;
+            state.departmentID = action.payload.departmentId;
+            state.userID = action.payload.userId;
+            state.name = action.payload.name;
+            state.year = action.payload.year;
+            state.quarter = action.payload.quarter;
+            state.category = action.payload.category;
+            state.block = action.payload.block;
+            state.plannedWeight = action.payload.plannedWeight;
+            state.waitResult = action.payload.waitResult;
+            state.taskStatus = action.payload.status;
+            state.isLoading = false;
         },
         removeTask(state) {
             state.id = null
+            state.departmentID = null
+            state.userID = null
+            state.userName = null
             state.name = null
             state.year = null
             state.quarter = null
@@ -139,6 +211,11 @@ const taskSlice = createSlice({
             state.plannedWeight = null
             state.waitResult = null
             state.status = null
+            state.isLoading = true;
+        },
+        setTaskUser(state, action) {
+            console.log(action)
+            state.userName = action.payload.surname + " " + action.payload.name + " " + action.payload.patronymic
         },
     },
     extraReducers: {
@@ -151,10 +228,32 @@ const taskSlice = createSlice({
         [getTask.rejected]: (state, action) => {
             state.status = 'rejected';
             state.error = action.payload;
-        }
+        },
+        [createTask.pending]: (state, action) => {
+            createTaskToast = toast.loading("Добавляю задачу...")
+        },
+        [createTask.fulfilled]: (state, action) => {
+            toast.update(createTaskToast,
+                {
+                    render: "Задача успешно добавлена",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
+        },
+        [createTask.rejected]: (state, action) => {
+            toast.update(createTaskToast,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
+        },
     },
 });
 debugger;
-export const {setTask, removeTask} = taskSlice.actions;
+export const {setTask, removeTask, setTaskUser} = taskSlice.actions;
 
 export default taskSlice.reducer;
