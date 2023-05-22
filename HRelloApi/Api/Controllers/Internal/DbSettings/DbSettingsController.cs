@@ -1,4 +1,7 @@
 ﻿using Dal.Entities;
+using Dal.TaskResult.Entities;
+using Dal.Tasks.Entities;
+using Dal.Tasks.Repositories.Interfaces;
 using Dal.User.Models;
 using Logic.Constants;
 using Logic.Managers.Departament.Interfaces;
@@ -18,11 +21,14 @@ public class DbSettingsController : ControllerBase
 {
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IDepartamentManager _departamentManager;
-    
-    public DbSettingsController(RoleManager<IdentityRole> roleManager, IDepartamentManager departamentManager)
+    private readonly IBlockRepository _blockRepository;
+
+    public DbSettingsController(RoleManager<IdentityRole> roleManager, IDepartamentManager departamentManager,
+        IBlockRepository blockRepository)
     {
         _departamentManager = departamentManager;
         _roleManager = roleManager;
+        _blockRepository = blockRepository;
     }
 
     /// <summary>
@@ -69,5 +75,53 @@ public class DbSettingsController : ControllerBase
         };
         await _departamentManager.InsertAsync(department4);
         return Ok();
+    }
+
+    /// <summary>
+    /// Создание дефолтных блоков в бд
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(200)]
+    [HttpPost("set-default-block")]
+    public async Task<IActionResult> SetDefaultBlockAsync()
+    {
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.Adaptation
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.Estimation
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.Selection
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.CorporateCulture
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.InternalWork
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.StaffDevelopment
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.HRSupport
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.HRBrandExternal
+        });
+        await _blockRepository.InsertAsync(new BlockDal
+        {
+            Value = BlockConstants.PersonnelAccountingAndSalary
+        });
+        
+        return Ok(await _blockRepository.GetAllAsync());
     }
 }
