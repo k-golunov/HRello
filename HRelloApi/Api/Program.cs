@@ -22,6 +22,7 @@ using Logic.Exceptions.Base;
 using Logic.Managers.Departament;
 using Logic.Managers.Departament.Interfaces;
 using Logic.Managers.Tasks;
+using Logic.Managers.Tasks.Filters.mapping;
 using Logic.Managers.Tasks.Interfaces;
 using Logic.Managers.Tasks.StatusesTree;
 using Microsoft.AspNetCore.Diagnostics;
@@ -71,6 +72,7 @@ builder.Services.AddAutoMapper(typeof(UserResultProfile));
 builder.Services.AddAutoMapper(typeof(BossResultProfile));
 builder.Services.AddAutoMapper(typeof(TaskProfile));
 builder.Services.AddAutoMapper(typeof(FiltersProfile));
+builder.Services.AddAutoMapper(typeof(FilteredTaskProfile));
 
 builder.Services.AddControllers()
     .AddJsonOptions(opt=> { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
@@ -102,13 +104,13 @@ app.UseCors();
 
 // Откючаем (комментируем) если не требуется отчистка бд 
 // т.к. все данные из бд будут удаленны
-using (var scope = 
+/*using (var scope = 
        app.Services.CreateScope())
 using (var context = scope.ServiceProvider.GetService<DataContext>())
 {
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
-}
+}*/
 
 app.MapControllers();
 app.UseExceptionHandler(a => a.Run(async context =>

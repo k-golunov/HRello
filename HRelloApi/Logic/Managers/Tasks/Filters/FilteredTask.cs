@@ -1,11 +1,8 @@
 ﻿namespace Logic.Managers.Tasks.Filters;
 
-/// <summary>
-/// Класс отвечающий за фильтры
-/// Содержит поля, по которым возможна фильтрация задач
-/// </summary>
-public class Filters
-{ 
+public class FilteredTask
+{
+    public Guid Id;
     /// <summary>
     /// Фильтр по году
     /// </summary>

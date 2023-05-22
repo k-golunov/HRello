@@ -17,8 +17,8 @@ public class FiltersProfile: Profile
         CreateMap<FiltersRequest, Filters>()
             .ForMember(dst => dst.Year, opt => opt.MapFrom(src => src.Year))
             .ForMember(dst => dst.Quarter, opt => opt.MapFrom(src => src.Quarter))
-            .ForMember(dst => dst.Block, opt => opt.MapFrom(src => src.Block))
+            .ForMember(dst => dst.BlockId, opt => opt.MapFrom(src => src.Block))
             .ForMember(dst => dst.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
-            .ForMember(dst => dst.User, opt => opt.MapFrom(src => src.User));
+            .ForMember(dst => dst.UserId, opt => opt.MapFrom(src => src.User));
     }
 }
