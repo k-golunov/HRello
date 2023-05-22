@@ -1,6 +1,5 @@
 import {useSelector, useDispatch} from 'react-redux';
 import {setUser} from '../store/slices/userSlice';
-import {getProfile} from '../store/slices/profileSlice';
 
 export function useAuth() {
     const user = useSelector((state) => state.user);
@@ -10,14 +9,16 @@ export function useAuth() {
         accessToken: localStorage.getItem('USSCHR-accessToken'),
         email: localStorage.getItem('USSCHR-email'),
         id: localStorage.getItem('USSCHR-userId'),
-        //id: localStorage.getItem('userId'),
-        //role: localStorage.getItem('role'),
+        role: localStorage.getItem('USSCHR-role'),
+        departmentID: localStorage.getItem('USSCHR-departmentID'),
     };
 
     if (
         localUser.accessToken &&
         localUser.email &&
         localUser.id &&
+        localUser.role &&
+        localUser.departmentID &&
         //localUser.role &&
         !user.accessToken
     ) {
@@ -26,20 +27,6 @@ export function useAuth() {
 
     return {
         isAuth: !!user.accessToken,
-        //isAdmin: true,
         ...user,
     };
-
-    // if (user.role === "Admin")
-    //   return {
-    //     isAuth: !!user.accessToken,
-    //     isAdmin: true,
-    //     ...user,
-    //   };
-    // else
-    //   return {
-    //     isAuth: !!user.accessToken,
-    //     isAdmin: false,
-    //     ...user,
-    //   };
 }

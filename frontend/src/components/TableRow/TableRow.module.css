@@ -3,6 +3,7 @@
     flex-direction: row;
     border-bottom: 1px solid #B5B2B2;
     cursor: pointer;
+    max-width: 1272px;
 }
 
 .tableRowHeader {

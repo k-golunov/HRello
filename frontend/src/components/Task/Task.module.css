@@ -15,6 +15,15 @@
     justify-content: space-between;
 }
 
+.taskAction {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+
+    color: #F99D1D;
+}
+
 .taskInformationLeftContainer {
     display: flex;
     flex-direction: column;

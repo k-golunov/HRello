@@ -4,21 +4,20 @@ import Input from "../Input/Input";
 import Button from "../Button/Button";
 import Form from "react-bootstrap/Form";
 import {useForm} from "react-hook-form";
-import {signInUser, signUpUser} from '../../store/slices/userSlice';
 import {useDispatch} from "react-redux";
-import md5 from 'md5';
-import {toast} from "react-toastify";
-import {Link} from "react-router-dom";
 import PageTitle from "../PageTitle/PageTitle";
 import Dropdown from "../Dropdown/Dropdown";
-import {createTask} from "../../store/slices/tasksSlice";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import {useTask} from "../../hooks/use-task";
 import {updateTask} from "../../store/slices/taskSlice";
+import {useBlocks} from "../../hooks/use-blocks";
+import Loading from "../Loading/Loading";
+import {getBlocks} from "../../store/slices/blocksSlice";
 
 function EditTaskForm(props) {
     const dispatch = useDispatch();
-    const {register, handleSubmit, reset, formState: {errors}} = useForm({
+    const blocks = useBlocks();
+    const {register, handleSubmit, reset, getValues, formState: {errors}} = useForm({
         defaultValues: {
             editTaskName: '',
             editTaskYear: '',
@@ -29,21 +28,20 @@ function EditTaskForm(props) {
         mode: "onBlur"
     });
 
+    useEffect(() => {
+        dispatch(getBlocks());
+    }, []);
+
     const [selectedBlock, setSelectedBlock] = useState([]);
     const [selectedQuarter, setSelectedQuarter] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
 
-    const blocks = [
-        {value: 'Selection', label: 'Подбор'},
-        {value: 'Adaptation', label: 'Адаптация'},
-        {value: 'StaffDevelopment', label: 'Развитие персонала'},
-        {value: 'HRSupport', label: 'HR-сопровождение'},
-        {value: 'CorporateCulture', label: 'Корпоративная культура'},
-        {value: 'PersonnelAccountingAndSalary', label: 'Кадровый учет и з/п'},
-        {value: 'HRBrandExternal', label: 'HR-бренд внешний'},
-        {value: 'InternalWork', label: 'Внутренняя работа'},
-        {value: 'Estimation', label: 'Оценка'},
-    ]
+    let blocksFilter = []
+
+    if (!blocks.isLoading)
+        blocksFilter = blocks.blocks.map(block =>{
+            return { value: block.id, label: block.value}
+        })
 
     const categories = [
         {value: 'Planned', label: 'Запланированная'},
@@ -66,10 +64,9 @@ function EditTaskForm(props) {
         });
         // const block = blocks.findIndex(block => block.value === props.task.block);
         // console.log(props.selectedBlock, block)
-        setSelectedBlock(blocks.find(block => block.value === props.task.block))
+        setSelectedBlock(blocksFilter.find(block => block.label === props.task.block))
         // setSelectedCategory(categories.find(category => category.value === props.task.category))
         setSelectedQuarter(quarters.find(quarter => quarter.value === props.task.quarter))
-        console.log(selectedBlock)
         setSelectedCategory(categories.find(category => category.value === props.task.category))
     }, [props.task]);
 
@@ -89,16 +86,21 @@ function EditTaskForm(props) {
             year: parseInt(payload.editTaskYear),
             quarter: selectedQuarter.value,
             category: selectedCategory.value,
-            block: selectedBlock.value,
-            plannedWeight: parseInt(payload.editTaskPlaningWeight),
+            blockId: selectedBlock.value,
             waitResult: payload.editTaskPlaningResult,
-            // comment: payload.editTaskComment,
+            comment: payload.editTaskComment,
         }
         console.log(data);
-        //console.log("SELECTED QUARTER", selectedQuarter);
+        if (payload.editTaskPlaningWeight && selectedCategory.value !== "NotPlanned")
+            data["plannedWeight"] = parseInt(payload.editTaskPlaningWeight)
+        else
+            data["plannedWeight"] = -1
 
         dispatch(updateTask(data));
     }
+
+    if(blocks.isLoading)
+        return <Loading/>
 
     return (
         <div className={s.createTaskForm}>
@@ -132,7 +134,7 @@ function EditTaskForm(props) {
                                type="number"/>
                     </div>
                     <div className={s.formRow}>
-                        <Dropdown title="Блок задачи" options={blocks} minWidth="353px" onChange={setSelectedBlock}
+                        <Dropdown title="Блок задачи" options={blocksFilter} minWidth="353px" onChange={setSelectedBlock}
                                   value={selectedBlock}
 
                         />
@@ -149,17 +151,21 @@ function EditTaskForm(props) {
                                   onChange={setSelectedCategory}
                                   value={selectedCategory}
                         />
-                        <Input register={register}
-                               registerName='editTaskPlaningWeight'
-                               options={
-                                   {
-                                       required: true
-                                   }
-                               }
-                               errors={errors}
-                               title="Планируемый вес задачи, %"
-                               require={true}
-                               type="number"/>
+                        {
+                            selectedCategory.value === "Planned" ?
+                                <Input register={register}
+                                       registerName='editTaskPlaningWeight'
+                                       options={
+                                           {
+                                               required: true
+                                           }
+                                       }
+                                       errors={errors}
+                                       title="Планируемый вес задачи, %"
+                                       require={true}
+                                       type="number"/> :<></>
+                        }
+
                     </div>
 
                     <Input register={register}

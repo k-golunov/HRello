@@ -1,10 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import { useNavigate } from "react-router-dom";
-import USER_API from '../../api/userAPI';
-import {getProfile} from "./profileSlice";
-import {togglePopup} from "./popupSlice";
+import USER_API, {GET_USER_URL} from '../../api/userAPI';
 import jwt from 'jwt-decode'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const loginNotify = () => toast.success('🦄 Вы успешно авторизовались!', {
@@ -63,18 +60,43 @@ export const signInUser = createAsyncThunk(
                 );
             }
 
-            response = await response.text();
-            // response.accessToken = response.accessToken.accessToken;
+            response = await response.json();
 
-            // debugger;
             console.log(response)
-            dispatch(setUser({accessToken: response, email: user.email}));
-            // dispatch(getProfile());
-            // dispatch(togglePopup("signIn"));
+            dispatch(setUser({accessToken: response.accessToken, email: user.email}));
+
             loginNotify();
 
-            // navigate(`/profile`);
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
+export const getUserName = createAsyncThunk(
+    'user/get/name',
+    async function (userID, {rejectWithValue, dispatch}) {
+        try {
+
+            let response = await fetch(USER_API.GET_USER_URL+"/"+userID, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.json();
+
+            dispatch(setUserName(response));
             return response;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -85,7 +107,6 @@ export const signInUser = createAsyncThunk(
 export const createUser = createAsyncThunk(
     'user/createUser',
     async function (user, {rejectWithValue, dispatch}) {
-        // let navigate = useNavigate();
         try {
             const accessToken = 'Bearer ' + localStorage.getItem('accessToken');
             let response = await fetch(USER_API.CREATE_USER_URL, {
@@ -160,8 +181,12 @@ const initialState = {
     id: null,
     email: null,
     accessToken: null,
+    departmentID: null,
     role: null,
-    // id: null,
+    name: null,
+    surname: null,
+    patronymic: null,
+
     status: null,
     error: null,
 };
@@ -175,27 +200,32 @@ const userSlice = createSlice({
             state.email = action.payload.email;
             // state.id = action.payload.id;
             state.accessToken = action.payload.accessToken;
-            state.id = jwt(action.payload.accessToken).Id;
+            state.id = jwt(action.payload.accessToken).userId;
             state.role = jwt(action.payload.accessToken).Role;
-            // state.role = action.payload.role;
-            // const accessToken = action.payload.accessToken.json();
+            state.departmentID = parseInt(jwt(action.payload.accessToken).DepartmentId);
 
             localStorage.setItem('USSCHR-accessToken', action.payload.accessToken);
             localStorage.setItem('USSCHR-userId', state.id);
-            // localStorage.setItem('userId', action.payload.id);
             localStorage.setItem('USSCHR-email', action.payload.email);
-            // localStorage.setItem('role', action.payload.role);
+            localStorage.setItem('USSCHR-departmentID', state.departmentID);
+            localStorage.setItem('USSCHR-role', state.role);
+        },
+        setUserName(state, action) {
+            state.name = action.payload.name;
+            state.surname = action.payload.surname;
+            state.patronymic = action.payload.patronymic;
         },
         removeUser(state) {
-            state.email = null;
             state.id = null;
+            state.email = null;
             state.accessToken = null;
-            // state.role = null;
+            state.departmentID = null;
+            state.role = null;
             localStorage.removeItem('USSCHR-accessToken');
             localStorage.removeItem('USSCHR-userId');
-            // localStorage.removeItem('userId');
             localStorage.removeItem('USSCHR-email');
-            // localStorage.removeItem('role');
+            localStorage.removeItem('USSCHR-departmentID');
+            localStorage.removeItem('USSCHR-role');
         },
     },
     extraReducers: {
@@ -224,6 +254,6 @@ const userSlice = createSlice({
     },
 });
 debugger;
-export const {setUser, removeUser} = userSlice.actions;
+export const {setUser, removeUser, setUserName} = userSlice.actions;
 
 export default userSlice.reducer;
