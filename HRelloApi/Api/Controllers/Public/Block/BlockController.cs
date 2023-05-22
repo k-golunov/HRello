@@ -25,7 +25,7 @@ public class BlockController: BasePublicController
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(BlockResponse), 200)]
-    public async Task<IActionResult> CreateBlockAsync([FromBody] CreateBlockRequest request)
+    public async Task<IActionResult> CreateBlockAsync(CreateBlockRequest request)
     {
         var block = new BlockDal(request.Value);
         var id = await _manager.InsertAsync(block);
