@@ -3,7 +3,7 @@
 /// <summary>
 /// модель ответа на запросы операций с блоками задач
 /// </summary>
-public class BlockResponse
+public record BlockResponse
 {
     /// <summary>
     /// id блока
