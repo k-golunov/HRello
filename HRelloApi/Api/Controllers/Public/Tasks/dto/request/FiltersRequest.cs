@@ -38,4 +38,9 @@ public class FiltersRequest
     /// </summary>
     [JsonProperty("DepartmentId")]
     public string? DepartmentId { get; init; }
+    /// <summary>
+    /// Фильтр по статусу
+    /// </summary>
+    [JsonProperty("Status")]
+    public int? Status { get; init; }
 }

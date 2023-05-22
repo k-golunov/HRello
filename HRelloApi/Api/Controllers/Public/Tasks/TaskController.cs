@@ -77,7 +77,7 @@ public class TaskController: BasePublicController
             throw new TaskNotFoundException(model.Id);
         var task = _mapper.Map(model, oldTask);
         var token = Request.Headers["Authorization"].ToString().Split(' ')[1];
-        var response = new TaskIdResponse { Id = await _manager.UpdateTaskAsync(task, model.BlockId, token) };
+        var response = new TaskIdResponse { Id = await _manager.UpdateTaskAsync(task, model.BlockId, token, model.Comment) };
         return Ok(response);
     }
 

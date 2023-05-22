@@ -64,4 +64,12 @@ public record EditTaskRequest
     [JsonProperty("WaitResult")]
     public required string WaitResult { get; init; }
     
+    
+    /// <summary>
+    /// Ожидаемый результат
+    /// </summary>
+    [Required]
+    [JsonProperty("Comment")]
+    public required string? Comment { get; init; }
+    
 }

@@ -95,12 +95,12 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <param name="blockId">id обновленного блока задачи</param>
     /// <param name="token">jwt пользователя</param>
     /// <returns>id обновленной записи</returns>
-    public async Task<Guid> UpdateTaskAsync(TaskDal taskDal, Guid blockId, string token)
+    public async Task<Guid> UpdateTaskAsync(TaskDal taskDal, Guid blockId, string token, string? comment)
     {
         await CheckAndSetDataForTask(taskDal, token, blockId);
         var taskId = await _taskRepository.UpdateAsync(taskDal);
         var action = await ChangeStatusAndGetAction(taskDal, StatusEnum.OnChecking);
-        await CreateNewHistoryEntry(taskDal, action);
+        await CreateNewHistoryEntry(taskDal, action, comment);
         return taskId;
     }
 
