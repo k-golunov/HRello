@@ -67,9 +67,7 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Редактирования данных о задаче
     /// </summary>
-    #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    #endif
     [HttpPut]
     [ProducesResponseType(typeof(TaskIdResponse), 200)]
     public async Task<IActionResult> EditTask(EditTaskRequest model)
