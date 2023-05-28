@@ -37,7 +37,7 @@ public class ResultController : BasePublicController
     /// <returns></returns>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(GetTaskResultResponse), 200)]
-    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetTaskResultsAsync([FromRoute] Guid id)
     {
         var taskResultDal = await _taskResultManager.GetAsync(id);

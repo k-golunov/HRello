@@ -188,7 +188,7 @@ public class AuthorizeController : BasePublicController
     /// </summary>
     /// <param name="userId">идентификатор пользователя</param>
     /// <returns></returns>
-    [HttpGet("check-invite/{userId:guid}")]
+    [HttpGet("check-invite/{userId}")]
     public async Task<IActionResult> CheckInvite([FromRoute] string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
