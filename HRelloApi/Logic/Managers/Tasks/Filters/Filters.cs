@@ -29,5 +29,5 @@ public class Filters
     /// <summary>
     /// Фильтр по статусу
     /// </summary>
-    public int? Status { get; init; }
+    public string? Status { get; init; }
 }
