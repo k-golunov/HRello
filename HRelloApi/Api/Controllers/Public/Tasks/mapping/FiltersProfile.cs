@@ -19,6 +19,8 @@ public class FiltersProfile: Profile
             .ForMember(dst => dst.Quarter, opt => opt.MapFrom(src => src.Quarter))
             .ForMember(dst => dst.BlockId, opt => opt.MapFrom(src => src.Block))
             .ForMember(dst => dst.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
-            .ForMember(dst => dst.UserId, opt => opt.MapFrom(src => src.User));
+            .ForMember(dst => dst.UserId, opt => opt.MapFrom(src => src.User))
+            .ForMember(dst => dst.Status, opt => opt.MapFrom(src => src.Status));
+
     }
 }

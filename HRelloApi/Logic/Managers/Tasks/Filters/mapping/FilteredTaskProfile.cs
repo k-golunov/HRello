@@ -13,6 +13,7 @@ public class FilteredTaskProfile : Profile
             .ForMember(dst => dst.Quarter, ost => ost.MapFrom(src => src.Quarter))
             .ForMember(dst => dst.BlockId, ost => ost.MapFrom(src => src.Block.Id))
             .ForMember(dst => dst.UserId, ost => ost.MapFrom(src => src.User.Id))
+            .ForMember(dst => dst.Status, ost => ost.MapFrom(src => src.Status))
             .ForMember(dst => dst.DepartmentId, ost => ost.MapFrom(src => src.DepartamentId));
     }
 }
