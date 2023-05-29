@@ -2,6 +2,7 @@
 using Dal;
 using Dal.Entities;
 using Dal.User.Repositories;
+using Dal.User.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -63,7 +64,7 @@ public static class AuthenticationExtension
         
         services.AddScoped<RoleManager<IdentityRole>>();
         services.AddScoped<UserManager<UserDal>>();
-        services.AddScoped<UserRepository>();
+        services.AddTransient<IUserRepository, UserRepository>();
         
         return services;
     }

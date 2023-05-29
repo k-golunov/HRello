@@ -1,7 +1,9 @@
-﻿using Dal.Entities;
+﻿using Dal.Base;
+using Dal.Entities;
 using Dal.User.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Dal.User.Repositories;
@@ -10,7 +12,20 @@ namespace Dal.User.Repositories;
 /// Репозиторий, который должен быть реализацией над айдентити
 /// В данные момент не реализовано.
 /// </summary>
-public class UserRepository
+public class UserRepository : IUserRepository
 {
-    
+    private readonly DataContext _context;
+    protected readonly DbSet<UserDal> _dbSet;
+
+    public UserRepository(DataContext context)
+    {
+        _context = context;
+        _dbSet = context.Set<UserDal>();
+    }
+
+    public async Task ChangePasswordAsync(UserDal dal)
+    {
+        _context.Entry(dal).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+    }
 }
