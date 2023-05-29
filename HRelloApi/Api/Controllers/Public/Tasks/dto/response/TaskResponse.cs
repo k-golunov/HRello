@@ -8,7 +8,7 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.response;
 /// <summary>
 /// Модель данных задачи для ответа 
 /// </summary>
-public class TaskResponse
+public record TaskResponse
 {
     /// <summary>
     /// Идентификатор задачи
@@ -87,4 +87,12 @@ public class TaskResponse
     [Required]
     [JsonProperty("DepartmentId")]
     public required int DepartmentId { get; init; }
+    
+    [Required]
+    [JsonProperty("UserResult")]
+    public required UserResultResponse? UserResult { get; set; }
+    
+    [Required]
+    [JsonProperty("BossResult")]
+    public required BossResultResponse? BossResult { get; set; }
 }
