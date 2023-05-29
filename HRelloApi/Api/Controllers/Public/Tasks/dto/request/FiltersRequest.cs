@@ -42,5 +42,5 @@ public class FiltersRequest
     /// Фильтр по статусу
     /// </summary>
     [JsonProperty("Status")]
-    public int? Status { get; init; }
+    public string? Status { get; init; }
 }
