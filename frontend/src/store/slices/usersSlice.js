@@ -1,28 +1,31 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import USER_API from '../../api/userAPI';
-import 'react-toastify/dist/ReactToastify.css';
+import {createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk} from '@reduxjs/toolkit';
+import API from "../../api/API";
+import {getProfile} from "./profileSlice";
+import {toast} from "react-toastify";
+
 
 export const getUsers = createAsyncThunk(
     'users/get',
     async function (_, {rejectWithValue, dispatch}) {
         try {
-            let response = await fetch(USER_API.GET_USERS_URL, {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
+            let response = await fetch(
+                `${API.GET_USERS}`,
+                {
+                    method: 'get',
                 }
-            });
+            );
 
             if (!response.ok) {
+                response = await response.json();
                 throw new Error(
-                    `${response.status}${
-                        response.statusText ? ' ' + response.statusText : ''
-                    }`
+                    `${response.error}`
                 );
             }
 
             response = await response.json();
-            dispatch(setUsers(response));
+
+            dispatch(setUsers(response.data));
 
             return response;
         } catch (error) {
@@ -33,7 +36,7 @@ export const getUsers = createAsyncThunk(
 
 const initialState = {
     users: [],
-    isLoading: true,
+    isLoading: true
 };
 
 const usersSlice = createSlice({
@@ -41,8 +44,8 @@ const usersSlice = createSlice({
     initialState: initialState,
     reducers: {
         setUsers(state, action) {
-            console.log(action)
-            state.users = action.payload.users;
+            debugger
+            state.users = action.payload;
             state.isLoading = false;
         },
         removeUsers(state) {
@@ -54,7 +57,6 @@ const usersSlice = createSlice({
 
     },
 });
-debugger;
 export const {setUsers, removeUsers} = usersSlice.actions;
 
 export default usersSlice.reducer;

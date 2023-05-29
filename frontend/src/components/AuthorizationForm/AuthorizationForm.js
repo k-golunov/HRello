@@ -8,7 +8,6 @@ import {signInUser} from '../../store/slices/userSlice';
 import {useDispatch} from "react-redux";
 import md5 from 'md5';
 import {toast} from "react-toastify";
-import {Link} from "react-router-dom";
 
 function AuthorizationForm(props) {
     const dispatch = useDispatch();
@@ -24,19 +23,16 @@ function AuthorizationForm(props) {
         payload.authorizationPassword = md5(payload.authorizationPassword);
         const data = {
             email: payload.authorizationEmail,
-            password: payload.authorizationPassword,
-            rememberMe: true
+            password: payload.authorizationPassword
         }
-        console.log(data);
         dispatch(signInUser(data));
     }
 
     return (
-        <div className={s.authorizationForm}>
-            <p className={s.header}>Название сервиса</p>
-            <div>
+        <>
+            <p className={s.header}>Добро пожаловать в Portfolio Hub</p>
+            <Form className={s.authorizationForm} onSubmit={handleSubmit(onSubmit)}>
                 <p className={s.authorization}>Авторизация</p>
-                <Form className={s.form} onSubmit={handleSubmit(onSubmit)}>
                     <Input register={register}
                            registerName='authorizationEmail'
                            options={
@@ -45,28 +41,23 @@ function AuthorizationForm(props) {
                                }
                            }
                            errors={errors}
-                           title="Почта"
+                           title="Логин или почта"
                            require={true}
                            type="text"/>
-                    <div className={s.password}>
-                        <Input register={register}
-                               registerName='authorizationPassword'
-                               options={
-                                   {
-                                       required: true
-                                   }
+                    <Input register={register}
+                           registerName='authorizationPassword'
+                           options={
+                               {
+                                   required: true
                                }
-                               errors={errors}
-                               title="Пароль"
-                               require={true}
-                               type="password"/>
-                        <div className={s.forget}><Link to="/restore">Забыли пароль?</Link></div>
-                    </div>
-
-                    <Button type="submit">Войти</Button>
-                </Form>
-            </div>
-        </div>
+                           }
+                           errors={errors}
+                           title="Пароль"
+                           require={true}
+                           type="password"/>
+                    <Button type="submit">Войти в систему</Button>
+            </Form>
+        </>
     )
 }
 

@@ -1,32 +1,21 @@
-import {useSelector, useDispatch} from 'react-redux';
-import {setUser} from '../store/slices/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../store/slices/userSlice';
 
 export function useAuth() {
-    const user = useSelector((state) => state.user);
-    const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-    const localUser = {
-        accessToken: localStorage.getItem('USSCHR-accessToken'),
-        email: localStorage.getItem('USSCHR-email'),
-        id: localStorage.getItem('USSCHR-userId'),
-        role: localStorage.getItem('USSCHR-role'),
-        departmentID: localStorage.getItem('USSCHR-departmentID'),
-    };
+  const localUser = {
+    id: localStorage.getItem('PortfolioHub-userId'),
+    email: localStorage.getItem('PortfolioHub-email'),
+  };
 
-    if (
-        localUser.accessToken &&
-        localUser.email &&
-        localUser.id &&
-        localUser.role &&
-        localUser.departmentID &&
-        //localUser.role &&
-        !user.accessToken
-    ) {
-        dispatch(setUser(localUser));
-    }
+  if (localUser.email && localUser.id) {
+    dispatch(setUser(localUser));
+  }
 
-    return {
-        isAuth: !!user.accessToken,
-        ...user,
-    };
+  return {
+    isAuth: !!user.id,
+    ...user,
+  };
 }

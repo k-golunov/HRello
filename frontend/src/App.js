@@ -1,123 +1,83 @@
-import React from 'react';
-import './App.scss';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import NotFoundPage from './pages/NotFoundPage';
-import HomeLayout from './components/HomeLayout';
-import Redirection from "./hoc/Redirection";
+import './App.css';
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import HomeLayout from "./components/HomeLayout";
+import {PortfolioPage} from "./pages/PortfolioPage";
+import {ProjectsPage} from "./pages/ProjectsPage";
+import {WelcomePage} from "./pages/WelcomePage";
+import {RegistrationPage} from "./pages/RegistrationPage";
+import {AuthorizationPage} from "./pages/AuthorizationPage";
 import RequireUnauth from "./hoc/RequireUnauth";
-import RegistrationPage from "./pages/RegistrationPage";
-import InvitationsPage from "./pages/InvitationsPage";
-import NotFoundLink from "./pages/NotFoundLink";
-import MyTasksPage from "./pages/MyTasksPage";
-import AllTaskPage from "./pages/AllTasksPage";
-import TasksLayout from "./components/TasksLayout";
-import CreateTaskPage from "./pages/CreateTaskPage";
-import TaskLayout from "./components/TaskLayout";
-import TaskPage from "./pages/TaskPage";
-import EditTaskPage from "./pages/EditTaskPage";
-import EndingTaskPage from "./pages/EndingTaskPage";
-import WorkersPage from "./pages/WorkersPage";
-import DepartmentsPage from "./pages/DepartmentsPage";
-import OnCheckTaskPage from "./pages/OnCheckTaskPage";
-import WorkersLayout from "./components/WorkersLayout";
+import {NotFoundPage} from "./pages/NotFoundPage";
+import {ProjectPage} from "./pages/ProjectPage";
+import PortfolioLayout from "./components/ProtfolioLayout";
+import {ProfilePage} from "./pages/ProfilePage";
+import RequireAuth from "./hoc/RequireAuth";
+import ProfileLayout from "./components/ProfileLayout";
+import {ComponentsPage} from "./pages/ComponentsPage";
+import {EditPortfolioPage} from "./pages/EditPortfolioPage";
+import {ActivatePage} from "./pages/ActivatePage";
+import {EditProfilePage} from "./pages/EditProfilePage";
+import {FavouriteProjectsPage} from "./pages/FavouriteProjetsPage";
+import {NotImplementPage} from "./pages/NotImplementPage";
+import {EditProjectsPage} from "./pages/EditProjectsPage";
+import ScrollToTop from "./hoc/ScrollToTop";
+import {CatalogPage} from "./pages/CatalogPage";
 
 function App() {
-
     return (
         <Router>
-            <Routes>
-                <Route path='/' element={<HomeLayout/>}>
-                    <Route index element={<Redirection/>}/>
-                    <Route path='login' element={
-                        <RequireUnauth>
-                            <LoginPage/>
-                        </RequireUnauth>}/>
-                    <Route path='registration/:link' element={
-                        <RequireUnauth>
-                            <RegistrationPage/>
-                        </RequireUnauth>}/>
-                    <Route path='registration/' element={
-                            <NotFoundLink/>}/>
-                    <Route path='invitations' element={<InvitationsPage/>}/>
-                    <Route path='*' element={<NotFoundPage/>}/>
-                </Route>
+            <ScrollToTop>
+                <Routes>
+                    <Route path='/' element={<HomeLayout/>}>
+                        <Route index element={<WelcomePage/>}/>
+                        <Route path='/registration' element={
+                            <RequireUnauth>
+                                <RegistrationPage/>
+                            </RequireUnauth>}/>
+                        <Route path='/authorization' element={
+                            <RequireUnauth>
+                                <AuthorizationPage/>
+                            </RequireUnauth>}/>
+                        <Route path='/activate/:link' element={
+                            // <RequireUnauth>
+                            <ActivatePage/>
+                            // </RequireUnauth>
+                        }
+                        />
+                        <Route path='/catalog' element={<CatalogPage/>}/>
+                        <Route path='*' element={<NotFoundPage/>}/>
+                    </Route>
 
-                <Route path='/tasks' element={<TasksLayout page='myTasks'/>}>
-                    <Route path='my' element={
-                        // <RequireAuth>
-                        <MyTasksPage/>
-                        // </RequireAuth>
-                    }
-                    />
-                </Route>
+                    <Route path='/' element={<ProfileLayout/>}>
 
-                <Route path='/tasks' element={<TasksLayout page='onCheck'/>}>
-                    <Route path='onCheck' element={
-                        // <RequireAuth>
-                        <OnCheckTaskPage/>
-                        // </RequireAuth>
-                    }
-                    />
-                </Route>
+                        <Route path='/:userId' element={<PortfolioPage/>}/>
+                        <Route path='/:userId/projects' element={<ProjectsPage/>}/>
+                        <Route path='/:userId/projects/edit' element={<EditProjectsPage/>}/>
+                        <Route path='/:userId/project/:projectId/' element={<ProjectPage/>}/>
+                        <Route path='/:userId/profile' element={
+                            <RequireAuth>
+                                <ProfilePage/>
+                            </RequireAuth>}/>
+                        <Route path='/:userId/profile/edit' element={
+                            <RequireAuth>
+                                <EditProfilePage/>
+                            </RequireAuth>}/>
+                        <Route path='/:userId/profile/favourite' element={
+                            <RequireAuth>
+                                <FavouriteProjectsPage/>
+                            </RequireAuth>}/>
+                        <Route path='/:userId/edit' element={
+                            <RequireAuth>
+                                <EditPortfolioPage/>
+                            </RequireAuth>}/>
+                    </Route>
 
-                <Route path='/tasks' element={<TasksLayout page='allTasks'/>}>
-                    <Route path='all' element={
-                        // <RequireAuth>
-                        <AllTaskPage/>
-                        // </RequireAuth>
-                    }
-                    />
-                </Route>
-
-                <Route path='/tasks' element={<TaskLayout />}>
-                    <Route path='create' element={
-                        // <RequireAuth>
-                        <CreateTaskPage/>
-                        // </RequireAuth>
-                    }
-                    />
-                </Route>
-
-                <Route path='/workers' element={<WorkersLayout page='workers'/>}>
-                    <Route path='' element={
-                        // <RequireAuth>
-                        <WorkersPage/>
-                        // </RequireAuth>
-                    }
-                    />
-                </Route>
-                <Route path='/departments' element={<WorkersLayout page='departments' />}>
-                    <Route path='' element={
-                        // <RequireAuth>
-                        <DepartmentsPage/>
-                        // </RequireAuth>
-                    }
-                    />
-                </Route>
-
-                <Route path='/task' element={<TaskLayout />}>
-                    <Route path=':taskId' element={
-                        // <RequireAuth>
-                        <TaskPage/>
-                        // </RequireAuth>
-                    }/>
-
-                    <Route path=':taskId/edit' element={
-                        // <RequireAuth>
-                        <EditTaskPage/>
-                        // </RequireAuth>
-                    }/>
-
-                    <Route path=':taskId/ending' element={
-                        // <RequireAuth>
-                        <EndingTaskPage/>
-                        // </RequireAuth>
-                    }/>
-                </Route>
-            </Routes>
-        </Router>
-    );
+                    <Route path='/' element={<ProfileLayout/>}>
+                        <Route path='/components' element={<ComponentsPage/>}/>
+                    </Route>
+                </Routes>
+            </ScrollToTop>
+        </Router>);
 }
 
 export default App;

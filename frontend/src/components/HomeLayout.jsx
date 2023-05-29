@@ -1,17 +1,20 @@
 import React from 'react';
 import {Outlet} from 'react-router-dom';
 import Footer from './Footer/Footer';
-import Header from './Header/Header';
-
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import MainContent from "./MainContent/MainContent";
+import NavBar from "./NavBar/NavBar";
+import {ToastContainer} from "react-toastify";
+import WidthContent from "./WidthContent/WidthContent";
 
 const HomeLayout = () => {
     return (
-        <>
-            <Header/>
-            <Outlet/>
-            {/*<PageTitle/>*/}
+        <div>
+            <NavBar type="main"/>
+            <WidthContent>
+                <Outlet/>
+            </WidthContent>
+            <Footer/>
+
             <ToastContainer
                 position="bottom-right"
                 autoClose={3000}
@@ -24,7 +27,7 @@ const HomeLayout = () => {
                 pauseOnHover
                 theme="colored"
             />
-        </>
+        </div>
     );
 };
 
