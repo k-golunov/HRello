@@ -1,6 +1,8 @@
-﻿namespace Dal.User.Repositories.Interfaces;
+﻿using Dal.Entities;
 
-public interface IUserRepository 
+namespace Dal.User.Repositories.Interfaces;
+
+public interface IUserRepository
 {
-    
+    public Task ChangePasswordAsync(UserDal dal);
 }
