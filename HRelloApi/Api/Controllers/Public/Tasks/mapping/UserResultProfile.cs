@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dal.Tasks.Entities;
 using HRelloApi.Controllers.Public.Tasks.dto.request;
+using HRelloApi.Controllers.Public.Tasks.dto.response;
 
 namespace HRelloApi.Controllers.Public.Tasks.mapping;
 
@@ -20,5 +21,13 @@ public class UserResultProfile: Profile
             .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dst => dst.TaskId, opt => opt.MapFrom(src => src.TaskId))
             .ForMember(dst => dst.Result, opt => opt.MapFrom(src => src.Result));
+        
+        CreateMap<UserTaskResultDal, UserResultResponse>()
+            .ForMember(dst => dst.FactResult, opt => opt.MapFrom(src => src.FactResult))
+            .ForMember(dst => dst.FactWeight, opt => opt.MapFrom(src => src.FactWeight))
+            .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dst => dst.Result, opt => opt.MapFrom(src => src.Result));
+
     }
 }

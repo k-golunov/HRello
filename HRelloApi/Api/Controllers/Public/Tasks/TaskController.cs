@@ -137,9 +137,13 @@ public class TaskController: BasePublicController
     public async Task<IActionResult> GetTask([FromRoute] Guid taskId)
     {
         var task = await _manager.GetAsync<TaskDal>(taskId);
+        var userResult = await _manager.GetAllAsync<UserTaskResultDal>();
+        var bossResult = await _manager.GetAllAsync<BossTaskResultDal>();
         if (task == null)
             throw new TaskNotFoundException(taskId);
         var taskResponse = _mapper.Map<TaskDal, TaskResponse>(task);
+        taskResponse.UserResult = _mapper.Map<UserResultResponse>(userResult.FirstOrDefault(x => x.TaskId == taskId));
+        taskResponse.BossResult = _mapper.Map<BossResultResponse>(bossResult.FirstOrDefault(x => x.TaskId == taskId));
         return Ok(taskResponse);
     }
 

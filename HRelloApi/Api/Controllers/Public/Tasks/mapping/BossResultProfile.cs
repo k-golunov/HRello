@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dal.Tasks.Entities;
 using HRelloApi.Controllers.Public.Tasks.dto.request;
+using HRelloApi.Controllers.Public.Tasks.dto.response;
 
 namespace HRelloApi.Controllers.Public.Tasks.mapping;
 
@@ -18,6 +19,11 @@ public class BossResultProfile: Profile
             .ForMember(dst => dst.Result, opt => opt.MapFrom(src => src.Result))
             .ForMember(dst => dst.Comment, opt => opt.MapFrom(src => src.Comment))
             .ForMember(dst => dst.TaskId, opt => opt.MapFrom(src => src.TaskId));
+
+        CreateMap<BossTaskResultDal, BossResultResponse>()
+            .ForMember(dst => dst.Result, opt => opt.MapFrom(src => src.Result))
+            .ForMember(dst => dst.Comment, opt => opt.MapFrom(src => src.Comment))
+            .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id));
 
     }
 }
