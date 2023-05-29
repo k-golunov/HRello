@@ -9,7 +9,7 @@ import Table1 from "../components/Table/Table";
 import s from './Pages.module.css';
 import Table from 'rc-table';
 import TableRow from "../components/TableRow/TableRow";
-import {getAllTasks} from "../store/slices/tasksSlice";
+import {getAllTasks, resetTasks} from "../store/slices/tasksSlice";
 import {useTasks} from "../hooks/use-tasks";
 import {useDepartments} from "../hooks/use-departments";
 import {useBlocks} from "../hooks/use-blocks";
@@ -17,6 +17,7 @@ import {getDepartments} from "../store/slices/departmentsSlice";
 import {getBlocks} from "../store/slices/blocksSlice";
 import Loading from "../components/Loading/Loading";
 import {removeTask} from "../store/slices/taskSlice";
+import Pagination from "rc-pagination";
 
 const MyTasksPage = () => {
     const dispatch = useDispatch();
@@ -25,8 +26,11 @@ const MyTasksPage = () => {
     const tasks = useTasks();
     const blocks = useBlocks();
 
+    const [currentPage, setCurrentPage] = useState(1);
+
     useEffect(() => {
-        dispatch(getAllTasks({page: 1, users: [user.id]}));
+        dispatch(resetTasks());
+        dispatch(getAllTasks({page: currentPage, users: [user.id]}));
         dispatch(getBlocks());
         dispatch(removeTask());
     }, []);
@@ -51,13 +55,14 @@ const MyTasksPage = () => {
     ]
 
     const statusList = [
-        { value: 0, label: 'На проверке'},
-        { value: 1, label: 'На доработку'},
-        { value: 2, label: 'В работе'},
-        { value: 5, label: 'Ожидает отмены'},
-        { value: 6, label: 'Отменена'},
-        { value: 3, label: 'Проверка завершения'},
-        { value: 4, label: 'Завершена'},
+        { value: ["OnChecking", "OnRework", "InWork", "AwaitingCancellation", "Canceled", "CompletionCheck", "Completed"], label: '-'},
+        { value: "OnChecking", label: 'На проверке'},
+        { value: "OnRework", label: 'На доработку'},
+        { value: "InWork", label: 'В работе'},
+        { value: "AwaitingCancellation", label: 'Ожидает отмены'},
+        { value: "Canceled", label: 'Отменена'},
+        { value: "CompletionCheck", label: 'Проверка завершения'},
+        { value: "Completed", label: 'Завершена'},
     ]
 
     const [selectedYear, setSelectedYear] = useState([]);
@@ -73,13 +78,13 @@ const MyTasksPage = () => {
 
     useEffect(() => {
         dispatch(getAllTasks({
-            page: 1,
+            page: currentPage,
             users:[user.id],
             blocks:selectedBlock.filter(block=> block.value).map(block => block.value?block.value:""),
             quarter:selectedQuarter.filter(quarter=> quarter.value).map(quarter => quarter.value?quarter.value:""),
             status: [selectedStatus.value]
         }));
-    }, [selectedBlock, selectedQuarter, selectedStatus]);
+    }, [selectedBlock, selectedQuarter, selectedStatus, currentPage]);
 
     const filters = [
         {
@@ -102,6 +107,7 @@ const MyTasksPage = () => {
             'state': selectedStatus,
             'setState': setSelectedStatus,
             'placeholder': "Статус задачи",
+            'title': "Статус задачи",
             'isMulti': false,
             'minWidth': '232px'
         }
@@ -116,7 +122,7 @@ const MyTasksPage = () => {
         {type: "header", text: 'Статус', alignment: "left", width: "260px"},
     ]
 
-    if(blocks.isLoading)
+    if(tasks.isLoading || blocks.isLoading)
         return <Loading/>
 
     return (
@@ -146,6 +152,15 @@ const MyTasksPage = () => {
                     return <TableRow cells={cells} taskID={task.id}/>
                 })
             }
+
+            <div className={s.pagination}>
+                <Pagination total={tasks.pagesCount*10}
+                            current={ currentPage }
+                            onChange={page => setCurrentPage(page)}
+                            pageSize={10}
+                            hideOnSinglePage
+                />
+            </div>
         </>
     );
 };

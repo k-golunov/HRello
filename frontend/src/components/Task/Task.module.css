@@ -24,6 +24,15 @@
     color: #F99D1D;
 }
 
+.taskCanceled {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+
+    color: #F96057;
+}
+
 .taskInformationLeftContainer {
     display: flex;
     flex-direction: column;
@@ -79,4 +88,10 @@
     font-weight: 600;
     font-size: 36px;
     line-height: 49px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
 }

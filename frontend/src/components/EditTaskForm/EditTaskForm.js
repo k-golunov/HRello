@@ -9,20 +9,22 @@ import PageTitle from "../PageTitle/PageTitle";
 import Dropdown from "../Dropdown/Dropdown";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import {useTask} from "../../hooks/use-task";
-import {updateTask} from "../../store/slices/taskSlice";
+import {removeTask, updateTask} from "../../store/slices/taskSlice";
 import {useBlocks} from "../../hooks/use-blocks";
 import Loading from "../Loading/Loading";
 import {getBlocks} from "../../store/slices/blocksSlice";
+import {useNavigate} from "react-router-dom";
 
 function EditTaskForm(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const blocks = useBlocks();
     const {register, handleSubmit, reset, getValues, formState: {errors}} = useForm({
         defaultValues: {
-            editTaskName: '',
-            editTaskYear: '',
-            editTaskPlaningWeight: '',
-            editTaskPlaningResult: '',
+            editTaskName: props.task.name,
+            editTaskYear: props.task.year,
+            editTaskPlaningWeight: props.task.plannedWeight,
+            editTaskPlaningResult: props.task.waitResult,
             editTaskComment: ''
         },
         mode: "onBlur"
@@ -31,17 +33,6 @@ function EditTaskForm(props) {
     useEffect(() => {
         dispatch(getBlocks());
     }, []);
-
-    const [selectedBlock, setSelectedBlock] = useState([]);
-    const [selectedQuarter, setSelectedQuarter] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState([]);
-
-    let blocksFilter = []
-
-    if (!blocks.isLoading)
-        blocksFilter = blocks.blocks.map(block =>{
-            return { value: block.id, label: block.value}
-        })
 
     const categories = [
         {value: 'Planned', label: 'Запланированная'},
@@ -55,31 +46,25 @@ function EditTaskForm(props) {
         {value: 4, label: '4 квартал'}
     ]
 
+    const [selectedBlock, setSelectedBlock] = useState([]);
+    const [selectedQuarter, setSelectedQuarter] = useState(quarters.find(quarter => quarter.value === props.task.quarter));
+    const [selectedCategory, setSelectedCategory] = useState(categories.find(category => category.value === props.task.category));
+
+    let blocksFilter = []
+
+    if (!blocks.isLoading)
+        blocksFilter = blocks.blocks.map(block =>{
+            return { value: block.id, label: block.value}
+        })
+
+
+
     useEffect(() => {
-        reset({
-            editTaskName: props.task.name,
-            editTaskYear: props.task.year,
-            editTaskPlaningWeight: props.task.plannedWeight,
-            editTaskPlaningResult: props.task.waitResult
-        });
-        // const block = blocks.findIndex(block => block.value === props.task.block);
-        // console.log(props.selectedBlock, block)
         setSelectedBlock(blocksFilter.find(block => block.label === props.task.block))
-        // setSelectedCategory(categories.find(category => category.value === props.task.category))
-        setSelectedQuarter(quarters.find(quarter => quarter.value === props.task.quarter))
-        setSelectedCategory(categories.find(category => category.value === props.task.category))
-    }, [props.task]);
+    }, [blocks]);
 
 
     const onSubmit = (payload) => {
-        // if (payload.registrationPassword !== payload.registrationRetryPassword) {
-        //     alert('Вы указали разные пароли!');
-        //     return;
-        // }
-        //
-        // delete payload.registrationRetryPassword;
-        // payload.registrationPassword = md5(payload.registrationPassword);
-        //
         const data = {
             id: props.task.id,
             name: payload.editTaskName,
@@ -95,12 +80,17 @@ function EditTaskForm(props) {
             data["plannedWeight"] = parseInt(payload.editTaskPlaningWeight)
         else
             data["plannedWeight"] = -1
-
-        dispatch(updateTask(data));
+        dispatch(removeTask())
+        dispatch(updateTask(data)).then(response=>{
+            if(!response.error)
+                navigate("/task/"+props.task.id)
+        })
     }
 
     if(blocks.isLoading)
         return <Loading/>
+
+    console.log("BLOCK", selectedBlock, "QUARTER", selectedQuarter, "CATEGORY", selectedCategory)
 
     return (
         <div className={s.createTaskForm}>

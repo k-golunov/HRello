@@ -10,7 +10,7 @@ import s from './Pages.module.css';
 import Table from 'rc-table';
 import TableRow from "../components/TableRow/TableRow";
 import {useTasks} from "../hooks/use-tasks";
-import {getAllTasks} from "../store/slices/tasksSlice";
+import {getAllTasks, removeTasks, resetTasks} from "../store/slices/tasksSlice";
 import {useDepartments} from "../hooks/use-departments";
 import {getDepartments} from "../store/slices/departmentsSlice";
 import Loading from "../components/Loading/Loading";
@@ -19,6 +19,8 @@ import {useBlocks} from "../hooks/use-blocks";
 import {getUsers} from "../store/slices/usersSlice";
 import {useUsers} from "../hooks/use-users";
 import {removeTask} from "../store/slices/taskSlice";
+import Pagination from 'rc-pagination';
+import 'rc-pagination/assets/index.css';
 
 const AllTasksPage = () => {
     const dispatch = useDispatch();
@@ -29,8 +31,11 @@ const AllTasksPage = () => {
     const blocks = useBlocks();
     const users = useUsers();
 
+    const [currentPage, setCurrentPage] = useState(1);
+
     useEffect(() => {
-        dispatch(getAllTasks({page: 1}));
+        dispatch(resetTasks());
+        dispatch(getAllTasks({page: currentPage}));
         dispatch(getDepartments());
         dispatch(getBlocks());
         dispatch(getUsers());
@@ -60,13 +65,14 @@ const AllTasksPage = () => {
     ]
 
     const statusList = [
-        { value: 0, label: 'На проверке'},
-        { value: 1, label: 'На доработку'},
-        { value: 2, label: 'В работе'},
-        { value: 5, label: 'Ожидает отмены'},
-        { value: 6, label: 'Отменена'},
-        { value: 3, label: 'Проверка завершения'},
-        { value: 4, label: 'Завершена'},
+        { value: ["OnChecking", "OnRework", "InWork", "AwaitingCancellation", "Canceled", "CompletionCheck", "Completed"], label: '-'},
+        { value: "OnChecking", label: 'На проверке'},
+        { value: "OnRework", label: 'На доработку'},
+        { value: "InWork", label: 'В работе'},
+        { value: "AwaitingCancellation", label: 'Ожидает отмены'},
+        { value: "Canceled", label: 'Отменена'},
+        { value: "CompletionCheck", label: 'Проверка завершения'},
+        { value: "Completed", label: 'Завершена'},
     ]
 
     if(!departments.isLoading)
@@ -93,14 +99,14 @@ const AllTasksPage = () => {
 
     useEffect(() => {
         dispatch(getAllTasks({
-            page: 1,
+            page: currentPage,
             users:selectedEmployee.filter(worker=> worker.value).map(worker => worker.value?worker.value:""),
             blocks:selectedBlock.filter(block=> block.value).map(block => block.value?block.value:""),
             departments:selectedDepartment.filter(department=> department.value).map(department => department.value?department.value:""),
             quarter:selectedQuarter.filter(quarter=> quarter.value).map(quarter => quarter.value?quarter.value:""),
             status: [selectedStatus.value]
         }));
-    }, [selectedEmployee, selectedBlock, selectedDepartment, selectedQuarter, selectedStatus]);
+    }, [selectedEmployee, selectedBlock, selectedDepartment, selectedQuarter, selectedStatus, currentPage]);
 
     const filters = [
         {
@@ -109,6 +115,7 @@ const AllTasksPage = () => {
             'setState': setSelectedQuarter,
             'placeholder': "Квартал",
             'isMulti': true,
+            'minWidth': '120px'
         },
         {
             'options': departmentFilter,
@@ -139,6 +146,7 @@ const AllTasksPage = () => {
             'state': selectedStatus,
             'setState': setSelectedStatus,
             'placeholder': "Статус задачи",
+            'title': "Статус задачи",
             'isMulti': false,
             'minWidth': '232px'
         }
@@ -164,7 +172,7 @@ const AllTasksPage = () => {
         {type: "status", status: 'CompletionCheck', alignment: "left", width: "260px"},
     ]
 
-    if(departments.isLoading || blocks.isLoading || users.isLoading)
+    if(tasks.isLoading || departments.isLoading || blocks.isLoading || users.isLoading)
         return <Loading/>
 
     return (
@@ -197,6 +205,17 @@ const AllTasksPage = () => {
                     return <TableRow cells={cells} taskID={task.id}/>
                 })
             }
+
+            <div className={s.pagination}>
+                <Pagination total={tasks.pagesCount*10}
+                            current={ currentPage }
+                            onChange={page => setCurrentPage(page)}
+                            pageSize={10}
+                            hideOnSinglePage
+                />
+            </div>
+
+
             {/*<Table1 />*/}
             {/*<Table columns={columns} data={tasks} />*/}
         </>
