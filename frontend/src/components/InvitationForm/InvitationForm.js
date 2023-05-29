@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import s from './InvitationForm.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
@@ -11,25 +11,44 @@ import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
 import Select, { StylesConfig } from "react-select";
 import Dropdown from "../Dropdown/Dropdown";
+import {getAllTasks} from "../../store/slices/tasksSlice";
+import {getDepartments} from "../../store/slices/departmentsSlice";
+import {getBlocks} from "../../store/slices/blocksSlice";
+import {getUsers} from "../../store/slices/usersSlice";
+import {removeTask} from "../../store/slices/taskSlice";
+import Loading from "../Loading/Loading";
+import {useDepartments} from "../../hooks/use-departments";
 
 function InvitationForm(props) {
     const dispatch = useDispatch();
-    const departmentOptions = [
-        { value: 1, label: "Управление персоналом" },
-        { value: 2, label: "Компенсации и льготы" },
-        { value: 3, label: "Обучение" },
-        { value: 4, label: "HR интегратор и производства" },
-    ];
+    const departments = useDepartments();
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    let departmentFilter = []
+
+    useEffect(() => {
+        dispatch(getDepartments());
+        dispatch(removeTask());
+    }, []);
 
     const roleOptions = [
         { value: "employee", label: "Сотрудник" },
-        { value: "director", label: "Руководитель" },
-        { value: "maindirector", label: "Главный руководитель" },
+        { value: "boss", label: "Руководитель" },
+        { value: "mainboss", label: "Главный руководитель" },
     ];
-    const [departmentSelected, setDepartmentSelected] = useState(departmentOptions[0]);
+
+    const [departmentSelected, setDepartmentSelected] = useState([]);
     const [roleSelected, setRoleSelected] = useState(roleOptions[0]);
 
-    const {register, handleSubmit, formState: {errors}} = useForm({
+    useEffect(() => {
+        setDepartmentSelected(departmentFilter[0])
+    }, [departments]);
+
+
+
+
+    const {register, handleSubmit, reset, formState: {errors}} = useForm({
         defaultValues: {
             invitationEmail: '',
         },
@@ -37,14 +56,41 @@ function InvitationForm(props) {
     });
 
     const onSubmit = (payload) => {
-        const data = {
-            email: payload.invitationEmail,
-            departamentId: departmentSelected.value,
-            role: roleSelected.value
+        if(!isLoading)
+        {
+            setIsLoading(true);
+            const data = {
+                email: payload.invitationEmail,
+                departamentId: departmentSelected.value,
+                role: roleSelected.value
+            }
+            console.log(data);
+            dispatch(createUser(data)).then(()=>{
+                reset({
+                    invitationEmail: ''
+                });
+                setDepartmentSelected(departmentFilter[0]);
+                setRoleSelected(roleOptions[0]);
+                dispatch(getUsers());
+                setIsLoading(false);
+            },
+                ()=> {
+                    setIsLoading(false);
+                });
         }
-        console.log(data);
-        dispatch(createUser(data));
     }
+
+    console.log(isLoading);
+
+    if(!departments.isLoading)
+        departmentFilter = departments.departments.map(department =>{
+            return { value: department.id, label: department.name}
+        })
+
+    if(departments.isLoading)
+        return <Loading/>
+
+
 
 
 
@@ -67,8 +113,8 @@ function InvitationForm(props) {
                                require={true}
                                type="text"
                         />
-                        <Dropdown title="Отдел" minWidth="394px" options={departmentOptions} onChange={e => setDepartmentSelected(e)}/>
-                        <Dropdown title="Роль"  minWidth="394px" options={roleOptions} onChange={e => setRoleSelected(e)}/>
+                        <Dropdown title="Отдел" value={departmentSelected} minWidth="394px" options={departmentFilter} onChange={e => setDepartmentSelected(e)}/>
+                        <Dropdown title="Роль" value={roleSelected} minWidth="394px" options={roleOptions} onChange={e => setRoleSelected(e)}/>
                     </div>
 
 

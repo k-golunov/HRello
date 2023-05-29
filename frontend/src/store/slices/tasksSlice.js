@@ -19,7 +19,12 @@ export const getAllTasks = createAsyncThunk(
             if(props.quarter && props.quarter.length)
                 filter.push("Quarter=" + props.quarter.join(", "))
             if(props.status && props.status.length)
-                filter.push("Status=" + props.status.join(", "))
+                if(!Array.isArray(props.status[0]))
+                    filter.push("Status=" + props.status.join(", "))
+                else
+                    filter.push("Status=" + props.status[0].join(", "))
+
+
             console.log("Filter", filter);
 
             let response = await fetch(TASK_API.GET_ALL_TASKS_URL+props.page + (filter.length !== 0 ?"?"+filter.join("&"):""), {
@@ -59,7 +64,8 @@ export const getAllTasks = createAsyncThunk(
 const initialState = {
     allTasksCount: 0,
     pagesCount: 0,
-    tasks:[]
+    tasks:[],
+    isLoading: true
 };
 
 const tasksSlice = createSlice({
@@ -67,11 +73,20 @@ const tasksSlice = createSlice({
     initialState: initialState,
     reducers: {
         setTasks(state, action) {
+
             state.allTasksCount = action.payload.allTasksCount;
             state.pagesCount = action.payload.pagesCount;
             state.tasks = action.payload.tasks;
+            state.isLoading = false;
         },
         removeTasks(state) {
+            state.allTasksCount = 0;
+            state.pagesCount = 0;
+            state.tasks = [];
+            state.isLoading = false;
+        },
+        resetTasks(state) {
+            state.isLoading = true;
             state.allTasksCount = 0;
             state.pagesCount = 0;
             state.tasks = [];
@@ -82,6 +97,6 @@ const tasksSlice = createSlice({
     },
 });
 debugger;
-export const {setTasks, removeTasks} = tasksSlice.actions;
+export const {setTasks, removeTasks, resetTasks} = tasksSlice.actions;
 
 export default tasksSlice.reducer;

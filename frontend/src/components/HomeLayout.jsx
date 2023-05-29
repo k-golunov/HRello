@@ -12,18 +12,6 @@ const HomeLayout = () => {
             <Header/>
             <Outlet/>
             {/*<PageTitle/>*/}
-            <ToastContainer
-                position="bottom-right"
-                autoClose={3000}
-                hideProgressBar
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss={false}
-                draggable
-                pauseOnHover
-                theme="colored"
-            />
         </>
     );
 };

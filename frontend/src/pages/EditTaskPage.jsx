@@ -5,6 +5,7 @@ import {useParams} from "react-router-dom";
 import {useTask} from "../hooks/use-task";
 import {getTask} from "../store/slices/taskSlice";
 import EditTaskForm from "../components/EditTaskForm/EditTaskForm";
+import Loading from "../components/Loading/Loading";
 
 const EditTaskPage = () => {
     const { taskId } = useParams();
@@ -15,6 +16,9 @@ const EditTaskPage = () => {
     }, []);
 
     const task = useTask();
+
+    if(task.isLoading)
+        return <Loading />
 
     return (
         <div>

@@ -1,41 +1,14 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import USER_API, {GET_USER_URL} from '../../api/userAPI';
+import USER_API, {DELETE_USER_URL, GET_USER_URL} from '../../api/userAPI';
 import jwt from 'jwt-decode'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {updateTask} from "./taskSlice";
 
-const loginNotify = () => toast.success('🦄 Вы успешно авторизовались!', {
-    position: "bottom-right",
-    autoClose: 3000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "colored",
-});
-
-const createNotify = () => toast.success('🦄 Приглашение успешно отправлено!', {
-    position: "bottom-right",
-    autoClose: 3000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "colored",
-});
-
-const registrationNotify = () => toast.success('🦄 Вы успешно зарегестрировались в системе!', {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-    });
+let loginNotify;
+let registrationNotify;
+let createUserNotify;
+let deleteUserNotify;
 
 export const signInUser = createAsyncThunk(
     'user/signIn',
@@ -52,12 +25,11 @@ export const signInUser = createAsyncThunk(
             });
 
             if (!response.ok) {
-                alert("Username or password is incorrect");
-                throw new Error(
-                    `${response.status}${
-                        response.statusText ? ' ' + response.statusText : ''
-                    }`
-                );
+                //alert("Username or password is incorrect");
+                if(response.status === 401)
+                    throw new Error("Неверный логин или пароль");
+                else
+                    throw new Error("Ошибка сервера");
             }
 
             response = await response.json();
@@ -65,7 +37,7 @@ export const signInUser = createAsyncThunk(
             console.log(response)
             dispatch(setUser({accessToken: response.accessToken, email: user.email}));
 
-            loginNotify();
+            //loginNotify();
 
             return response;
         } catch (error) {
@@ -130,14 +102,40 @@ export const createUser = createAsyncThunk(
             response = await response.text();
             // debugger;
             console.log(response)
-            //dispatch(setUser({accessToken: response, email: user.email}));
-            // dispatch(getProfile());
-            // dispatch(togglePopup("signIn"));
-            createNotify();
-
-            // navigate(`/profile`);
 
             return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const deleteUser = createAsyncThunk(
+    'user/delete',
+    async function (userID, {rejectWithValue, dispatch}) {
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('accessToken');
+            let response = await fetch(USER_API.DELETE_USER_URL+userID, {
+                method: 'delete',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                }
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            //response = await response.json();
+            //console.log(response)
+
+            //return response;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -164,11 +162,11 @@ export const signUpUser = createAsyncThunk(
                 );
             }
 
-            response = await response.json();
+            //response = await response.json();
 
-            // dispatch(signInUser(user));
+            //dispatch(signInUser(user));
             // dispatch(togglePopup("signUp"));
-            registrationNotify();
+            //registrationNotify();
 
             return response;
         } catch (error) {
@@ -229,27 +227,94 @@ const userSlice = createSlice({
         },
     },
     extraReducers: {
-        [signInUser.pending]: (state, action) => {
-            state.status = 'loading';
-        },
-        [signInUser.fulfilled]: (state, action) => {
-            state.status = 'resolved';
-        },
-        [signInUser.rejected]: (state, action) => {
-            state.status = 'rejected';
-            state.error = action.payload;
-        },
         [signUpUser.pending]: (state, action) => {
+            registrationNotify = toast.loading("Регистрирую пользователя...")
         },
         [signUpUser.fulfilled]: (state, action) => {
+            toast.update(registrationNotify,
+                {
+                    render: "Вы успешно зарегистрировались!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
         },
         [signUpUser.rejected]: (state, action) => {
+            toast.update(registrationNotify,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
         },
         [createUser.pending]: (state, action) => {
+            createUserNotify = toast.loading("Отправляю приглашение пользователю...")
         },
         [createUser.fulfilled]: (state, action) => {
+            toast.update(createUserNotify,
+                {
+                    render: "Приглашение успешно отправлено!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
         },
         [createUser.rejected]: (state, action) => {
+            toast.update(createUserNotify,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
+        },
+        [signInUser.pending]: (state, action) => {
+            loginNotify = toast.loading("Вхожу в систему...")
+        },
+        [signInUser.fulfilled]: (state, action) => {
+            toast.update(loginNotify,
+                {
+                    render: "Вы успешно вошли в систему",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
+        },
+        [signInUser.rejected]: (state, action) => {
+            toast.update(loginNotify,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
+        },
+
+        [deleteUser.pending]: (state, action) => {
+            deleteUserNotify = toast.loading("Аннулирую приглашение...")
+        },
+        [deleteUser.fulfilled]: (state, action) => {
+            toast.update(deleteUserNotify,
+                {
+                    render: "Приглашение успешно аннулировано!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
+        },
+        [deleteUser.rejected]: (state, action) => {
+            toast.update(deleteUserNotify,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
         },
     },
 });

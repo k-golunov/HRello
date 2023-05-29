@@ -1,15 +1,21 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import TASK_API, {GET_TASK_USER_URL} from "../../api/taskAPI";
+import TASK_API, {
+    CHANGE_TASK_STATUS_URL, COMPLETE_TASK_URL,
+    GET_TASK_HISTORY_URL,
+    GET_TASK_USER_URL,
+    SEND_TASK_TO_REVIEW_URL
+} from "../../api/taskAPI";
 import {toast} from "react-toastify";
 
 let createTaskToast;
+let updateTaskToast;
 
 export const getTask = createAsyncThunk(
     'task/get',
     async function (taskId, {rejectWithValue, dispatch}) {
         // let navigate = useNavigate();
         try {
-
+            console.log("GET TASK")
             let response = await fetch(TASK_API.GET_TASK_URL+taskId, {
                 method: 'get',
                 headers: {
@@ -84,6 +90,46 @@ export const getTaskUser = createAsyncThunk(
     }
 );
 
+export const getTaskHistory = createAsyncThunk(
+    'task/get/history',
+    async function (taskId, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+
+            let response = await fetch(TASK_API.GET_TASK_HISTORY_URL+taskId, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.json();
+            // response.accessToken = response.accessToken.accessToken;
+
+            // debugger;
+            console.log(response);
+            dispatch(setTaskHistory(response));
+            // dispatch(getProfile());
+            // dispatch(togglePopup("signIn"));
+            //loginNotify();
+
+            // navigate(`/profile`);
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const createTask = createAsyncThunk(
     'task/create',
     async function (task, {rejectWithValue, dispatch}) {
@@ -121,6 +167,129 @@ export const createTask = createAsyncThunk(
             // navigate(`/profile`);
 
             return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const changeTaskStatus = createAsyncThunk(
+    'task/changeStatus',
+    async function (props, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            let response = await fetch(TASK_API.CHANGE_TASK_STATUS_URL, {
+                method: 'patch',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                },
+                body: JSON.stringify(props),
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            //response = await response.json();
+            // debugger;
+            //console.log(response)
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            // dispatch(getProfile());
+            // dispatch(togglePopup("signIn"));
+            // createNotify();
+
+            // navigate(`/profile`);
+
+            //return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const sendToReviewTask = createAsyncThunk(
+    'task/sendToReview',
+    async function (props, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            let response = await fetch(TASK_API.SEND_TASK_TO_REVIEW_URL, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                },
+                body: JSON.stringify(props),
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            //response = await response.json();
+            // debugger;
+            //console.log(response)
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            // dispatch(getProfile());
+            // dispatch(togglePopup("signIn"));
+            // createNotify();
+
+            // navigate(`/profile`);
+
+            //return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const completeTask = createAsyncThunk(
+    'task/complete',
+    async function (props, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            let response = await fetch(TASK_API.COMPLETE_TASK_URL, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                },
+                body: JSON.stringify(props),
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            //response = await response.json();
+            // debugger;
+            //console.log(response)
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            // dispatch(getProfile());
+            // dispatch(togglePopup("signIn"));
+            // createNotify();
+
+            // navigate(`/profile`);
+
+            //return response;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -177,6 +346,7 @@ const initialState = {
     waitResult: null,
     taskStatus: null,
     isLoading: true,
+    history: [],
 };
 
 const taskSlice = createSlice({
@@ -184,7 +354,7 @@ const taskSlice = createSlice({
     initialState: initialState,
     reducers: {
         setTask(state, action) {
-            console.log(action)
+            console.log("SET TASK ACTION", action)
             state.id = action.payload.id;
             state.departmentID = action.payload.departmentId;
             state.userID = action.payload.userId;
@@ -212,10 +382,15 @@ const taskSlice = createSlice({
             state.waitResult = null
             state.status = null
             state.isLoading = true;
+            state.history = [];
         },
         setTaskUser(state, action) {
             console.log(action)
             state.userName = action.payload.surname + " " + action.payload.name + " " + action.payload.patronymic
+        },
+        setTaskHistory(state, action) {
+            console.log(action)
+            state.history = action.payload.allHistory;
         },
     },
     extraReducers: {
@@ -251,9 +426,31 @@ const taskSlice = createSlice({
                 }
             );
         },
+        [updateTask.pending]: (state, action) => {
+            updateTaskToast = toast.loading("Редактирую задачу...")
+        },
+        [updateTask.fulfilled]: (state, action) => {
+            toast.update(updateTaskToast,
+                {
+                    render: "Задача успешно отредактирована",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
+        },
+        [updateTask.rejected]: (state, action) => {
+            toast.update(updateTaskToast,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
+        },
     },
 });
 debugger;
-export const {setTask, removeTask, setTaskUser} = taskSlice.actions;
+export const {setTask, removeTask, setTaskUser, setTaskHistory} = taskSlice.actions;
 
 export default taskSlice.reducer;

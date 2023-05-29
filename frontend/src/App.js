@@ -21,6 +21,7 @@ import WorkersPage from "./pages/WorkersPage";
 import DepartmentsPage from "./pages/DepartmentsPage";
 import OnCheckTaskPage from "./pages/OnCheckTaskPage";
 import WorkersLayout from "./components/WorkersLayout";
+import CompleteTaskPage from "./pages/CompleteTaskPage";
 
 function App() {
 
@@ -112,6 +113,12 @@ function App() {
                     <Route path=':taskId/ending' element={
                         // <RequireAuth>
                         <EndingTaskPage/>
+                        // </RequireAuth>
+                    }/>
+
+                    <Route path=':taskId/complete' element={
+                        // <RequireAuth>
+                        <CompleteTaskPage/>
                         // </RequireAuth>
                     }/>
                 </Route>

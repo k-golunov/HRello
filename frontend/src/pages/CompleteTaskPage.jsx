@@ -10,8 +10,9 @@ import s from "../components/Task/Task.module.css";
 import Task from "../components/Task/Task";
 import TaskInformation from "../components/Task/TaskInformation";
 import History from "../components/History/History";
+import CompleteTaskForm from "../components/CompleteTaskForm/CompleteTaskForm";
 
-const EndingTaskPage = (props) => {
+const CompleteTaskPage = (props) => {
     const { taskId } = useParams();
     const dispatch = useDispatch();
     const task = useTask();
@@ -50,13 +51,13 @@ const EndingTaskPage = (props) => {
             {/*<EndingTaskForm/>*/}
 
             <TaskInformation task={task}
-                             action="ending"
+                             action="complete"
             />
-            <EndingTaskForm taskID={taskId}/>
+            <CompleteTaskForm taskID={taskId}/>
 
             <History history={task.history}/>
         </div>
     );
 };
 
-export default EndingTaskPage;
+export default CompleteTaskPage;

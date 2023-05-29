@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import s from './EndingTaskForm.module.css';
+import s from './CompleteTaskForm.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import Form from "react-bootstrap/Form";
@@ -14,17 +14,15 @@ import Dropdown from "../Dropdown/Dropdown";
 import {createTask} from "../../store/slices/tasksSlice";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import {useTask} from "../../hooks/use-task";
-import {getTask, getTaskHistory, sendToReviewTask, updateTask} from "../../store/slices/taskSlice";
+import {completeTask, getTask, getTaskHistory, sendToReviewTask, updateTask} from "../../store/slices/taskSlice";
 
-function EndingTaskForm(props) {
+function CompleteTaskForm(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const {register, handleSubmit, reset, formState: {errors}} = useForm({
         defaultValues: {
-            endingTaskResult: '',
-            endingTaskFactWeight: '',
-            endingTaskPercent: '',
-            endingTaskComment: '',
+            completeTaskPercent: '',
+            completeTaskComment: '',
         },
         mode: "onBlur"
     });
@@ -65,17 +63,16 @@ function EndingTaskForm(props) {
         //
         const data = {
             taskId: props.taskID,
-            result: payload.endingTaskResult,
-            factWeight: payload.endingTaskFactWeight,
-            factResult: payload.endingTaskPercent,
-            description: payload.endingTaskComment,
+            result: payload.completeTaskPercent,
+            comment: payload.completeTaskComment,
         }
         console.log(data);
         //console.log("SELECTED QUARTER", selectedQuarter);
 
-        dispatch(sendToReviewTask(data)).then(response => {
-            if(!response.error) {
-                toast.success('Задача успешно отправлена на завершение!', {
+        dispatch(completeTask(data)).then(response => {
+            if(!response.error)
+            {
+                toast.success('Задача успешно завершена!', {
                     position: "bottom-right",
                     autoClose: 3000,
                     hideProgressBar: false,
@@ -87,33 +84,19 @@ function EndingTaskForm(props) {
                 });
                 dispatch(getTask(props.taskID))
                 dispatch(getTaskHistory(props.taskID))
-                navigate("/task/"+props.taskID);
+                navigate("/task/"+props.taskID)
             }
         });
     }
 
     return (
         <div className={s.endingTaskForm}>
-            <PageTitle title="Результаты работы"/>
+            {/*<PageTitle title="Результаты работы"/>*/}
             <div>
                 <Form className={s.form} onSubmit={handleSubmit(onSubmit)}>
                     <div className={s.formLeftContainer}>
                         <Input register={register}
-                               registerName='endingTaskResult'
-                               errors={errors}
-                               title="Результат работы"
-                               options={
-                                   {
-                                       required: true
-                                   }
-                               }
-                               require={true}
-                               type="text"
-                               rows={2}
-                               as="textarea"
-                        />
-                        <Input register={register}
-                               registerName='endingTaskComment'
+                               registerName='completeTaskComment'
                                errors={errors}
                                title="Комментарий"
                                options={
@@ -125,30 +108,17 @@ function EndingTaskForm(props) {
                                type="text"
                                rows={2}
                                as="textarea"
-                               description="Расскажите о возникших сложностях"
+                               description="Какое-то напоминание для руководителя/главного руководителя"
                         />
 
                         <div className={s.buttons}>
                             <Button type="submit">Отправить</Button>
-                            <Button isSecond click={()=> navigate("/task/"+props.taskID)}>Отменить завершение</Button>
                         </div>
                     </div>
 
                     <div className={s.formRightContainer}>
                         <Input register={register}
-                               registerName='endingTaskFactWeight'
-                               options={
-                                   {
-                                       required: true
-                                   }
-                               }
-                               errors={errors}
-                               title="Фактический вес"
-                               require={true}
-                               type="text"/>
-
-                        <Input register={register}
-                               registerName='endingTaskPercent'
+                               registerName='completeTaskPercent'
                                options={
                                    {
                                        required: true
@@ -158,7 +128,7 @@ function EndingTaskForm(props) {
                                title="Процент выполнения"
                                require={true}
                                type="text"
-                               description="Укажите, на сколько процентов, по Вашему мнению, Вы справились с задачей"
+                               description="Укажите, на сколько процентов, по Вашему мнению, сотрудник справился с задачей"
                         />
                     </div>
                 </Form>
@@ -167,4 +137,4 @@ function EndingTaskForm(props) {
     )
 }
 
-export default EndingTaskForm;
+export default CompleteTaskForm;

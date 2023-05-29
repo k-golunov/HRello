@@ -9,7 +9,7 @@ import Table1 from "../components/Table/Table";
 import s from './Pages.module.css';
 import Table from 'rc-table';
 import TableRow from "../components/TableRow/TableRow";
-import {getAllTasks} from "../store/slices/tasksSlice";
+import {getAllTasks, removeTasks, resetTasks} from "../store/slices/tasksSlice";
 import {useTasks} from "../hooks/use-tasks";
 import Loading from "../components/Loading/Loading";
 import {getDepartments} from "../store/slices/departmentsSlice";
@@ -19,6 +19,7 @@ import {useDepartments} from "../hooks/use-departments";
 import {getUsers} from "../store/slices/usersSlice";
 import {useUsers} from "../hooks/use-users";
 import {removeTask} from "../store/slices/taskSlice";
+import Pagination from "rc-pagination";
 
 const OnCheckTaskPage = () => {
     const dispatch = useDispatch();
@@ -30,8 +31,18 @@ const OnCheckTaskPage = () => {
     const departments = useDepartments();
     const users = useUsers();
 
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const statusList = [
+        { value: ["OnChecking", "CompletionCheck", "AwaitingCancellation"], label: '-'},
+        { value: "OnChecking", label: 'На проверке'},
+        { value: "CompletionCheck", label: 'Проверка завершения'},
+        { value: "AwaitingCancellation", label: 'Ожидает отмены'},
+    ]
+
     useEffect(() => {
-        dispatch(getAllTasks({page: 1}));
+        dispatch(resetTasks());
+        dispatch(getAllTasks({page: currentPage, status: [statusList[0].value], departments:[user.departmentID]}));
         dispatch(getDepartments());
         dispatch(getBlocks());
         dispatch(getUsers());
@@ -58,7 +69,7 @@ const OnCheckTaskPage = () => {
     // ]
 
     let blockFilter = []
-    let departmentFilter = []
+    //let departmentFilter = []
     let employeeFilter = []
 
     if(!blocks.isLoading)
@@ -66,22 +77,16 @@ const OnCheckTaskPage = () => {
             return { value: block.id, label: block.value}
         })
 
-    if(!departments.isLoading)
-        departmentFilter = departments.departments.map(department =>{
-            return { value: department.id, label: department.name}
-        })
+    // if(!departments.isLoading)
+    //     departmentFilter = departments.departments.map(department =>{
+    //         return { value: department.id, label: department.name}
+    //     })
 
 
 
     const sortWeightList = [
         { value: 'desc', label: 'По возрастанию'},
         { value: 'asc', label: 'По убыванию'},
-    ]
-
-    const statusList = [
-        { value: 0, label: 'На проверке'},
-        { value: 3, label: 'Проверка завершения'},
-        { value: 5, label: 'Ожидает отмены'},
     ]
 
     if(!users.isLoading)
@@ -91,22 +96,23 @@ const OnCheckTaskPage = () => {
 
     const [selectedYear, setSelectedYear] = useState([]);
     const [selectedQuarter, setSelectedQuarter] = useState([]);
-    const [selectedDepartment, setSelectedDepartment] = useState([]);
+    //const [selectedDepartment, setSelectedDepartment] = useState([]);
     const [selectedBlock, setSelectedBlock] = useState([]);
-    const [selectedSort, setSelectedSort] = useState([]);
+    //const [selectedSort, setSelectedSort] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState(statusList[0]);
 
     useEffect(() => {
         dispatch(getAllTasks({
-            page: 1,
+            page: currentPage,
             users:selectedEmployee.filter(worker=> worker.value).map(worker => worker.value?worker.value:""),
             blocks:selectedBlock.filter(block=> block.value).map(block => block.value?block.value:""),
-            departments:selectedDepartment.filter(department=> department.value).map(department => department.value?department.value:""),
+            //departments:selectedDepartment.filter(department=> department.value).map(department => department.value?department.value:""),
+            departments: [user.departmentID],
             quarter:selectedQuarter.filter(quarter=> quarter.value).map(quarter => quarter.value?quarter.value:""),
             status: [selectedStatus.value]
         }));
-    }, [selectedEmployee, selectedBlock, selectedDepartment, selectedQuarter, selectedStatus]);
+    }, [selectedEmployee, selectedBlock, selectedQuarter, selectedStatus, currentPage]);
 
     const filters = [
         {
@@ -115,15 +121,16 @@ const OnCheckTaskPage = () => {
             'setState': setSelectedQuarter,
             'placeholder': "Квартал",
             'isMulti': true,
+            'minWidth': '120px'
         },
-        {
-            'options': departmentFilter,
-            'state': selectedDepartment,
-            'setState': setSelectedDepartment,
-            'placeholder': "Отдел",
-            'isMulti': true,
-            'minWidth': '170px'
-        },
+        // {
+        //     'options': departmentFilter,
+        //     'state': selectedDepartment,
+        //     'setState': setSelectedDepartment,
+        //     'placeholder': "Отдел",
+        //     'isMulti': true,
+        //     'minWidth': '170px'
+        // },
         {
             'options': employeeFilter,
             'state': selectedEmployee,
@@ -138,13 +145,14 @@ const OnCheckTaskPage = () => {
             'setState': setSelectedBlock,
             'placeholder': "Блок",
             'isMulti': true,
-            'minWidth': '230px'
+            'minWidth': '200px'
         },
         {
             'options': statusList,
             'state': selectedStatus,
             'setState': setSelectedStatus,
             'placeholder': "Статус задачи",
+            'title': "Статус задачи",
             'isMulti': false,
             'minWidth': '232px'
         }
@@ -160,7 +168,7 @@ const OnCheckTaskPage = () => {
         {type: "header", text: 'Статус', alignment: "left", width: "260px"},
     ]
 
-    if(departments.isLoading || blocks.isLoading || users.isLoading)
+    if(tasks.isLoading || departments.isLoading || blocks.isLoading || users.isLoading)
         return <Loading/>
 
     return (
@@ -173,12 +181,13 @@ const OnCheckTaskPage = () => {
 
             <TableRow cells={headers} isHeader/>
             {
-                tasks.tasks.length === 0 ?
+                tasks.tasks.filter(task => task.userId !== user.id).length === 0 ?
                     <TableRow cells={[{type: "text", text: "Нет задач!", alignment: "center", width: "1272px"}]}/> :
                     <></>
             }
             {
-                tasks.tasks.map(task => {
+                tasks.tasks.filter(task => task.userId !== user.id)
+                    .map(task => {
                     let taskUser = users.users.find(findUser => findUser.id === task.userId)
                     let taskDepartment = departments.departments.find(findDepartment => findDepartment.id === task.departmentId)
                     let cells = [
@@ -193,6 +202,15 @@ const OnCheckTaskPage = () => {
                     return <TableRow cells={cells} taskID={task.id}/>
                 })
             }
+
+            <div className={s.pagination}>
+                <Pagination total={tasks.pagesCount*10}
+                            current={ currentPage }
+                            onChange={page => setCurrentPage(page)}
+                            pageSize={10}
+                            hideOnSinglePage
+                />
+            </div>
             {/*<TableRow cells={cells} onClick={navigate("/task/ba62e168-6f36-43c7-ad57-5372a644a188")}/>*/}
             {/*<TableRow cells={cells}/>*/}
             {/*<Table1 />*/}

@@ -17,7 +17,6 @@ const RegistrationPage = () => {
     return (
         <div>
             <RegistrationForm userId={link}/>
-            <ToastContainer />
         </div>
     );
 };
