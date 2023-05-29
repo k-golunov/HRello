@@ -56,7 +56,7 @@ public class ResultController : BasePublicController
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(IdResponse), 200)]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = RoleConstants.MainBoss)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateTaskResultsAsync([FromBody] CreateTaskResultRequest request)
     {
         var taskResultDal = _mapper.Map<TaskResultDal>(request);
