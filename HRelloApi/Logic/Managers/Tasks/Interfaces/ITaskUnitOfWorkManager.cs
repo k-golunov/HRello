@@ -15,7 +15,6 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> UpdateTaskAsync(TaskDal taskDal,Guid blockId, string token, string? comment);
     public List<TaskDal> ApplyFilters(Filters.Filters filters, List<TaskDal> tasks);
     public Task<Guid> ChangeStatus(Guid taskId, StatusEnum nextStatus, string comment);
-
     public Task<Guid> SendResultForTask<T>(T taskResult, TaskDal task, StatusEnum status, string comment = null)
         where T : BaseDal<Guid>;
     public Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>;
