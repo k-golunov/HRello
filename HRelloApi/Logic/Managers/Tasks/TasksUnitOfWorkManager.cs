@@ -220,10 +220,10 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     {
         var repository = GetRepository<T>();
         var allData = await repository.GetAllAsync();
-        if (allData.Count == 0)
-        {
-            throw new BaseException("EntityNotFoundException", "ни одной сущности не найдено", 400);
-        }
+        // if (allData.Count == 0)
+        // {
+        //     throw new BaseException("EntityNotFoundException", "ни одной сущности не найдено", 400);
+        // }
         
         return allData;
     }
