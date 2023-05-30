@@ -12,7 +12,7 @@ namespace Dal.Base;
 /// <typeparam name="TI">Тип уникального идентификатора (Id)</typeparam>
 public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI>
 {
-    private readonly DataContext _context;
+    protected readonly DataContext _context;
     protected readonly DbSet<T> _dbSet;
 
     public BaseRepository(DataContext context)

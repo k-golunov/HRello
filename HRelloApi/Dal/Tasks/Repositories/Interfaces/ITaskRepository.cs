@@ -8,4 +8,5 @@ namespace Dal.Tasks.Repositories.Interfaces;
 /// </summary>
 public interface ITaskRepository: IBaseRepository<TaskDal, Guid>
 {
+    public Task DeleteAll();
 }

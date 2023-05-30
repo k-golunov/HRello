@@ -27,4 +27,10 @@ public class TaskRepository: BaseRepository<TaskDal, Guid>, ITaskRepository
                 .Include(x => x.User)
                 .ToListAsync();
     }
+
+    public async Task DeleteAll()
+    {
+        _dbSet.RemoveRange(_dbSet.ToList());
+        await _context.SaveChangesAsync();
+    }
 }
