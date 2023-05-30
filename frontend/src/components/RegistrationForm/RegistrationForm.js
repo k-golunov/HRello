@@ -34,7 +34,7 @@ function RegistrationForm(props) {
             }
 
             delete payload.registrationRetryPassword;
-            payload.registrationPassword = md5(payload.registrationPassword);
+            //payload.registrationPassword = md5(payload.registrationPassword);
 
             const data = {
                 userId: props.userId,

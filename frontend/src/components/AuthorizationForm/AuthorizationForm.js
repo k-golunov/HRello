@@ -26,7 +26,7 @@ function AuthorizationForm(props) {
         if(!isLoading)
         {
             setIsLoading(true);
-            payload.authorizationPassword = md5(payload.authorizationPassword);
+            //payload.authorizationPassword = md5(payload.authorizationPassword);
             const data = {
                 email: payload.authorizationEmail,
                 password: payload.authorizationPassword,

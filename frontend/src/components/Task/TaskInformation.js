@@ -141,33 +141,6 @@ function TaskInformation(props) {
 
 
 
-
-                        {
-                            props.action === "watching" &&
-                            props.task.taskStatus === "CompletionCheck" &&
-                            user.id !== props.task.userID &&
-                            isBossAndDepartment ?
-                                <div className={s.buttons}>
-                                    <Button onClick={() => {
-                                        // dispatch(changeTaskStatus({
-                                        //     id: props.task.id,
-                                        //     nextStatus: "InWork"
-                                        // })).then(()=>{
-                                        //     dispatch(getTask(props.task.id))
-                                        //     dispatch(getTaskHistory(props.task.id));
-                                        // })
-                                        navigate("./complete")
-                                    }}>Одобрить</Button>
-                                    <Button isSecond onClick={() => props.setCancelCompletionModalActive(true)}>Отклонить завершение</Button>
-                                    {/*<Button isSecond onClick={() => props.setOnReworkModalActive(true)}>На доработку</Button>*/}
-                                </div> : <></>
-                        }
-
-
-
-
-
-
                         {
                             props.action === "watching" &&
                             props.task.taskStatus === "InWork" &&

@@ -347,6 +347,8 @@ const initialState = {
     taskStatus: null,
     isLoading: true,
     history: [],
+    userResult: null,
+    bossResult: null
 };
 
 const taskSlice = createSlice({
@@ -366,6 +368,8 @@ const taskSlice = createSlice({
             state.plannedWeight = action.payload.plannedWeight;
             state.waitResult = action.payload.waitResult;
             state.taskStatus = action.payload.status;
+            state.userResult = action.payload.userResult;
+            state.bossResult = action.payload.bossResult;
             state.isLoading = false;
         },
         removeTask(state) {
@@ -381,6 +385,8 @@ const taskSlice = createSlice({
             state.plannedWeight = null
             state.waitResult = null
             state.status = null
+            state.userResult = null;
+            state.bossResult = null;
             state.isLoading = true;
             state.history = [];
         },
