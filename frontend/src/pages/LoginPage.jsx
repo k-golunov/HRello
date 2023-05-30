@@ -7,7 +7,6 @@ const LoginPage = () => {
     return (
         <div>
             <AuthorizationForm/>
-            <ToastContainer />
         </div>
     );
 };

@@ -50,7 +50,11 @@ function FilterDropdown(props) {
     return (
 
         <div>
-            {/*<p className={s.title}>{props.title}</p>*/}
+            {
+                props.title ?
+                    <p className={s.title}>{props.title}</p> :<></>
+            }
+
             <Select
                 className={s.dropdown}
                 defaultValue={!props.isMulti?props.options[0]:{}}

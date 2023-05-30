@@ -8,6 +8,7 @@ function Input(props) {
         <div className={s.input}>
             <div className={s.titleBox}><p className={s.title}>{props.title??""}</p>
                 {props.require ? <p title="Поле обязательно для ввода" className={s.required}>*</p> : <></>}</div>
+            {props.description? <div className={s.description}>{props.description}</div>:<></>}
             {/*<Form.Control {...props.register(props.registerName, props.options)} className={s.inputBox} {...props}/>*/}
             <Form.Control {...props.register(props.registerName, props.options)} className={classNames(s.inputBox, props.errors?.[props.registerName]?s.invalid:"")} {...props}/>
         </div>

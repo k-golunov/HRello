@@ -4,11 +4,10 @@ import {Link} from 'react-router-dom';
 import {useAuth} from '../../hooks/use-auth'
 
 const Nav = () => {
-    const isAuth = useAuth().isAuth;
-    const isAdmin = useAuth().isAdmin;
+    const auth = useAuth();
 
-    if (isAuth) {
-        if (!isAdmin)
+    if (auth.isAuth) {
+        if (auth.role === "employee")
             return (
                 <div className={s.nav}>
                     <Link to='/tasks/my' className={s.nav_item}>
@@ -17,7 +16,7 @@ const Nav = () => {
                     <Link to='/' className={s.nav_item}>
                         Итоги
                     </Link>
-                    <Link to='/' className={s.nav_item}>
+                    <Link to='/workers' className={s.nav_item}>
                         Сотрудники
                     </Link>
                 </div>
@@ -25,17 +24,17 @@ const Nav = () => {
         else
             return (
                 <div className={s.nav}>
-                    <Link to='/admin/directions' className={s.nav_item}>
-                        Направления практик
+                    <Link to='/tasks/onCheck' className={s.nav_item}>
+                        Задачи
                     </Link>
                     <Link to='/admin/applications' className={s.nav_item}>
-                        Заявки
+                        Итоги
                     </Link>
-                    <Link to='/admin/testcases' className={s.nav_item}>
-                        Тестовое
+                    <Link to='/workers' className={s.nav_item}>
+                        Сотрудники
                     </Link>
-                    <Link to='/admin/practicants' className={s.nav_item}>
-                        Практиканты
+                    <Link to='/invitations' className={s.nav_item}>
+                        Приглашения
                     </Link>
                 </div>
             );
@@ -43,15 +42,7 @@ const Nav = () => {
 
     return (
         <div className={s.nav}>
-            <a href='#about' className={s.nav_item}>
-                О нас
-            </a>
-            <a href='#directions' className={s.nav_item}>
-                Направления подготовки
-            </a>
-            <a href='#footer' className={s.nav_item}>
-                Контакты
-            </a>
+
         </div>
     );
 };
