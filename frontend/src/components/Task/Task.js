@@ -16,6 +16,7 @@ import {useForm} from "react-hook-form";
 import TaskInformation from "./TaskInformation";
 import ToCancellationForm from "../ToCancellationForm/ToCancellationForm";
 import CancelCompletionForm from "../CancelCompletionForm/CancelCompletionForm";
+import TaskResults from "./TaskResults";
 
 function Task(props) {
     const dispatch = useDispatch();
@@ -75,6 +76,12 @@ function Task(props) {
                              setCancellationModalActive={setCancellationModalActive}
                              setCancelCompletionModalActive={setCancelCompletionModalActive}
             />
+
+            <TaskResults task={task}
+                         action="watching"
+                         setCancelCompletionModalActive={setCancelCompletionModalActive}
+            />
+
 
 
 
