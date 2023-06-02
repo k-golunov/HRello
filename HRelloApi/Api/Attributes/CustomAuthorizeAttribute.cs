@@ -9,14 +9,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HRelloApi.Attributes;
 
+/// <summary>
+/// Кастомный атрибут авторизации для проверки роли в токене
+/// </summary>
 public class CustomAuthorizeAttribute : Attribute, IAuthorizationFilter
 {
-    private readonly UserManager<UserDal> _userManager;
-
-    /*internal CustomAuthorizeAttribute(UserManager<UserDal> userManager)
-    {
-        _userManager = userManager;
-    }*/
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
