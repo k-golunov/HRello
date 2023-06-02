@@ -56,13 +56,15 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // работа с отделами
 builder.Services.AddScoped<IDepartamentManager, DepartamentManager>();
 builder.Services.AddScoped<IDepartamentRepository, DepartamentRepository>();
 //работа с задачами
 builder.Services.AddTasks();
+builder.Services.AddTasksResults();
 // Маппинг 
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(CreateUserMappingProfile));

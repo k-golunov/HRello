@@ -18,6 +18,13 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> SendResultForTask<T>(T taskResult, TaskDal task, StatusEnum status, string comment = null)
         where T : BaseDal<Guid>;
     public Task<T?> GetAsync<T>(Guid id) where T : BaseDal<Guid>;
+    /// <summary>
+    /// получение массива данных по массиву айдишников
+    /// </summary>
+    /// <param name="listId">массив айдишников</param>
+    /// <typeparam name="T">Тип сущности</typeparam>
+    /// <returns></returns>
+    public Task<List<T>> GetByListIdAsync<T>(List<Guid> listId) where T : BaseDal<Guid>;
     public Task<Guid> UpdateAsync<T>(T dal) where T : BaseDal<Guid>;
     public Task<Guid> InsertAsync<T>(T dal) where T : BaseDal<Guid>;
     public Task DeleteAsync<T>(Guid id) where T : BaseDal<Guid>;

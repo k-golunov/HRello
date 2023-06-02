@@ -38,4 +38,10 @@ public interface IBaseRepository<T, TI> where T : BaseDal<TI>
     /// <param name="dal">сущность</param>
     /// <returns>список всех сущностей из бд</returns>
     public Task<List<T>> GetAllAsync();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task<List<T>> GetByListIdAsync(List<TI> listId);
 }
