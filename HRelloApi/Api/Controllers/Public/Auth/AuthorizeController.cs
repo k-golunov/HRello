@@ -4,11 +4,13 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Dal.Entities;
+using HRelloApi.Attributes;
 using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Notification;
+using Logic.Constants;
 using Logic.Exceptions.Department;
 using Logic.Exceptions.User;
 using Logic.Managers.Departament.Interfaces;
@@ -70,7 +72,7 @@ public class AuthorizeController : BasePublicController
     /// При успешном создании пользователя отправляет электронное письмо на почту созданного пользователя
     /// для дальнейшей его регистрации на сервисе
     /// </returns>
-    //[Authorize(Roles = "boss")]
+    [CustomAuthorize(Roles = RoleConstants.Boss)]
     [HttpPost("createUser")]
     [ProducesResponseType(typeof(Guid), 200)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)

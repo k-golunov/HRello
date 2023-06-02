@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dal.TaskResult.Entities;
 using Dal.Tasks.Entities;
+using HRelloApi.Attributes;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Results.dto.Request;
 using HRelloApi.Controllers.Public.Results.dto.Response;
@@ -56,6 +57,7 @@ public class ResultController : BasePublicController
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(IdResponse), 200)]
+    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateTaskResultsAsync([FromBody] CreateTaskResultRequest request)
     {
