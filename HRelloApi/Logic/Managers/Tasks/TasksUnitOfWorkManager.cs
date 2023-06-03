@@ -11,6 +11,7 @@ using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
+using Logic.Excel;
 using Logic.Exceptions.Base;
 using Logic.Exceptions.Tasks;
 using Logic.Exceptions.User;
@@ -239,6 +240,15 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         // }
         
         return allData;
+    }
+
+    public async Task<byte[]> GetExcelFile(int year, List<int> quarter)
+    {
+        var tasksList = await _taskRepository.GetAllWithResult(year, quarter);
+
+        var bytes = new ExcelGenerator().GenerateTasksReport(tasksList);
+
+        return bytes;
     }
 
     /// <summary>

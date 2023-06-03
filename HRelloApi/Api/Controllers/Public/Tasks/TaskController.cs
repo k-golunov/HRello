@@ -67,9 +67,7 @@ public class TaskController: BasePublicController
     /// <summary>
     /// Редактирования данных о задаче
     /// </summary>
-    #if !DEBUG
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    #endif
     [HttpPut]
     [ProducesResponseType(typeof(TaskIdResponse), 200)]
     public async Task<IActionResult> EditTask(EditTaskRequest model)
@@ -162,6 +160,20 @@ public class TaskController: BasePublicController
         var tasks = filteredTasks.Select(_mapper.Map<TaskResponse>).ToList();
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
         return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10 + 1, tasks));
+    }
+
+    /// <summary>
+    /// Скачивание эксель файла с задачами
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("excel-file")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetExcelFileAsync([FromBody] GetExcelFileRequest request)
+    {
+        var bytes = await _manager.GetExcelFile(request.Year, request.Quearter);
+        
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Guid.NewGuid().ToString());
     }
 
     /// <summary>

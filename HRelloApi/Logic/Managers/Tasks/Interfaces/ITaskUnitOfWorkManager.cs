@@ -29,4 +29,12 @@ public interface ITaskUnitOfWorkManager
     public Task<Guid> InsertAsync<T>(T dal) where T : BaseDal<Guid>;
     public Task DeleteAsync<T>(Guid id) where T : BaseDal<Guid>;
     public Task<List<T>> GetAllAsync<T>() where T : BaseDal<Guid>;
+
+    /// <summary>
+    /// Метод для получения байт для скачивания эксель файла
+    /// </summary>
+    /// <param name="year">год задач</param>
+    /// <param name="quarter">квартал задач</param>
+    /// <returns></returns>
+    public Task<byte[]> GetExcelFile(int year, List<int> quarter);
 }

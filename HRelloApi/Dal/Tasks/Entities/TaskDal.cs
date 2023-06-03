@@ -80,6 +80,16 @@ public class TaskDal : BaseDal<Guid>
     /// Хранит отдел пользователя и все данные по нему
     /// </summary>
     public DepartamentDal Departament { get; set; }
+
+    /// <summary>
+    /// Итоги от сотрудника
+    /// </summary>
+    public UserTaskResultDal? UserTaskResultDal { get; set; }
+    
+    /// <summary>
+    /// Итоги от руководителя
+    /// </summary>
+    public BossTaskResultDal? BossTaskResultDal { get; set; }
     
     /// <summary>
     /// итоги от руководителя, к которым привязанна задача

@@ -17,4 +17,10 @@ public interface IResultManager : IBaseRepository<TaskResultDal, Guid>
     /// <param name="quarter"></param>
     /// <returns></returns>
     public void ValidationData(List<TaskDal> tasks, int year, int quarter);
+
+    /// <summary>
+    /// Генерация файла из итогов в эксель
+    /// </summary>
+    /// <returns></returns>
+    Task<byte[]> GenerateFileAsync();
 }

@@ -22,4 +22,9 @@ public class ResultManager : BaseManager<TaskResultDal, Guid>, IResultManager
             throw new NotValidYearOrQuarterException(year, quarter);
         }
     }
+
+    public Task<byte[]> GenerateFileAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

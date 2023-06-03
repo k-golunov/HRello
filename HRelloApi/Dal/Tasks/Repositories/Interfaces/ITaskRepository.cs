@@ -8,5 +8,7 @@ namespace Dal.Tasks.Repositories.Interfaces;
 /// </summary>
 public interface ITaskRepository: IBaseRepository<TaskDal, Guid>
 {
-    public Task DeleteAll();
+    public Task DeleteAllAsync();
+
+    public Task<List<TaskDal>> GetAllWithResult(int year, List<int> quarter);
 }
