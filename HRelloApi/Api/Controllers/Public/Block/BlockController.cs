@@ -87,6 +87,6 @@ public class BlockController: BasePublicController
         var blocks = await _manager.GetAllAsync<BlockDal>();
         if (blocks.Count == 0)
             return NoContent();
-        return Ok(blocks);
+        return Ok(new GetAllBlockResponse(){AllBlocks = blocks});
     }
 }
