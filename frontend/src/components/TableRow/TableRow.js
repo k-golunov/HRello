@@ -37,6 +37,22 @@ function TableRow(props) {
         'Completed': 'Завершена'
     }
 
+    const unsecuredCopyToClipboard = (text) => {
+        const textArea = document.createElement("textarea");
+        textArea.value= text;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch(err) {
+            console.error('Unable to copy to clipboard',err);
+        }
+
+        document.body.removeChild(textArea)
+    };
+
+
     return (
         <div className={classNames(s.tableRow, props.isHeader?s.tableRowHeader:"")} onClick={props.taskID? ()=>navigate("/task/"+props.taskID) : ()=>{}}>
             {
@@ -73,17 +89,34 @@ function TableRow(props) {
                     if(cell.type === "copyLink")
                         return <TableCell width={cell.width} alignment={cell.alignment}>
                             <div className={s.copyLink} onClick={()=> {
-                                navigator.clipboard.writeText(cell.link).then(toast.success('Ссылка успешно скопирована!', {
-                                    position: "bottom-right",
-                                    autoClose: 2000,
-                                    hideProgressBar: false,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                    progress: undefined,
-                                    theme: "colored",
-                                })
-                            )
+
+                                if (window.isSecureContext && navigator.clipboard) {
+                                    navigator.clipboard.writeText(cell.link).then(()=>toast.success('Ссылка успешно скопирована!', {
+                                            position: "bottom-right",
+                                            autoClose: 2000,
+                                            hideProgressBar: false,
+                                            closeOnClick: true,
+                                            pauseOnHover: true,
+                                            draggable: true,
+                                            progress: undefined,
+                                            theme: "colored",
+                                        })
+                                    )
+                                } else {
+                                    unsecuredCopyToClipboard(cell.link);
+                                    toast.success('Ссылка успешно скопирована!', {
+                                        position: "bottom-right",
+                                        autoClose: 2000,
+                                        hideProgressBar: false,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                        progress: undefined,
+                                        theme: "colored",
+                                    })
+                                }
+
+
                             }}>Скопировать</div>
                         </TableCell>
 
