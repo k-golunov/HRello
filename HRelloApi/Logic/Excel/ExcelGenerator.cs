@@ -37,6 +37,21 @@ public class ExcelGenerator
         {
             sheet.Cells[1, i+1].Value = TaskHeadres[i];
         }
+        
+        sheet.Cells[1, 8].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        sheet.Cells[1, 8].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
+        sheet.Cells[1, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        sheet.Cells[1, 9].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
+        sheet.Cells[1, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        sheet.Cells[1, 10].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
+        sheet.Cells[1, 11].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        sheet.Cells[1, 11].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
+        sheet.Cells[1, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        sheet.Cells[1, 12].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+        sheet.Cells[1, 13].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        sheet.Cells[1, 13].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+        sheet.Cells[1, 14].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        sheet.Cells[1, 14].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
 
         for (var i = 2; i < tasks.Count+2; i++)
         {
@@ -48,18 +63,26 @@ public class ExcelGenerator
             sheet.Cells[i, 6].Value = tasks[i-2].WaitResult;
             sheet.Cells[i, 7].Style.Numberformat.Format = "###%";
             sheet.Cells[i, 7].Value = tasks[i-2].PlannedWeight;
-            sheet.Cells[i, 8].Style.Fill.PatternType = ExcelFillStyle.Gray125;
+            sheet.Cells[i, 8].Style.Fill.PatternType = ExcelFillStyle.Solid;
             sheet.Cells[i, 8].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
             sheet.Cells[i, 8].Value = tasks[i-2].UserTaskResultDal?.Result;
             sheet.Cells[i, 9].Style.Numberformat.Format = "###%";
-            sheet.Cells[i, 9].Style.Fill.PatternType = ExcelFillStyle.Gray125;
+            sheet.Cells[i, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
             sheet.Cells[i, 9].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
             sheet.Cells[i, 9].Value = tasks[i-2].UserTaskResultDal?.FactResult;
+            sheet.Cells[i, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            sheet.Cells[i, 10].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
             sheet.Cells[i, 10].Style.Numberformat.Format = "###%";
             sheet.Cells[i, 10].Value = tasks[i-2].UserTaskResultDal?.FactWeight;
+            sheet.Cells[i, 11].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            sheet.Cells[i, 11].Style.Fill.BackgroundColor.SetColor(Color.Aqua);
             sheet.Cells[i, 11].Value = tasks[i-2].UserTaskResultDal?.Description;
             sheet.Cells[i, 12].Style.Numberformat.Format = "###%";
+            sheet.Cells[i, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            sheet.Cells[i, 12].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
             sheet.Cells[i, 12].Value = tasks[i-2].BossTaskResultDal?.Result;
+            sheet.Cells[i, 13].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            sheet.Cells[i, 13].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
             sheet.Cells[i, 13].Value = tasks[i-2].BossTaskResultDal?.Comment;
             sheet.Cells[i, 14].Value = "";
             sheet.Cells[i, 15].Value = tasks[i-2].UserTaskResultDal?.FactWeight * tasks[i-2].BossTaskResultDal?.Result;
