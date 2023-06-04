@@ -1,5 +1,5 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import USER_API, {DELETE_USER_URL, GET_USER_URL} from '../../api/userAPI';
+import USER_API, {DELETE_USER_URL, GET_USER_URL, SEND_RECOVERY_PASSWORD_URL} from '../../api/userAPI';
 import jwt from 'jwt-decode'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -121,6 +121,37 @@ export const deleteUser = createAsyncThunk(
                     'Content-Type': 'application/json',
                     Authorization: accessToken
                 }
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            //response = await response.json();
+            //console.log(response)
+
+            //return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const recoveryUserPassword = createAsyncThunk(
+    'user/sendRecovery',
+    async function (email, {rejectWithValue, dispatch}) {
+        try {
+            let response = await fetch(USER_API.SEND_RECOVERY_PASSWORD_URL, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(email),
             });
 
             if (!response.ok) {

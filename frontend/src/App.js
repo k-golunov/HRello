@@ -22,6 +22,9 @@ import DepartmentsPage from "./pages/DepartmentsPage";
 import OnCheckTaskPage from "./pages/OnCheckTaskPage";
 import WorkersLayout from "./components/WorkersLayout";
 import CompleteTaskPage from "./pages/CompleteTaskPage";
+import EditResultTaskPage from "./pages/EditResultTaskPage";
+import SendRecoveryPage from "./pages/SendRecoveryPage";
+import RequireAuth from "./hoc/RequireAuth";
 
 function App() {
 
@@ -34,92 +37,102 @@ function App() {
                         <RequireUnauth>
                             <LoginPage/>
                         </RequireUnauth>}/>
+                    <Route path='send-recovery' element={
+                        <RequireUnauth>
+                            <SendRecoveryPage/>
+                        </RequireUnauth>}/>
                     <Route path='registration/:link' element={
                         <RequireUnauth>
                             <RegistrationPage/>
                         </RequireUnauth>}/>
                     <Route path='registration/' element={
                             <NotFoundLink/>}/>
-                    <Route path='invitations' element={<InvitationsPage/>}/>
+                    <Route path='invitations' element={<RequireAuth><InvitationsPage/></RequireAuth>}/>
                     <Route path='*' element={<NotFoundPage/>}/>
                 </Route>
 
                 <Route path='/tasks' element={<TasksLayout page='myTasks'/>}>
                     <Route path='my' element={
-                        // <RequireAuth>
-                        <MyTasksPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <MyTasksPage/>
+                        </RequireAuth>
                     }
                     />
                 </Route>
 
                 <Route path='/tasks' element={<TasksLayout page='onCheck'/>}>
                     <Route path='onCheck' element={
-                        // <RequireAuth>
-                        <OnCheckTaskPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <OnCheckTaskPage/>
+                        </RequireAuth>
                     }
                     />
                 </Route>
 
                 <Route path='/tasks' element={<TasksLayout page='allTasks'/>}>
                     <Route path='all' element={
-                        // <RequireAuth>
-                        <AllTaskPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <AllTaskPage/>
+                        </RequireAuth>
                     }
                     />
                 </Route>
 
                 <Route path='/tasks' element={<TaskLayout />}>
                     <Route path='create' element={
-                        // <RequireAuth>
-                        <CreateTaskPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <CreateTaskPage/>
+                        </RequireAuth>
                     }
                     />
                 </Route>
 
                 <Route path='/workers' element={<WorkersLayout page='workers'/>}>
                     <Route path='' element={
-                        // <RequireAuth>
-                        <WorkersPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <WorkersPage/>
+                        </RequireAuth>
                     }
                     />
                 </Route>
                 <Route path='/departments' element={<WorkersLayout page='departments' />}>
                     <Route path='' element={
-                        // <RequireAuth>
-                        <DepartmentsPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <DepartmentsPage/>
+                        </RequireAuth>
                     }
                     />
                 </Route>
 
                 <Route path='/task' element={<TaskLayout />}>
                     <Route path=':taskId' element={
-                        // <RequireAuth>
-                        <TaskPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <TaskPage/>
+                        </RequireAuth>
                     }/>
 
                     <Route path=':taskId/edit' element={
-                        // <RequireAuth>
-                        <EditTaskPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <EditTaskPage/>
+                        </RequireAuth>
                     }/>
 
+                    {/*<Route path=':taskId/edit-result' element={*/}
+                    {/*    // <RequireAuth>*/}
+                    {/*    <EditResultTaskPage/>*/}
+                    {/*    // </RequireAuth>*/}
+                    {/*}/>*/}
+
                     <Route path=':taskId/ending' element={
-                        // <RequireAuth>
-                        <EndingTaskPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <EndingTaskPage/>
+                        </RequireAuth>
                     }/>
 
                     <Route path=':taskId/complete' element={
-                        // <RequireAuth>
-                        <CompleteTaskPage/>
-                        // </RequireAuth>
+                        <RequireAuth>
+                            <CompleteTaskPage/>
+                        </RequireAuth>
                     }/>
                 </Route>
             </Routes>

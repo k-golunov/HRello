@@ -6,6 +6,7 @@ export const DELETE_USER_URL = `${HOST}/user/`;
 export const SIGN_UP_USER_URL = `${HOST}/Authorize/register`;
 export const GET_USER_URL = `${HOST}/user`;
 export const GET_USERS_URL = `${HOST}/user/all`;
+export const SEND_RECOVERY_PASSWORD_URL = `${HOST}/changepassword/start`;
 
 const USER_API = {
   SIGN_IN_USER_URL,
@@ -13,7 +14,8 @@ const USER_API = {
   SIGN_UP_USER_URL,
   GET_USER_URL,
   GET_USERS_URL,
-  DELETE_USER_URL
+  DELETE_USER_URL,
+  SEND_RECOVERY_PASSWORD_URL
 };
 
 export default USER_API;
