@@ -47,7 +47,7 @@ const EndingTaskPage = (props) => {
         <div className={s.task}>
             <Breadcrumbs breadcrumbs={[{id: 1, title: "Мои задачи", src: "/tasks/my"}, {id: 2, title: "Просмотр задачи", src: "/task/"+task.id}]}/>
             {/*<Task taskID={taskId} action="Завершение задачи"/>*/}
-            {/*<EndingTaskForm/>*/}
+            {/*<EditResultTaskForm/>*/}
 
             <TaskInformation task={task}
                              action="ending"

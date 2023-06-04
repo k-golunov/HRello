@@ -1,23 +1,22 @@
 import React, {useState} from 'react';
-import s from './AuthorizationForm.module.css';
+import s from './SendRecoveryForm.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import Form from "react-bootstrap/Form";
 import {useForm} from "react-hook-form";
-import {signInUser} from '../../store/slices/userSlice';
+import {recoveryUserPassword, signInUser} from '../../store/slices/userSlice';
 import {useDispatch} from "react-redux";
 import md5 from 'md5';
 import {toast} from "react-toastify";
 import {Link, useNavigate} from "react-router-dom";
 
-function AuthorizationForm(props) {
+function SendRecoveryForm(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm({
         defaultValues: {
-            authorizationEmail: '',
-            authorizationPassword: '',
+            recoveryEmail: ''
         },
         mode: "onBlur"
     });
@@ -28,15 +27,24 @@ function AuthorizationForm(props) {
             setIsLoading(true);
             //payload.authorizationPassword = md5(payload.authorizationPassword);
             const data = {
-                email: payload.authorizationEmail,
-                password: payload.authorizationPassword,
-                rememberMe: true
+                email: payload.recoveryEmail
             }
-            dispatch(signInUser(data)).then(response=>{
+            dispatch(recoveryUserPassword(data)).then(response=>{
                 setIsLoading(false);
-                console.log("RESPONSE", response)
                 if(!response.error)
-                    navigate("/tasks/my");
+                {
+                    toast.success('Письмо с ссылкой для восстановления отправлено на почту!', {
+                        position: "bottom-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    navigate("/login");
+                }
             });
         }
     }
@@ -45,10 +53,10 @@ function AuthorizationForm(props) {
         <div className={s.authorizationForm}>
             <p className={s.header}>Название сервиса</p>
             <div>
-                <p className={s.authorization}>Авторизация</p>
+                <p className={s.authorization}>Восстановление пароля</p>
                 <Form className={s.form} onSubmit={handleSubmit(onSubmit)}>
                     <Input register={register}
-                           registerName='authorizationEmail'
+                           registerName='recoveryEmail'
                            options={
                                {
                                    required: true
@@ -58,26 +66,12 @@ function AuthorizationForm(props) {
                            title="Почта"
                            require={true}
                            type="text"/>
-                    <div className={s.password}>
-                        <Input register={register}
-                               registerName='authorizationPassword'
-                               options={
-                                   {
-                                       required: true
-                                   }
-                               }
-                               errors={errors}
-                               title="Пароль"
-                               require={true}
-                               type="password"/>
-                        <div className={s.forget}><Link to="/send-recovery">Забыли пароль?</Link></div>
-                    </div>
 
-                    <Button type="submit">Войти</Button>
+                    <Button type="submit">Восстановить пароль</Button>
                 </Form>
             </div>
         </div>
     )
 }
 
-export default AuthorizationForm;
+export default SendRecoveryForm;
