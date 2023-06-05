@@ -89,4 +89,31 @@ public class ResultController : BasePublicController
             AllTaskResultResponse = allTaskResults.Select(_mapper.Map<GetTaskResultResponse>).ToList()
         });
     }
+
+    /// <summary>
+    /// рест для редактирования итога
+    /// </summary>
+    [HttpPut]
+    [ProducesResponseType(typeof(IdResponse), 200)]
+    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> EditTaskResultAsync([FromBody] EditTaskResultRequest request)
+    {
+        var taskResult = await _taskResultManager.GetAsync(request.Id);
+        var newResult = _mapper.Map(request, taskResult);
+        var id = await _taskResultManager.UpdateAsync(newResult);
+        return Ok(new IdResponse { Id = id });
+    }
+
+    /// <summary>
+    /// рест для удаления итога
+    /// </summary>
+    [HttpDelete]
+    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> DeleteTaskResultAsync([FromQuery] Guid id)
+    {
+        await _taskResultManager.DeleteAsync(id);
+        return Ok();
+    }
 }
