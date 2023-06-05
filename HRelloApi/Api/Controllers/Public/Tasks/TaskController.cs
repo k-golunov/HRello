@@ -163,6 +163,20 @@ public class TaskController: BasePublicController
     }
 
     /// <summary>
+    /// Скачивание эксель файла с задачами
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("excel-file")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetExcelFileAsync([FromBody] GetExcelFileRequest request)
+    {
+        var bytes = await _manager.GetExcelFile(request.Year, request.Quearter);
+        
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Guid.NewGuid().ToString());
+    }
+
+    /// <summary>
     /// Проверяет наличие переданного блока задач в БД
     /// При успешно найденном блоке присваивает ее задаче
     /// </summary>

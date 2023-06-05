@@ -1,16 +1,16 @@
 ﻿using Dal.Base;
+using Dal.Results.Repositories.Interfaces;
 using Dal.TaskResult.Entities;
-using Dal.TaskResult.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dal.TaskResult.Repositories;
+namespace Dal.Results.Repositories;
 
 /// <summary>
 /// Репозиторий для работы с итогами от главного руководителя
 /// </summary>
-public class TaskResultRepository : BaseRepository<TaskResultDal, Guid>, ITaskResultRepository
+public class ResultRepository : BaseRepository<TaskResultDal, Guid>, IResultRepository
 {
-    public TaskResultRepository(DataContext context) : base(context)
+    public ResultRepository(DataContext context) : base(context)
     {
     }
 

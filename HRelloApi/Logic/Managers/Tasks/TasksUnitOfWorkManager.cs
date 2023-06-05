@@ -11,6 +11,7 @@ using Dal.Tasks.Entities;
 using Dal.Tasks.Enum;
 using Dal.Tasks.Repositories;
 using Dal.Tasks.Repositories.Interfaces;
+using Logic.Excel;
 using Logic.Exceptions.Base;
 using Logic.Exceptions.Tasks;
 using Logic.Exceptions.User;
@@ -180,6 +181,19 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return result;
     }
 
+    public async Task<List<T>> GetByListIdAsync<T>(List<Guid> listId) where T : BaseDal<Guid>
+    {
+        var repository = GetRepository<T>();
+        var response = await repository.GetByListIdAsync(listId);
+
+        if (response.Count == 0)
+        {
+            throw new BaseException("EntitiesNotFound", "данных не найдено", 400);
+        }
+
+        return response;
+    }
+
     /// <summary>
     /// обновляет передаваемую в дженерик параметре сущность новой моделью
     /// </summary>
@@ -226,6 +240,15 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         // }
         
         return allData;
+    }
+
+    public async Task<byte[]> GetExcelFile(int year, List<int> quarter)
+    {
+        var tasksList = await _taskRepository.GetAllWithResult(year, quarter);
+
+        var bytes = new ExcelGenerator().GenerateTasksReport(tasksList);
+
+        return bytes;
     }
 
     /// <summary>

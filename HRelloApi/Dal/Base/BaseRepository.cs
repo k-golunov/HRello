@@ -75,4 +75,9 @@ public class BaseRepository<T, TI> : IBaseRepository<T, TI> where T : BaseDal<TI
     {
         return await _dbSet.ToListAsync();
     }
+
+    public async Task<List<T>> GetByListIdAsync(List<TI> listId)
+    {
+        return await _dbSet.Where(e => listId.Contains(e.Id)).ToListAsync();
+    }
 }

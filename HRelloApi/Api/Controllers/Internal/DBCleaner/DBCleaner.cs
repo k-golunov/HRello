@@ -28,7 +28,7 @@ public class DBCleaner : ControllerBase
     [HttpDelete("delete-all-tasks")]
     public async Task<IActionResult> CleanTasksTable()
     {
-        await _taskRepository.DeleteAll();
+        await _taskRepository.DeleteAllAsync();
         return Ok();
     }
 }

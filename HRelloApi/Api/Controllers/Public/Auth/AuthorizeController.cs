@@ -4,11 +4,13 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Dal.Entities;
+using HRelloApi.Attributes;
 using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Auth.Dto.Request;
 using HRelloApi.Controllers.Public.Auth.Dto.Response;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Notification;
+using Logic.Constants;
 using Logic.Exceptions.Department;
 using Logic.Exceptions.User;
 using Logic.Managers.Departament.Interfaces;
@@ -70,7 +72,7 @@ public class AuthorizeController : BasePublicController
     /// При успешном создании пользователя отправляет электронное письмо на почту созданного пользователя
     /// для дальнейшей его регистрации на сервисе
     /// </returns>
-    //[Authorize(Roles = "boss")]
+    [CustomAuthorize(Roles = RoleConstants.Boss)]
     [HttpPost("createUser")]
     [ProducesResponseType(typeof(Guid), 200)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
@@ -91,25 +93,30 @@ public class AuthorizeController : BasePublicController
             var claims = new List<Claim>();
             claims.Add(new Claim("Email", model.Email));
             claims.Add(new Claim("DepartmentId", model.DepartamentId.ToString()));
-            claims.Add(new Claim("Role", model.Role));
+            claims.Add(new Claim(ClaimTypes.Role, model.Role));
 
             await _userManager.AddClaimsAsync(user, claims);
         }
         else
             return BadRequest();
         
-        EmailSender.SendEmail($"You can register by link: http://185.133.40.145:3000/register/{user.Id}", model.Email);
+        EmailSender.SendEmail($"You can register by link: http://185.133.40.145:3000/registration/{user.Id}", model.Email);
         return Ok(new IdModelResponse
         {
             UserId = user.Id
         });
     }
 
-    private string GetToken(UserDal user, IEnumerable<Claim> principal)
+    private async Task<string> GetToken(UserDal user, IEnumerable<Claim> principal)
     {
         var claims = principal.ToList();
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
         claims.Add(new Claim("userId", user.Id));
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+           claims.Add(new Claim(ClaimTypes.Role, role)); 
+        }
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey));
         var token = new JwtSecurityToken
@@ -170,7 +177,7 @@ public class AuthorizeController : BasePublicController
 
             return Ok(new TokenResponse
             {
-                AccessToken = token,
+                AccessToken = await token,
                 RefreshToken = "Нет реализации)))",
                 UserId = user.Id
             });
@@ -184,7 +191,7 @@ public class AuthorizeController : BasePublicController
     /// </summary>
     /// <param name="userId">идентификатор пользователя</param>
     /// <returns></returns>
-    [HttpGet("check-invite/{userId:guid}")]
+    [HttpGet("check-invite/{userId}")]
     public async Task<IActionResult> CheckInvite([FromRoute] string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
