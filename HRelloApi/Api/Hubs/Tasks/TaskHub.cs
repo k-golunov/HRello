@@ -25,9 +25,9 @@ public class TaskHub : Hub
     {
         var task = await _manager.GetAsync<TaskDal>(message.TaskId);
         
-        // Отправка уведомления тому, кто изменил данные
+        // Отправка уведомления тому, кто изменил данные надо ли???
         await Clients.Caller.SendAsync("UpdateTaskNotify", task?.Id);
         // Отправка уведомления всем остальным, кто подписан на задачу (пока только тот, кто делает задачу)
-        await Clients.Others.SendAsync("UpdateTaskReceive", task?.Name);
+        await Clients.Others.SendAsync("UpdateTaskReceive", $"{task?.Name} {message}");
     }
 }
