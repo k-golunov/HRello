@@ -193,8 +193,7 @@ function TaskInformation(props) {
                         user.id === props.task.userID)
                     ||
                         ((props.task.taskStatus === "OnChecking" ||
-                                props.task.taskStatus === "InWork" ||
-                                props.task.taskStatus === "OnRework") &&
+                                props.task.taskStatus === "InWork") &&
                         user.id !== props.task.userID &&
                         isBossAndDepartment)?
                             <Button onClick={() => props.setCancellationModalActive(true)} isSecond>Отменить</Button> : <></>

@@ -67,6 +67,22 @@ const Header = (props) => {
                 )
             else
                 secondHeader = null;
+        } else if(props.typeSecond === "Service")
+        {
+            secondHeader = (
+                <div className={s.headerContainer}>
+                    <div className={s.secondHeader}>
+                        <Link
+                            className={classNames(s.secondHeaderLink, props.page === 'blocks' ? s.active : "")}
+                            to='/blocks'>Блоки</Link>
+                        <Link
+                            className={classNames(s.secondHeaderLink, props.page === 'departments' ? s.active : "")}
+                            to='/departments'>
+                            <div>Отделы</div>
+                        </Link>
+                    </div>
+                </div>
+            )
         }
     }
 

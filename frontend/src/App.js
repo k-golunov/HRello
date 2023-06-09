@@ -25,6 +25,8 @@ import CompleteTaskPage from "./pages/CompleteTaskPage";
 import EditResultTaskPage from "./pages/EditResultTaskPage";
 import SendRecoveryPage from "./pages/SendRecoveryPage";
 import RequireAuth from "./hoc/RequireAuth";
+import ServiceLayout from "./components/ServiceLayout";
+import BlocksPage from "./pages/BlocksPage";
 
 function App() {
 
@@ -95,10 +97,19 @@ function App() {
                     }
                     />
                 </Route>
-                <Route path='/departments' element={<WorkersLayout page='departments' />}>
+                <Route path='/departments' element={<ServiceLayout page='departments' />}>
                     <Route path='' element={
                         <RequireAuth>
                             <DepartmentsPage/>
+                        </RequireAuth>
+                    }
+                    />
+                </Route>
+
+                <Route path='/blocks' element={<ServiceLayout page='blocks' />}>
+                    <Route path='' element={
+                        <RequireAuth>
+                            <BlocksPage/>
                         </RequireAuth>
                     }
                     />

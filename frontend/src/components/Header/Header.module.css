@@ -148,3 +148,13 @@
 .secondHeaderLink {
 
 }
+
+.gear {
+    height: 20px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.gear:hover path {
+    fill: #F99D1D;
+}
