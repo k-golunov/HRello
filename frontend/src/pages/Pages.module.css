@@ -33,3 +33,12 @@
     margin-top: 20px;
     justify-content: center;
 }
+
+.serviceButtons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+    justify-content: center;
+    animation: show 0.5s ease-in-out;
+}

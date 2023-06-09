@@ -3,9 +3,10 @@ import { useDispatch } from 'react-redux';
 import 'react-toastify/dist/ReactToastify.css';
 import {useParams} from "react-router-dom";
 import {useTask} from "../hooks/use-task";
-import {getTask} from "../store/slices/taskSlice";
+import {getTask, getTaskHistory} from "../store/slices/taskSlice";
 import EditTaskForm from "../components/EditTaskForm/EditTaskForm";
 import Loading from "../components/Loading/Loading";
+import History from "../components/History/History";
 
 const EditTaskPage = () => {
     const { taskId } = useParams();
@@ -13,6 +14,7 @@ const EditTaskPage = () => {
 
     useEffect(() => {
         dispatch(getTask(taskId))
+        dispatch(getTaskHistory(taskId))
     }, []);
 
     const task = useTask();
@@ -22,8 +24,8 @@ const EditTaskPage = () => {
 
     return (
         <div>
-            <EditTaskForm task={task}
-            />
+            <EditTaskForm task={task}/>
+            <History history={task.history}/>
             {/*<ToastContainer />*/}
         </div>
     );

@@ -7,8 +7,7 @@ import WidthContent from "./WidthContent/WidthContent";
 const WorkersLayout = (props) => {
     return (
         <>
-            <Header />
-            {/*<Header withSecond typeSecond={"Workers"} page={props.page}/>*/}
+            <Header withSecond typeSecond={"Service"} page={props.page}/>
             <WidthContent>
                 <Outlet/>
             </WidthContent>

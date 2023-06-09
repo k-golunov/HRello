@@ -12,16 +12,44 @@ import TableRow from "../components/TableRow/TableRow";
 import {useTasks} from "../hooks/use-tasks";
 import {getAllTasks} from "../store/slices/tasksSlice";
 import {removeTask} from "../store/slices/taskSlice";
+import {getDepartments} from "../store/slices/departmentsSlice";
+import {useDepartments} from "../hooks/use-departments";
+import {getUsers} from "../store/slices/usersSlice";
+import {useUsers} from "../hooks/use-users";
+import {useForm} from "react-hook-form";
+import AddBlockForm from "../components/AddBlockForm/AddBlockForm";
+import {ModalWindow} from "../components/ModalWindow/ModalWindow";
+import AddDepartmentForm from "../components/AddDepartmentForm/AddDepartmentForm";
 
 const DepartmentsPage = () => {
     const dispatch = useDispatch();
     const isAuth = useAuth().isAuth;
     const navigate = useNavigate();
 
-    const tasks = useTasks();
+    const departments = useDepartments();
+    const users = useUsers();
+
+    const [addDepartmentModalActive, setAddDepartmentModalActive] = useState(false);
+    const [editDepartmentModalActive, setEditDepartmentModalActive] = useState(false);
+    const [editDepartment, setEditDepartment] = useState(null);
+
+    const {register: registerAddDepartment, reset: resetAddDepartment, handleSubmit: handleSubmitAddDepartment, formState: {errors: errorsAddDepartment}} = useForm({
+        defaultValues: {
+            addDepartmentName: ''
+        },
+        mode: "onBlur"
+    });
+
+    const {register: registerEditDepartment, reset: resetEditDepartment, handleSubmit: handleSubmitEditDepartment, formState: {errors: errorsEditDepartment}} = useForm({
+        defaultValues: {
+            editDepartmentName: ''
+        },
+        mode: "onBlur"
+    });
 
     useEffect(() => {
-        dispatch(getAllTasks({page: 1}));
+        dispatch(getDepartments());
+        dispatch(getUsers());
         dispatch(removeTask());
     }, []);
 
@@ -97,21 +125,17 @@ const DepartmentsPage = () => {
         {type: "header", text: 'Руководитель', alignment: "left", width: "600px"},
     ]
 
-    const departments = [
+    /*departments = [
         {boss: "Бурханова Екатерина Сергеевна", name: "Компенсации и льготы"},
         {boss: "Астафьева Анна Викторовна", name: "Интеграторы производства"},
         {boss: "Астафьева Анна Викторовна", name: "Разработка"},
-    ]
+    ]*/
 
 
     return (
         <>
             <PageTitle title="Отделы"/>
-            <div className={s.workersPageFilters}>
-                {/*<Filters filters={filters}/>*/}
-                <div/>
-                <Button onClick={()=>navigate("/invitations")}>Новый отдел</Button>
-            </div>
+
 
             <TableRow cells={headers} isHeader/>
             {
@@ -120,16 +144,32 @@ const DepartmentsPage = () => {
                     <></>
             }
             {
-                departments.map(department => {
+                departments.departments.map(department => {
+                    let user = department.bossId ? users.users.filter(user => user.id === department.bossId)[0]:null
+                    console.log(user)
                     let cells = [
                         {type: "text", text: department.name, alignment: "left", width: "600px"},
-                        {type: "text", text: department.boss, alignment: "left", width: "600px"},
+                        {type: "text", text: user? user.surname+" "+user.name+" "+user.patronymic: "-", alignment: "left", width: "600px"},
                     ]
                     return <TableRow cells={cells}/>
                 })
             }
-            {/*<Table1 />*/}
-            {/*<Table columns={columns} data={tasks} />*/}
+            <div className={s.serviceButtons}>
+                <Button onClick={()=>setAddDepartmentModalActive(true)}>Новый отдел</Button>
+            </div>
+
+            <ModalWindow active={addDepartmentModalActive}
+                         setActive={setAddDepartmentModalActive}
+                         onClose={()=>resetAddDepartment({
+                             addBlockName: ''
+                         })}>
+                <AddDepartmentForm handleSubmit={handleSubmitAddDepartment}
+                              errors={errorsAddDepartment}
+                              register={registerAddDepartment}
+                              setActive={setAddDepartmentModalActive}
+                              reset={resetAddDepartment}
+                />
+            </ModalWindow>
         </>
     );
 };
