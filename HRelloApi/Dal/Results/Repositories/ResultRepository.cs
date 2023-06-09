@@ -23,6 +23,7 @@ public class ResultRepository : BaseRepository<TaskResultDal, Guid>, IResultRepo
     public override async Task<List<TaskResultDal>> GetAllAsync()
     {
         return await _dbSet.Include(dal => dal.Tasks)
+            .ThenInclude(x => x.Block)
             .ToListAsync();
     }
 }

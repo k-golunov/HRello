@@ -6,11 +6,13 @@ using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Results.dto.Request;
 using HRelloApi.Controllers.Public.Results.dto.Response;
 using Logic.Constants;
+using Logic.Excel;
 using Logic.Managers.Result.Interfaces;
 using Logic.Managers.Tasks.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace HRelloApi.Controllers.Public.Results;
 
@@ -57,7 +59,7 @@ public class ResultController : BasePublicController
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(IdResponse), 200)]
-    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]*/
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateTaskResultsAsync([FromBody] CreateTaskResultRequest request)
     {
@@ -95,7 +97,7 @@ public class ResultController : BasePublicController
     /// </summary>
     [HttpPut]
     [ProducesResponseType(typeof(IdResponse), 200)]
-    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]*/
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> EditTaskResultAsync([FromBody] EditTaskResultRequest request)
     {
@@ -109,11 +111,26 @@ public class ResultController : BasePublicController
     /// рест для удаления итога
     /// </summary>
     [HttpDelete]
-    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]*/
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteTaskResultAsync([FromQuery] Guid id)
     {
         await _taskResultManager.DeleteAsync(id);
         return Ok();
+    }
+
+    [HttpGet("download")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> DownloadTaskResultAsync([FromQuery] int year, [FromQuery]string quarters, [FromQuery]int departmetnId)
+    {
+        var quartersArray = quarters.Split(' ').Select(int.Parse).ToList();
+        var allResults = await _taskResultManager.GetAllAsync();
+        var results = allResults.Where(res => 
+            res.Tasks[0].Year == year && 
+            quartersArray.Contains(res.Tasks[0].Quarter) &&
+            res.Tasks.Select(t => t.DepartamentId).Contains(departmetnId)).ToList();
+        var excel = ResultExcelGenerator.GenerateTasksReport(results, year, quartersArray);
+        return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            $"Итоги за {year} год {string.Join(", ", quarters)} квартал(ы)");
     }
 }
