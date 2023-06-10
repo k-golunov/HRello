@@ -72,7 +72,7 @@ public class AuthorizeController : BasePublicController
     /// При успешном создании пользователя отправляет электронное письмо на почту созданного пользователя
     /// для дальнейшей его регистрации на сервисе
     /// </returns>
-    [CustomAuthorize(Roles = RoleConstants.Boss)]
+    //[CustomAuthorize(Roles = RoleConstants.Boss)]
     [HttpPost("createUser")]
     [ProducesResponseType(typeof(Guid), 200)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserModelRequest model)
@@ -147,6 +147,7 @@ public class AuthorizeController : BasePublicController
         if (unregisteredUser == null)
             throw new UserNotFoundException(userId);
         var user = _mapper.Map(model, unregisteredUser);
+        user.EmailConfirmed = true;
         var passwordUpdateResult = await _userManager.AddPasswordAsync(user, model.Password);
         var result = await _userManager.UpdateAsync(user);
 
