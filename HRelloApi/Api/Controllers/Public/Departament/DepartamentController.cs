@@ -43,7 +43,6 @@ public class DepartamentController : BasePublicController
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.Created)]
     public async Task<IActionResult> CreateDepartamentAsync(CreateDepartamentRequest request)
     {
-        // TODO проверка, что BossId существует
         var dal = _mapper.Map<DepartamentDal>(request);
         var response = new CreateIdResponse
         {
@@ -84,5 +83,22 @@ public class DepartamentController : BasePublicController
     {
         var a = await _departamentManager.GetAllAsync();
         return Ok(a);
+    }
+    
+    /// <summary>
+    /// Создание отдела
+    /// </summary>
+    /// <param name="request">входная модель для создания</param>
+    /// <returns></returns>
+    [HttpPost("with-boss-id")]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> CreateDepartmentWithBossIdAsync(CreateDepartmentWithBossIdRequest request)
+    {
+        var dal = _mapper.Map<DepartamentDal>(request);
+        var response = new CreateIdResponse
+        {
+            Id = await _departamentManager.InsertAsync(dal)
+        };
+        return Ok(response);
     }
 }
