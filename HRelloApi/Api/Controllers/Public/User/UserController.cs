@@ -162,10 +162,10 @@ public class UserController : BasePublicController
     }
     
     /// <summary>
-    /// Удаление пользователя
+    /// Изменение роли пользователя
     /// </summary>
     /// <returns></returns>
-    [HttpPost("update-role")]
+    [HttpPatch("update-role")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> UpdateUserRole([FromBody] UpdateRoleRequest request)
     {

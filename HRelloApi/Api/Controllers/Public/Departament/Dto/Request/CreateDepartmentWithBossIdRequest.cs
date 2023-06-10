@@ -5,7 +5,7 @@ namespace HRelloApi.Controllers.Public.Departament.Dto.Request;
 /// <summary>
 /// Создание отдела с босс айди
 /// </summary>
-public class CreateDepartmentWithBossIdRequest
+public record CreateDepartmentWithBossIdRequest
 {
     /// <summary>
     /// Название отдела

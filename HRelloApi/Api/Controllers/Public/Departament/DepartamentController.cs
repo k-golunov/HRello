@@ -101,4 +101,24 @@ public class DepartamentController : BasePublicController
         };
         return Ok(response);
     }
+    
+    /// <summary>
+    /// Обновление отдела пользователя
+    /// </summary>
+    /// <param name="request">входная модель для создания</param>
+    /// <returns></returns>
+    [HttpPatch("user-department")]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> UpdateUsersDepartment(UpdateUserDepartmentRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(request.UserId);
+        if (user == null)
+        {
+            return NotFound(new BaseExceptionModel("User.404", "User not found"));
+        }
+        user.DepartamentId = request.NewDepartmentId;
+        await _userManager.UpdateAsync(user);
+
+        return Ok();
+    }
 }
