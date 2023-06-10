@@ -85,4 +85,14 @@ public class TaskDal : BaseDal<Guid>
     /// итоги от руководителя, к которым привязанна задача
     /// </summary>
     public List<TaskResultDal> TaskResults { get; set; }
+    
+    /// <summary>
+    /// итог по задаче от сотрудника
+    /// </summary>
+    public UserTaskResultDal? UserResult { get; set; }
+    
+    /// <summary>
+    /// итог по задаче от руководителя
+    /// </summary>
+    public BossTaskResultDal? BossResult { get; set; }
 }
