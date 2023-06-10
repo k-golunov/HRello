@@ -34,7 +34,7 @@ public class CustomAuthorizeAttribute : Attribute, IAuthorizationFilter
             try
             {
                 var role = jwt.Claims.First(x => x.Type == ClaimTypes.Role).Value;
-                if (!role.ToUpper().Equals(Roles.ToUpper()))
+                if (role != Roles)
                 {
                     context.Result = new JsonResult(new { message = "Unauthorized" })
                         { StatusCode = StatusCodes.Status403Forbidden };

@@ -14,7 +14,7 @@ namespace Logic.Managers.Base;
 /// <typeparam name="TI">Тип Id (Guid или int)</typeparam>
 public abstract class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
 {
-    private readonly IBaseRepository<T, TI> Repository;
+    protected readonly IBaseRepository<T, TI> Repository;
 
     public BaseManager(IBaseRepository<T, TI> repository)
     {

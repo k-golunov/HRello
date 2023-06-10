@@ -30,7 +30,7 @@ public static class ResultExcelGenerator
         WriteTitle(year, quaters, sheet);
         sheet.Columns[x - 1].Width = width;
         var groupedResults = results.GroupBy(x => x.Tasks.First().Block.Value).ToList();
-        for (int i = y; i < groupedResults.Count + y; i++)
+        for (var i = y; i < groupedResults.Count + y; i++)
         {
             var blockCell = sheet.Cells[i, x - 1];
             blockCell.Value = groupedResults[i - y].Key;
@@ -43,7 +43,7 @@ public static class ResultExcelGenerator
 
     private static void WriteTaskResultForBlock(IGrouping<string, TaskResultDal> block, int i, ExcelWorksheet sheet)
     {
-        for (int j = x; j < block.Count() + x; j++)
+        for (var j = x; j < block.Count() + x; j++)
         {
             var cell = sheet.Cells[i, j];
             cell.Value = block.ToList()[j - x].Result;

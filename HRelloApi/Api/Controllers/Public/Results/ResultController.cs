@@ -97,7 +97,7 @@ public class ResultController : BasePublicController
     /// </summary>
     [HttpPut]
     [ProducesResponseType(typeof(IdResponse), 200)]
-    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]*/
+    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> EditTaskResultAsync([FromBody] EditTaskResultRequest request)
     {
@@ -111,7 +111,7 @@ public class ResultController : BasePublicController
     /// рест для удаления итога
     /// </summary>
     [HttpDelete]
-    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]*/
+    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteTaskResultAsync([FromQuery] Guid id)
     {
@@ -120,17 +120,12 @@ public class ResultController : BasePublicController
     }
 
     [HttpGet("download")]
+    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> DownloadTaskResultAsync([FromQuery] int year, [FromQuery]string quarters, [FromQuery]int departmetnId)
+    public async Task<IActionResult> DownloadTaskResultAsync([FromQuery] TaskResultFilters filters)
     {
-        var quartersArray = quarters.Split(' ').Select(int.Parse).ToList();
-        var allResults = await _taskResultManager.GetAllAsync();
-        var results = allResults.Where(res => 
-            res.Tasks[0].Year == year && 
-            quartersArray.Contains(res.Tasks[0].Quarter) &&
-            res.Tasks.Select(t => t.DepartamentId).Contains(departmetnId)).ToList();
-        var excel = ResultExcelGenerator.GenerateTasksReport(results, year, quartersArray);
+        var excel = await _taskResultManager.GenerateFileAsync(filters.Year, filters.Quarters, filters.DepartmentsId);
         return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            $"Итоги за {year} год {string.Join(", ", quarters)} квартал(ы)");
+            $"Итоги за {filters.Year} год {string.Join(", ", filters.Quarters)} квартал(ы)");
     }
 }
