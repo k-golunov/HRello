@@ -1,7 +1,5 @@
 import React, {useEffect} from 'react';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AuthorizationForm from "../components/AuthorizationForm/AuthorizationForm";
 import PageTitle from "../components/PageTitle/PageTitle";
 import InvitationForm from "../components/InvitationForm/InvitationForm";
 import TableRow from "../components/TableRow/TableRow";
@@ -10,10 +8,6 @@ import s from "./Pages.module.css";
 import {getUsers} from "../store/slices/usersSlice";
 import {useDispatch} from "react-redux";
 import {useUsers} from "../hooks/use-users";
-import {getAllTasks} from "../store/slices/tasksSlice";
-import {getDepartments} from "../store/slices/departmentsSlice";
-import {getBlocks} from "../store/slices/blocksSlice";
-import {removeTask} from "../store/slices/taskSlice";
 import Loading from "../components/Loading/Loading";
 import {FRONTEND_HOST} from "../api/host";
 

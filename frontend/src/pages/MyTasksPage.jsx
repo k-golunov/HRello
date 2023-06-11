@@ -1,23 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import Button from '../components/Button/Button';
-import {Navigate, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../hooks/use-auth';
-import PageTitle from "../components/PageTitle/PageTitle";
 import Filters from "../components/Filters/Filters";
-import Table1 from "../components/Table/Table";
 import s from './Pages.module.css';
-import Table from 'rc-table';
 import TableRow from "../components/TableRow/TableRow";
 import {getAllTasks, resetTasks} from "../store/slices/tasksSlice";
 import {useTasks} from "../hooks/use-tasks";
-import {useDepartments} from "../hooks/use-departments";
 import {useBlocks} from "../hooks/use-blocks";
-import {getDepartments} from "../store/slices/departmentsSlice";
 import {getBlocks} from "../store/slices/blocksSlice";
 import Loading from "../components/Loading/Loading";
 import {removeTask} from "../store/slices/taskSlice";
 import Pagination from "rc-pagination";
+import TitleDropdown from "../components/TitleDropdown/TitleDropdown";
 
 const MyTasksPage = () => {
     const dispatch = useDispatch();
@@ -36,8 +32,8 @@ const MyTasksPage = () => {
     }, []);
 
     const yearList = [
-        { value: '2022', label: '2022'},
-        { value: '2023', label: '2023'}
+        { value: '2023', label: '2023'},
+        { value: '2022', label: '2022'}
     ]
 
     const quarterlist = [
@@ -65,7 +61,7 @@ const MyTasksPage = () => {
         { value: "Completed", label: 'Завершена'},
     ]
 
-    const [selectedYear, setSelectedYear] = useState([]);
+    const [selectedYear, setSelectedYear] = useState(yearList[0]);
     const [selectedQuarter, setSelectedQuarter] = useState([]);
     const [selectedBlock, setSelectedBlock] = useState([]);
     const [selectedSort, setSelectedSort] = useState([]);
@@ -78,13 +74,14 @@ const MyTasksPage = () => {
 
     useEffect(() => {
         dispatch(getAllTasks({
+            year: [selectedYear.value],
             page: currentPage,
             users:[user.id],
             blocks:selectedBlock.filter(block=> block.value).map(block => block.value?block.value:""),
             quarter:selectedQuarter.filter(quarter=> quarter.value).map(quarter => quarter.value?quarter.value:""),
             status: [selectedStatus.value]
         }));
-    }, [selectedBlock, selectedQuarter, selectedStatus, currentPage]);
+    }, [selectedBlock, selectedQuarter, selectedStatus, currentPage, selectedYear]);
 
     const filters = [
         {
@@ -93,6 +90,7 @@ const MyTasksPage = () => {
             'setState': setSelectedQuarter,
             'placeholder': "Квартал",
             'isMulti': true,
+            'minWidth': '120px'
         },
         {
             'options': blockFilter,
@@ -127,7 +125,17 @@ const MyTasksPage = () => {
 
     return (
         <>
-            <PageTitle title="Мои задачи"/>
+
+            <div className={s.titleContainer}>
+                <h1>Мои задачи за</h1>
+                {/*<PageTitle title="Мои задачи"/>*/}
+                <TitleDropdown options={yearList}
+                               onChange={setSelectedYear}
+                               minWidth={'100px'}
+                />
+                <h1>год</h1>
+            </div>
+
             <div className={s.myTaskPageFilters}>
                 <Filters filters={filters}/>
                 <Button onClick={()=>navigate("/tasks/create")}>Новая задача</Button>

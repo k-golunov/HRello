@@ -15,9 +15,11 @@ import {createTask} from "../../store/slices/tasksSlice";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import {useTask} from "../../hooks/use-task";
 import {getTask, getTaskHistory, sendToReviewTask, updateTask} from "../../store/slices/taskSlice";
+import {useAuth} from "../../hooks/use-auth";
 
 function EndingTaskForm(props) {
     const dispatch = useDispatch();
+    const user = useAuth();
     const navigate = useNavigate();
     const {register, handleSubmit, reset, formState: {errors}} = useForm({
         defaultValues: {
@@ -69,6 +71,7 @@ function EndingTaskForm(props) {
             factWeight: payload.endingTaskFactWeight,
             factResult: payload.endingTaskPercent,
             description: payload.endingTaskComment,
+            changeByUserId: user.id
         }
         console.log(data);
         //console.log("SELECTED QUARTER", selectedQuarter);

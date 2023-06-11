@@ -226,11 +226,12 @@ const userSlice = createSlice({
     reducers: {
         setUser(state, action) {
             console.log(action)
+            console.log(jwt(action.payload.accessToken))
             state.email = action.payload.email;
             // state.id = action.payload.id;
             state.accessToken = action.payload.accessToken;
             state.id = jwt(action.payload.accessToken).userId;
-            state.role = jwt(action.payload.accessToken).Role;
+            state.role = jwt(action.payload.accessToken)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"][0];
             state.departmentID = parseInt(jwt(action.payload.accessToken).DepartmentId);
 
             localStorage.setItem('USSCHR-accessToken', action.payload.accessToken);

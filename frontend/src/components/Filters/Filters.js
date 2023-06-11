@@ -1,9 +1,5 @@
 import React from 'react';
 import s from './Filters.module.css';
-import Form from "react-bootstrap/Form";
-import classNames from "classnames/bind";
-import Select from "react-select";
-import { components } from "react-select";
 import FilterDropdown from "../FilterDropdown/FilterDropdown";
 
 function Filters(props) {

@@ -10,12 +10,17 @@
 }
 
 .workersPageFilters,
-.myTaskPageFilters {
+.myTaskPageFilters,
+.resultsPageFilters {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 25px;
     align-items: end;
+}
+
+.resultsPageFilters {
+    margin-top: 40px;
 }
 
 .InvitationsPageTable {
@@ -41,4 +46,37 @@
     margin-top: 20px;
     justify-content: center;
     animation: show 0.5s ease-in-out;
+}
+
+
+.resultsTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 40px;
+}
+
+.titleContainer h1,
+.resultsTitle h1 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 37px;
+}
+
+.titleContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.createResultTasks,
+.createResultFilters {
+    margin-bottom: 25px;
+}
+
+.createResultForm {
+    margin-top: 25px;
 }

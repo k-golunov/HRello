@@ -10,9 +10,11 @@ import md5 from 'md5';
 import {toast} from "react-toastify";
 import {Link, useNavigate} from "react-router-dom";
 import {changeTaskStatus, getTask, getTaskHistory} from "../../store/slices/taskSlice";
+import {useAuth} from "../../hooks/use-auth";
 
 function OnReworkForm(props) {
     const dispatch = useDispatch();
+    const user = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +26,8 @@ function OnReworkForm(props) {
             dispatch(changeTaskStatus({
                 id: props.taskID,
                 nextStatus: "OnRework",
-                comment: payload.onReworkComment
+                comment: payload.onReworkComment,
+                changeByUserId: user.id
             })).then(response=>{
                 dispatch(getTask(props.taskID))
                 dispatch(getTaskHistory(props.taskID));
