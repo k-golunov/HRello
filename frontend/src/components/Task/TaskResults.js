@@ -80,7 +80,7 @@ function TaskResults(props) {
                                         navigate("./complete")
                                     }}>Одобрить</Button>
                                     <Button isSecond onClick={() => props.setCancelCompletionModalActive(true)}>Отклонить завершение</Button>
-                                    {/*<Button isSecond onClick={() => props.setOnReworkModalActive(true)}>На доработку</Button>*/}
+                                    {/*<Badge isSecond onClick={() => props.setOnReworkModalActive(true)}>На доработку</Badge>*/}
                                 </div> : <></>
                         }
 
@@ -121,7 +121,7 @@ function TaskResults(props) {
                 {/*    props.action === "watching" &&*/}
                 {/*    (props.task.taskStatus === "CompletionCheck") &&*/}
                 {/*    user.id === props.task.userID ?*/}
-                {/*        <Button onClick={() => navigate("./edit")}>Редактировать</Button> : <></>*/}
+                {/*        <Badge onClick={() => navigate("./edit")}>Редактировать</Badge> : <></>*/}
                 {/*}*/}
 
 

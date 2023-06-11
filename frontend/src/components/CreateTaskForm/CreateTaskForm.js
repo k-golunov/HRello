@@ -54,9 +54,12 @@ function CreateTaskForm(props) {
         {value: 'NotPlanned', label: 'Незапланированная'},
     ]
 
-    const quarter = [{value: '1', label: '1 квартал'}, {value: '2', label: '2 квартал'}, {
-        value: '3', label: '3 квартал'
-    }, {value: '4', label: '4 квартал'}]
+    const quarter = [
+        {value: '1', label: '1 квартал'},
+        {value: '2', label: '2 квартал'},
+        {value: '3', label: '3 квартал'},
+        {value: '4', label: '4 квартал'}
+    ]
 
     const [selectedBlock, setSelectedBlock] = useState(blocksFilter[0]);
     const [selectedQuarter, setSelectedQuarter] = useState(quarter[0]);

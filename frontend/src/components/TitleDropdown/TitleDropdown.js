@@ -1,30 +1,32 @@
 import React from 'react';
-import s from './FilterDropdown.module.css';
-import Select, {components} from "react-select";
+import s from './TitleDropdown.module.css';
+import Form from "react-bootstrap/Form";
+import classNames from "classnames/bind";
+import Select from "react-select";
+import { components } from "react-select";
 
-const Option = (props) => {
-    return (
-        <div>
-            <components.Option {...props} className={s.option}>
-                <input
-                    type="checkbox"
-                    checked={props.isSelected}
-                    onChange={() => null}
-                />{" "}
-                <label>{props.label}</label>
-            </components.Option>
-        </div>
-    );
+const indicatorSeparatorStyle = {
+    alignSelf: 'stretch',
+    // backgroundColor: "white",
+    marginBottom: 0,
+    marginTop: 0,
+    width: 0,
 };
 
-function FilterDropdown(props) {
+
+const IndicatorSeparator = ({innerProps}) => {
+    return <span style={indicatorSeparatorStyle} {...innerProps} />;
+};
+
+function TitleDropdown(props) {
     const dropdownStyles = {
 
         control: (styles) => ({
             ...styles,
-            border: '1px solid #565A5A',
-            borderRadius: '5px',
-            minHeight: '50px',
+            border: 0,
+            boxShadow: 'none',
+            borderRadius: '0px',
+            minHeight: '48px',
             minWidth: props.minWidth??'100px'
         }),
         option: (styles) => {
@@ -39,8 +41,17 @@ function FilterDropdown(props) {
             };
         },
         input: (styles) => ({ ...styles, color: 'black', fontFamily:'\'Open Sans\', sans-serif', fontSize: '16px', paddingLeft: '6px' }),
-        singleValue: (styles) => ({ ...styles, fontFamily:'\'Open Sans\', sans-serif', fontSize: '16px', paddingLeft: '6px' }),
         placeholder: (styles) => ({ ...styles, color: 'black', fontFamily:'\'Open Sans\', sans-serif', fontSize: '16px'}),
+        singleValue: (base) => ({
+            ...base,
+            padding: 2,
+            borderRadius: 0,
+            display: 'flex',
+            fontWeight: "500",
+            fontSize: "24px",
+            lineHeight: "33px",
+        }),
+        valueContainer: (styles) => ({ ...styles, paddingRight: "0"})
     };
 
     return (
@@ -68,12 +79,12 @@ function FilterDropdown(props) {
                 placeholder={props.placeholder}
                 controlShouldRenderValue={!props.isMulti}
                 isMulti={props.isMulti}
-                components={props.isMulti?{
-                    Option
-                }:{}}
+                components={{
+                    IndicatorSeparator
+                }}
             />
         </div>
     )
 }
 
-export default FilterDropdown;
+export default TitleDropdown;

@@ -84,7 +84,8 @@ function TaskInformation(props) {
                                     <Button onClick={() => {
                                         dispatch(changeTaskStatus({
                                             id: props.task.id,
-                                            nextStatus: "InWork"
+                                            nextStatus: "InWork",
+                                            changeByUserId: user.id
                                         })).then(response=>{
                                             dispatch(getTask(props.task.id))
                                             dispatch(getTaskHistory(props.task.id));
@@ -117,7 +118,8 @@ function TaskInformation(props) {
                                     <Button onClick={() => {
                                         dispatch(changeTaskStatus({
                                             id: props.task.id,
-                                            nextStatus: "Canceled"
+                                            nextStatus: "Canceled",
+                                            changeByUserId: user.id
                                         })).then(response=>{
                                             dispatch(getTask(props.task.id))
                                             dispatch(getTaskHistory(props.task.id));
@@ -147,7 +149,7 @@ function TaskInformation(props) {
                             user.id === props.task.userID ?
                                 <div className={s.buttons}>
                                     <Button onClick={   () => {navigate("./ending")}   }>Завершить</Button>
-                                    {/*<Button isSecond onClick={() => setOnReworkModalActive(true)}>На доработку</Button>*/}
+                                    {/*<Badge isSecond onClick={() => setOnReworkModalActive(true)}>На доработку</Badge>*/}
                                 </div> : <></>
                         }
 
@@ -197,7 +199,7 @@ function TaskInformation(props) {
                         user.id !== props.task.userID &&
                         isBossAndDepartment)?
                             <Button onClick={() => props.setCancellationModalActive(true)} isSecond>Отменить</Button> : <></>
-                            // <Button onClick={() => navigate("./edit")} isSecond>Отменить</Button> : <></>
+                            // <Badge onClick={() => navigate("./edit")} isSecond>Отменить</Badge> : <></>
                 }
 
 

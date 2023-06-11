@@ -13,7 +13,7 @@ const Nav = () => {
                     <Link to='/tasks/my' className={s.nav_item}>
                         Задачи
                     </Link>
-                    <Link to='/' className={s.nav_item}>
+                    <Link to='/results' className={s.nav_item}>
                         Итоги
                     </Link>
                     <Link to='/workers' className={s.nav_item}>
@@ -27,7 +27,7 @@ const Nav = () => {
                     <Link to='/tasks/onCheck' className={s.nav_item}>
                         Задачи
                     </Link>
-                    <Link to='/admin/applications' className={s.nav_item}>
+                    <Link to='/results' className={s.nav_item}>
                         Итоги
                     </Link>
                     <Link to='/workers' className={s.nav_item}>

@@ -83,6 +83,22 @@ const Header = (props) => {
                     </div>
                 </div>
             )
+        } else if(props.typeSecond === "Results" && user.role === "mainboss")
+        {
+            secondHeader = (
+                <div className={s.headerContainer}>
+                    <div className={s.secondHeader}>
+                        <Link
+                            className={classNames(s.secondHeaderLink, props.page === 'blocks' ? s.active : "")}
+                            to='/results/blocks'>По блокам</Link>
+                        <Link
+                            className={classNames(s.secondHeaderLink, props.page === 'heatmap' ? s.active : "")}
+                            to='/results/heatmap'>
+                            <div>Хитмап</div>
+                        </Link>
+                    </div>
+                </div>
+            )
         }
     }
 

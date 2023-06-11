@@ -14,10 +14,12 @@ import {useBlocks} from "../../hooks/use-blocks";
 import Loading from "../Loading/Loading";
 import {getBlocks} from "../../store/slices/blocksSlice";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../hooks/use-auth";
 
 function EditTaskForm(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const user = useAuth();
     const blocks = useBlocks();
     const {register, handleSubmit, reset, getValues, formState: {errors}} = useForm({
         defaultValues: {
@@ -74,6 +76,7 @@ function EditTaskForm(props) {
             blockId: selectedBlock.value,
             waitResult: payload.editTaskPlaningResult,
             comment: payload.editTaskComment,
+            changeByUserId: user.id
         }
         console.log(data);
         if (payload.editTaskPlaningWeight && selectedCategory.value !== "NotPlanned")

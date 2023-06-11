@@ -10,6 +10,8 @@ export const getAllTasks = createAsyncThunk(
             const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
             console.log("PROPS", props)
             let filter = [];
+            if(props.year && props.year.length)
+                filter.push("Year=" + props.year.join(", "))
             if(props.users && props.users.length)
                 filter.push("User=" + props.users.join(", "))
             if(props.blocks && props.blocks.length)

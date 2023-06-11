@@ -6,8 +6,6 @@ import Form from "react-bootstrap/Form";
 import {useForm} from "react-hook-form";
 import {signInUser} from '../../store/slices/userSlice';
 import {useDispatch} from "react-redux";
-import md5 from 'md5';
-import {toast} from "react-toastify";
 import {Link, useNavigate} from "react-router-dom";
 
 function AuthorizationForm(props) {

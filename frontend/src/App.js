@@ -27,6 +27,9 @@ import SendRecoveryPage from "./pages/SendRecoveryPage";
 import RequireAuth from "./hoc/RequireAuth";
 import ServiceLayout from "./components/ServiceLayout";
 import BlocksPage from "./pages/BlocksPage";
+import ResultsLayout from "./components/ResultsLayout";
+import CreateResultPage from "./pages/CreateResultPage";
+import ResultsPage from "./pages/ResultsPage";
 
 function App() {
 
@@ -110,6 +113,21 @@ function App() {
                     <Route path='' element={
                         <RequireAuth>
                             <BlocksPage/>
+                        </RequireAuth>
+                    }
+                    />
+                </Route>
+
+                <Route path='/results' element={<ResultsLayout />}>
+                    <Route path='' element={
+                        <RequireAuth>
+                            <ResultsPage/>
+                        </RequireAuth>
+                    }
+                    />
+                    <Route path='create' element={
+                        <RequireAuth>
+                            <CreateResultPage/>
                         </RequireAuth>
                     }
                     />

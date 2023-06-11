@@ -15,7 +15,7 @@
     min-height: -webkit-fill-available;
     width: 100vw;
     min-width: -webkit-fill-available;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.3);
     position: fixed;
     top: 0;
     left: 0;
@@ -26,7 +26,8 @@
 
     opacity: 0;
     pointer-events: none;
-    backdrop-filter: blur(10px);
+    /*backdrop-filter: blur(10px);*/
+
 }
 
 .active {
@@ -39,4 +40,5 @@
     padding: 20px;
     /*border-radius: 12px;*/
     background-color: white;
+    border-radius: 10px;
 }

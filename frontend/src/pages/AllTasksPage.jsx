@@ -21,6 +21,7 @@ import {useUsers} from "../hooks/use-users";
 import {removeTask} from "../store/slices/taskSlice";
 import Pagination from 'rc-pagination';
 import 'rc-pagination/assets/index.css';
+import TitleDropdown from "../components/TitleDropdown/TitleDropdown";
 
 const AllTasksPage = () => {
     const dispatch = useDispatch();
@@ -43,8 +44,8 @@ const AllTasksPage = () => {
     }, []);
 
     const yearList = [
+        { value: '2023', label: '2023'},
         { value: '2022', label: '2022'},
-        { value: '2023', label: '2023'}
     ]
 
     const quarterlist = [
@@ -90,7 +91,7 @@ const AllTasksPage = () => {
             return { value: user.id, label: user.surname + " " + user.name + " " + user.patronymic}
         })
 
-    const [selectedYear, setSelectedYear] = useState([]);
+    const [selectedYear, setSelectedYear] = useState(yearList[0]);
     const [selectedQuarter, setSelectedQuarter] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState([]);
     const [selectedBlock, setSelectedBlock] = useState([]);
@@ -99,6 +100,7 @@ const AllTasksPage = () => {
 
     useEffect(() => {
         dispatch(getAllTasks({
+            year: [selectedYear.value],
             page: currentPage,
             users:selectedEmployee.filter(worker=> worker.value).map(worker => worker.value?worker.value:""),
             blocks:selectedBlock.filter(block=> block.value).map(block => block.value?block.value:""),
@@ -106,7 +108,7 @@ const AllTasksPage = () => {
             quarter:selectedQuarter.filter(quarter=> quarter.value).map(quarter => quarter.value?quarter.value:""),
             status: [selectedStatus.value]
         }));
-    }, [selectedEmployee, selectedBlock, selectedDepartment, selectedQuarter, selectedStatus, currentPage]);
+    }, [selectedYear, selectedEmployee, selectedBlock, selectedDepartment, selectedQuarter, selectedStatus, currentPage]);
 
     const filters = [
         {
@@ -177,7 +179,14 @@ const AllTasksPage = () => {
 
     return (
         <>
-            <PageTitle title="Все задачи"/>
+            <div className={s.titleContainer}>
+                <h1>Все задачи за</h1>
+                <TitleDropdown options={yearList}
+                               onChange={setSelectedYear}
+                               minWidth={'100px'}
+                />
+                <h1>год</h1>
+            </div>
             <div className={s.myTaskPageFilters}>
                 <Filters filters={filters}/>
                 <Button onClick={()=>navigate("/tasks/create")}>Новая задача</Button>
