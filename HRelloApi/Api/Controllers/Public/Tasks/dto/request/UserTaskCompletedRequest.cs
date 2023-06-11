@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using HRelloApi.Controllers.Public.Tasks.dto.Base;
 using Newtonsoft.Json;
 
 namespace HRelloApi.Controllers.Public.Tasks.dto.request;
@@ -6,7 +7,7 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 /// <summary>
 /// Модель запроса на завершение задачи сотрудником
 /// </summary>
-public class UserTaskCompletedRequest
+public record UserTaskCompletedRequest : BaseRequestModel
 {
     /// <summary>
     /// Фактический результат, в процентах

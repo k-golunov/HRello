@@ -2,6 +2,7 @@
 using Dal.Results.Repositories.Interfaces;
 using Dal.TaskResult.Entities;
 using Dal.Tasks.Entities;
+using Logic.Excel;
 using Logic.Exceptions.TaskResultException;
 using Logic.Managers.Base;
 using Logic.Managers.Result.Interfaces;
@@ -23,8 +24,14 @@ public class ResultManager : BaseManager<TaskResultDal, Guid>, IResultManager
         }
     }
 
-    public Task<byte[]> GenerateFileAsync()
+    public async Task<byte[]> GenerateFileAsync(int year, string quarters, string departmetnsId)
     {
-        throw new NotImplementedException();
+        var quartersArray = quarters.Split(' ').Select(int.Parse).ToList();
+        var departmentsArray = departmetnsId.Split(' ').Select(int.Parse).ToList();
+        var results = ((IResultRepository)Repository).GetAllWhere(res => 
+            res.Tasks[0].Year == year && 
+            quartersArray.Contains(res.Tasks[0].Quarter) &&
+            res.Tasks.Select(t => t.DepartamentId).Intersect(departmentsArray).Any()).ToList();
+        return ResultExcelGenerator.GenerateTasksReport(results, year, quartersArray);
     }
 }

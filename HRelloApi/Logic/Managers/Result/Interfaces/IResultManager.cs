@@ -22,5 +22,5 @@ public interface IResultManager : IBaseRepository<TaskResultDal, Guid>
     /// Генерация файла из итогов в эксель
     /// </summary>
     /// <returns></returns>
-    Task<byte[]> GenerateFileAsync();
+    Task<byte[]> GenerateFileAsync(int year, string quarters, string departmetnId);
 }

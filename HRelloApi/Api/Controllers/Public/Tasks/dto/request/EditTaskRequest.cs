@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Dal.Tasks.Enum;
+using HRelloApi.Controllers.Public.Tasks.dto.Base;
 using Newtonsoft.Json;
 
 namespace HRelloApi.Controllers.Public.Tasks.dto.request;
@@ -7,7 +8,7 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 /// <summary>
 /// Входная модель данных для реста редактирования данных задачи
 /// </summary>
-public record EditTaskRequest
+public record EditTaskRequest : BaseRequestModel
 {
     /// <summary>
     /// Идентификатор задачи

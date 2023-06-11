@@ -32,6 +32,12 @@ public class UserDal : IdentityUser
     /// Хранит отдел пользователя и все данные по нему
     /// </summary>
     public DepartamentDal Departament { get; set; }
+    
+    /// <summary>
+    /// Поле, нужное для создания миграции через EF core
+    /// Хранит отдел пользователя и все данные по нему
+    /// </summary>
+    public int DepartamentId { get; set; }
 
     public override bool Equals(object? obj)
     {

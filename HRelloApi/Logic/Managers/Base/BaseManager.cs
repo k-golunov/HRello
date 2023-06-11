@@ -12,9 +12,9 @@ namespace Logic.Managers.Base;
 /// </summary>
 /// <typeparam name="T">Модель dal</typeparam>
 /// <typeparam name="TI">Тип Id (Guid или int)</typeparam>
-public class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
+public abstract class BaseManager<T, TI> : IBaseManager<T, TI> where T : BaseDal<TI>
 {
-    private readonly IBaseRepository<T, TI> Repository;
+    protected readonly IBaseRepository<T, TI> Repository;
 
     public BaseManager(IBaseRepository<T, TI> repository)
     {

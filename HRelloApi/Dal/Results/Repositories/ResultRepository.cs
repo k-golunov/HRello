@@ -23,6 +23,15 @@ public class ResultRepository : BaseRepository<TaskResultDal, Guid>, IResultRepo
     public override async Task<List<TaskResultDal>> GetAllAsync()
     {
         return await _dbSet.Include(dal => dal.Tasks)
+            .ThenInclude(x => x.Block)
             .ToListAsync();
+    }
+
+    public List<TaskResultDal> GetAllWhere(Func<TaskResultDal, bool> func)
+    {
+        IQueryable<TaskResultDal> results = _context.TaskResult
+            .Include(x => x.Tasks)
+            .ThenInclude(x => x.Block);
+        return results.Where(func).ToList();
     }
 }

@@ -1,4 +1,6 @@
-﻿using HRelloApi.Controllers.Internal.Role.Dto.Request;
+﻿using Dal.Entities;
+using HRelloApi.Controllers.Base.Exception;
+using HRelloApi.Controllers.Internal.Role.Dto.Request;
 using HRelloApi.Controllers.Internal.Role.Dto.Response;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,15 +10,17 @@ namespace HRelloApi.Controllers.Internal.Role;
 /// <summary>
 /// 
 /// </summary>
-[Route("api/v1/internal/role")]
+[Route("api/v1/public/role")]
 [ApiController]
 public class RoleController : ControllerBase
 {
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly UserManager<UserDal> _userManager;
 
-    public RoleController(RoleManager<IdentityRole> roleManager)
+    public RoleController(RoleManager<IdentityRole> roleManager, UserManager<UserDal> userManager)
     {
         _roleManager = roleManager;
+        _userManager = userManager;
     }
 
     /// <summary>
@@ -43,6 +47,25 @@ public class RoleController : ControllerBase
         return Ok(new AllRolesResponse
         {
             Roles = roles
+        });
+    }
+    
+    /// <summary>
+    /// Получение роли пользователя
+    /// </summary>
+    /// <returns>все роли</returns>
+    [HttpGet("{userId:guid}")]
+    public async Task<IActionResult> GetUserRole([FromRoute] Guid userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return NotFound(new BaseExceptionModel("User.404", "User not found"));
+        }
+        var role = await _userManager.GetRolesAsync(user);
+        return Ok(new GetUserRoleResponse()
+        {
+            Role = role[0]
         });
     }
 }

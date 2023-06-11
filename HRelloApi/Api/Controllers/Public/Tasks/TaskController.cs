@@ -77,7 +77,7 @@ public class TaskController: BasePublicController
             throw new TaskNotFoundException(model.Id);
         var task = _mapper.Map(model, oldTask);
         var token = Request.Headers["Authorization"].ToString().Split(' ')[1];
-        var response = new TaskIdResponse { Id = await _manager.UpdateTaskAsync(task, model.BlockId, token, model.Comment) };
+        var response = new TaskIdResponse { Id = await _manager.UpdateTaskAsync(task, model.BlockId, token, model.ChangeByUserId, model.Comment) };
         return Ok(response);
     }
 
@@ -89,7 +89,7 @@ public class TaskController: BasePublicController
     {
         if (model.NextStatus == StatusEnum.CompletionCheck || model.NextStatus == StatusEnum.Completed)
             throw new WrongUrlForChangeStatusException("/api/v1/public/task/review или  /api/v1/public/task/complete");
-        await _manager.ChangeStatus(model.Id, model.NextStatus, model.Comment);
+        await _manager.ChangeStatus(model.Id, model.NextStatus, model.ChangeByUserId, model.Comment);
         return Ok();
     }
 
@@ -105,7 +105,7 @@ public class TaskController: BasePublicController
             throw new WrongUrlForChangeStatusException(
                 "/api/v1/public/task/change-status или /api/v1/public/task/complete");
         var userResult = _mapper.Map<UserTaskResultDal>(model);
-        var result = await _manager.SendResultForTask(userResult, task, StatusEnum.CompletionCheck);
+        var result = await _manager.SendResultForTask(userResult, task, StatusEnum.CompletionCheck, model.ChangeByUserId);
         return Ok(new TaskResultResponse { ResultId = result, TaskId = task.Id });
 
     }

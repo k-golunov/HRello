@@ -26,18 +26,24 @@ public class HistoryDal : BaseDal<Guid>
     /// Задача
     /// </summary>
     public TaskDal Task { get; set; }
+    
+    /// <summary>
+    /// идентификатор пользователя, который внес изменения
+    /// </summary>
+    public string UserId { get; set; }
 
     public HistoryDal()
     {
         
     }
     
-    public HistoryDal(ActionTypeEnum type, TaskDal taskDal, string? comment = null)
+    public HistoryDal(ActionTypeEnum type, TaskDal taskDal, string userId, string? comment = null)
     {
         Id = Guid.NewGuid();
         ActionType = type;
         Date = DateTime.UtcNow;
         Comment = comment;
         Task = taskDal;
+        UserId = userId;
     }
 }

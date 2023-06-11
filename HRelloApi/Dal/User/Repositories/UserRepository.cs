@@ -28,4 +28,11 @@ public class UserRepository : IUserRepository
         _context.Entry(dal).State = EntityState.Modified;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<int> GetDepartmentId(string userId)
+    {
+        var entity = await _dbSet.Include(x => x.Departament).FirstAsync(x => x.Id == userId);
+        var departmentId = entity.Departament.Id;
+        return departmentId;
+    }
 }

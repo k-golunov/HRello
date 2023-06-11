@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Dal.Tasks.Enum;
+using HRelloApi.Controllers.Public.Tasks.dto.Base;
 using Newtonsoft.Json;
 
 namespace HRelloApi.Controllers.Public.Tasks.dto.request;

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Dal.Tasks.Enum;
+using HRelloApi.Controllers.Public.Tasks.dto.Base;
 using Newtonsoft.Json;
 
 namespace HRelloApi.Controllers.Public.Tasks.dto.request;
@@ -7,7 +8,7 @@ namespace HRelloApi.Controllers.Public.Tasks.dto.request;
 /// <summary>
 /// Модель запроса на изменение статуса задачи
 /// </summary>
-public class ChangeStatusRequest
+public record ChangeStatusRequest : BaseRequestModel
 {
     /// <summary>
     /// Id задачи

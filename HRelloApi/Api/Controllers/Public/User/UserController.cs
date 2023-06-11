@@ -23,6 +23,13 @@ public class UserController : BasePublicController
     private readonly JWTSettings _options;
     private readonly IMapper _mapper;
 
+    private readonly List<string> _roles = new()
+    {
+        RoleConstants.Employee,
+        RoleConstants.Boss,
+        RoleConstants.MainBoss
+    };
+
     /// <summary>
     /// Конструктор контроллера
     /// </summary>
@@ -151,6 +158,30 @@ public class UserController : BasePublicController
             return NotFound(new BaseExceptionModel("User.404", "User not found"));
         }
         await _userManager.DeleteAsync(user);
+        return Ok();
+    }
+    
+    /// <summary>
+    /// Изменение роли пользователя
+    /// </summary>
+    /// <returns></returns>
+    [HttpPatch("update-role")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> UpdateUserRole([FromBody] UpdateRoleRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(request.UserId);
+        if (user == null)
+        {
+            return NotFound(new BaseExceptionModel("User.404", "User not found"));
+        }
+
+        if (!_roles.Contains(request.OldRole) || !_roles.Contains(request.NewRole))
+        {
+            return NotFound(new BaseExceptionModel("Role.404", "Role not found"));
+        }
+        await _userManager.RemoveFromRoleAsync(user, request.OldRole);
+        await _userManager.AddToRoleAsync(user, request.NewRole);
+        
         return Ok();
     }
 }

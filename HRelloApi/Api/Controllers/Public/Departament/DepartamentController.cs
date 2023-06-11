@@ -43,7 +43,6 @@ public class DepartamentController : BasePublicController
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.Created)]
     public async Task<IActionResult> CreateDepartamentAsync(CreateDepartamentRequest request)
     {
-        // TODO проверка, что BossId существует
         var dal = _mapper.Map<DepartamentDal>(request);
         var response = new CreateIdResponse
         {
@@ -84,5 +83,42 @@ public class DepartamentController : BasePublicController
     {
         var a = await _departamentManager.GetAllAsync();
         return Ok(a);
+    }
+    
+    /// <summary>
+    /// Создание отдела
+    /// </summary>
+    /// <param name="request">входная модель для создания</param>
+    /// <returns></returns>
+    [HttpPost("with-boss-id")]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> CreateDepartmentWithBossIdAsync(CreateDepartmentWithBossIdRequest request)
+    {
+        var dal = _mapper.Map<DepartamentDal>(request);
+        var response = new CreateIdResponse
+        {
+            Id = await _departamentManager.InsertAsync(dal)
+        };
+        return Ok(response);
+    }
+    
+    /// <summary>
+    /// Обновление отдела пользователя
+    /// </summary>
+    /// <param name="request">входная модель для создания</param>
+    /// <returns></returns>
+    [HttpPatch("user-department")]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> UpdateUsersDepartment(UpdateUserDepartmentRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(request.UserId);
+        if (user == null)
+        {
+            return NotFound(new BaseExceptionModel("User.404", "User not found"));
+        }
+        user.DepartamentId = request.NewDepartmentId;
+        await _userManager.UpdateAsync(user);
+
+        return Ok();
     }
 }
