@@ -1,32 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit';
-import popupReducer from './slices/popupSlice';
+import {configureStore} from '@reduxjs/toolkit';
 import userReducer from './slices/userSlice';
+import usersReducer from './slices/usersSlice';
 import tasksReducer from './slices/tasksSlice';
 import taskReducer from './slices/taskSlice';
-import profileReducer from './slices/profileSlice';
-import directionsReducer from './slices/directionSlice';
-import allApplicationsReducer from './slices/allApplicationsSlice';
-import allTestsReducer from './slices/allTestsSlice';
-import allUsersReducer from './slices/allUsersSlice';
-import applicationReducer from './slices/applicationSlice';
-import checkAppSlice from './slices/applicationCheckSlice';
-import checkTestSlice from "./slices/testCheckSlice";
-import testUserSlice from "./slices/testUserSlice";
+import departmentsReducer from './slices/departmentsSlice';
+import blocksReducer from './slices/blocksSlice';
 
 export default configureStore({
-  reducer: {
-    // popups: popupReducer,
-    user: userReducer,
-    tasks: tasksReducer,
-    task: taskReducer,
-    // profile: profileReducer,
-    // directions: directionsReducer,
-    // applications: applicationReducer,
-    // allApplications: allApplicationsReducer,
-    // allTests: allTestsReducer,
-    // allUsers: allUsersReducer,
-    // checkApp: checkAppSlice,
-    // checkTest: checkTestSlice,
-    // testUser: testUserSlice
-  },
+    reducer: {
+        user: userReducer,
+        users: usersReducer,
+        tasks: tasksReducer,
+        task: taskReducer,
+        departments: departmentsReducer,
+        blocks: blocksReducer,
+    },
 });

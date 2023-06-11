@@ -9,10 +9,27 @@
     }
 }
 
-
+.workersPageFilters,
 .myTaskPageFilters {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 25px;
+    align-items: end;
+}
+
+.InvitationsPageTable {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    max-width: 1272px;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+    justify-content: center;
 }

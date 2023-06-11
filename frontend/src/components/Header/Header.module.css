@@ -18,7 +18,7 @@
 }
 
 .nav_logo {
-    width: 332px;
+    /*width: 332px;*/
 }
 
 .nav_logo a {
@@ -75,6 +75,29 @@
     color: #f59d0e;
     transition: color 200ms;
     border-bottom: 2px #f59d0e solid;
+}
+
+.nav_item1 {
+    text-decoration: none;
+    color: #000;
+    font-weight: 700;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 19px;
+    cursor: default;
+    letter-spacing: 0.5px;
+    font-family: OpenSans, serif;
+    transition: color 200ms;
+    border-bottom: 2px transparent solid;
+
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.nav_item1:hover {
+    /*color: #f59d0e;*/
+    /*transition: color 200ms;*/
 }
 
 .sep {

@@ -13,7 +13,11 @@ function Status(props) {
         'AwaitingCancellation': 'Ожидает отмены',
         'Canceled': 'Отменена',
         'CompletionCheck': 'Проверка завершения',
-        'Completed': 'Завершена'
+        'Completed': 'Завершена',
+
+        'Wait': 'Ожидание',
+        'NotWorking': 'Аннулированно',
+        "Registr": 'Зарегестрирован'
     }
 
     return (

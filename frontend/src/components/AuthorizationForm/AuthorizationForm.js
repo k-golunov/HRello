@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import s from './AuthorizationForm.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
@@ -8,10 +8,12 @@ import {signInUser} from '../../store/slices/userSlice';
 import {useDispatch} from "react-redux";
 import md5 from 'md5';
 import {toast} from "react-toastify";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function AuthorizationForm(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm({
         defaultValues: {
             authorizationEmail: '',
@@ -21,14 +23,22 @@ function AuthorizationForm(props) {
     });
 
     const onSubmit = (payload) => {
-        payload.authorizationPassword = md5(payload.authorizationPassword);
-        const data = {
-            email: payload.authorizationEmail,
-            password: payload.authorizationPassword,
-            rememberMe: true
+        if(!isLoading)
+        {
+            setIsLoading(true);
+            //payload.authorizationPassword = md5(payload.authorizationPassword);
+            const data = {
+                email: payload.authorizationEmail,
+                password: payload.authorizationPassword,
+                rememberMe: true
+            }
+            dispatch(signInUser(data)).then(response=>{
+                setIsLoading(false);
+                console.log("RESPONSE", response)
+                if(!response.error)
+                    navigate("/tasks/my");
+            });
         }
-        console.log(data);
-        dispatch(signInUser(data));
     }
 
     return (
@@ -60,7 +70,7 @@ function AuthorizationForm(props) {
                                title="Пароль"
                                require={true}
                                type="password"/>
-                        <div className={s.forget}><Link to="/restore">Забыли пароль?</Link></div>
+                        <div className={s.forget}><Link to="/send-recovery">Забыли пароль?</Link></div>
                     </div>
 
                     <Button type="submit">Войти</Button>

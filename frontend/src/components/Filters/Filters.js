@@ -15,6 +15,7 @@ function Filters(props) {
                                            onChange={filter.setState}
                                            placeholder={filter.placeholder}
                                            isMulti={filter.isMulti}
+                                           title={filter.title??""}
                                            minWidth={filter.minWidth??'100px'}
                     />
                 })

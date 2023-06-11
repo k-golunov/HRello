@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import s from './RegistrationForm.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
@@ -8,10 +8,12 @@ import {signInUser, signUpUser} from '../../store/slices/userSlice';
 import {useDispatch} from "react-redux";
 import md5 from 'md5';
 import {toast} from "react-toastify";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function RegistrationForm(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm({
         defaultValues: {
             registrationSurname: '',
@@ -24,23 +26,29 @@ function RegistrationForm(props) {
     });
 
     const onSubmit = (payload) => {
-        if (payload.registrationPassword !== payload.registrationRetryPassword) {
-            alert('Вы указали разные пароли!');
-            return;
-        }
+        if(!isLoading) {
+            setIsLoading(true);
+            if (payload.registrationPassword !== payload.registrationRetryPassword) {
+                alert('Вы указали разные пароли!');
+                return;
+            }
 
-        delete payload.registrationRetryPassword;
-        payload.registrationPassword = md5(payload.registrationPassword);
+            delete payload.registrationRetryPassword;
+            //payload.registrationPassword = md5(payload.registrationPassword);
 
-        const data = {
-            userId: props.userId,
-            surname: payload.registrationSurname,
-            name: payload.registrationName,
-            patronymic: payload.registrationPatronymic,
-            password: payload.registrationPassword
+            const data = {
+                userId: props.userId,
+                surname: payload.registrationSurname,
+                name: payload.registrationName,
+                patronymic: payload.registrationPatronymic,
+                password: payload.registrationPassword
+            }
+            console.log(data);
+            dispatch(signUpUser(data)).then(() => {
+                setIsLoading(false);
+                navigate("/login");
+            });
         }
-        console.log(data);
-        dispatch(signUpUser(data));
     }
 
     return (
