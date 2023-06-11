@@ -124,11 +124,5 @@ app.UseExceptionHandler(a => a.Run(async context =>
         context.Response.StatusCode = baseException.Status;
         await context.Response.WriteAsJsonAsync(new { message = exception.Message, code = baseException.Code});
     }
-    /*else
-    {
-       await context.Response.WriteAsJsonAsync(new { error = exception.Message }); 
-    }*/
-    
 }));
-//app.UseMiddleware<ErrorHandlerMiddleware>();
 app.Run();

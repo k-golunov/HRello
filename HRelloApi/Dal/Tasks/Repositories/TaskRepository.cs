@@ -25,8 +25,8 @@ public class TaskRepository: BaseRepository<TaskDal, Guid>, ITaskRepository
         return await _dbSet
                 .Include(x => x.Block)
                 .Include(x => x.User)
-                .Include(x => x.UserResult)
-                .Include(x => x.BossResult)
+                .Include(x => x.UserTaskResultDal)
+                .Include(x => x.BossTaskResultDal)
                 .ToListAsync();
     }
 

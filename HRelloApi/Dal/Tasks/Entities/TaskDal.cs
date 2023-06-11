@@ -59,6 +59,11 @@ public class TaskDal : BaseDal<Guid>
     /// Статус задачи
     /// </summary>
     public StatusEnum Status { get; set; }
+    
+    /// <summary>
+    /// Идентификатор сотрудника, к которому привязана задача
+    /// </summary>
+    public string UserId { get; set; }
 
     /// <summary>
     /// Сотрудник, отвественный за задачу
@@ -95,14 +100,4 @@ public class TaskDal : BaseDal<Guid>
     /// итоги от руководителя, к которым привязанна задача
     /// </summary>
     public List<TaskResultDal> TaskResults { get; set; }
-    
-    /// <summary>
-    /// итог по задаче от сотрудника
-    /// </summary>
-    public UserTaskResultDal? UserResult { get; set; }
-    
-    /// <summary>
-    /// итог по задаче от руководителя
-    /// </summary>
-    public BossTaskResultDal? BossResult { get; set; }
 }

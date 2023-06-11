@@ -85,7 +85,7 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     {
         await CheckAndSetDataForTask(taskDal, token, blockId);
         taskDal.Id = await _taskRepository.InsertAsync(taskDal);
-        await CreateNewHistoryEntry(taskDal, ActionTypeEnum.OnChecking);
+        await CreateNewHistoryEntry(taskDal, ActionTypeEnum.OnChecking, taskDal.UserId);
         return taskDal.Id;
     }
 
@@ -95,13 +95,14 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <param name="taskDal">сущность задачи с новыми данными</param>
     /// <param name="blockId">id обновленного блока задачи</param>
     /// <param name="token">jwt пользователя</param>
+    /// <param name="userId">Идентификатор пользователя, который внес изменения</param>
     /// <returns>id обновленной записи</returns>
-    public async Task<Guid> UpdateTaskAsync(TaskDal taskDal, Guid blockId, string token, string? comment)
+    public async Task<Guid> UpdateTaskAsync(TaskDal taskDal, Guid blockId, string token, string userId ,string? comment)
     {
         await CheckAndSetDataForTask(taskDal, token, blockId);
         var taskId = await _taskRepository.UpdateAsync(taskDal);
         var action = await ChangeStatusAndGetAction(taskDal, StatusEnum.OnChecking);
-        await CreateNewHistoryEntry(taskDal, action, comment);
+        await CreateNewHistoryEntry(taskDal, action, userId ,comment);
         return taskId;
     }
 
@@ -138,21 +139,21 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
         return filteredTasks;
     }
 
-    public async Task<Guid> ChangeStatus(Guid taskId, StatusEnum nextStatus, string comment)
+    public async Task<Guid> ChangeStatus(Guid taskId, StatusEnum nextStatus, string userId, string comment)
     {
         var task = await _taskRepository.GetAsync(taskId);
         if (task == null)
             throw new TaskNotFoundException(taskId);
         var action = await ChangeStatusAndGetAction(task, nextStatus);
-        await CreateNewHistoryEntry(task, action, comment);
+        await CreateNewHistoryEntry(task, action, userId, comment);
         return task.Id;
     }
 
-    public async Task<Guid> SendResultForTask<T>(T taskResult, TaskDal task, StatusEnum status, string comment = null) where T: BaseDal<Guid>
+    public async Task<Guid> SendResultForTask<T>(T taskResult, TaskDal task, StatusEnum status, string userId, string comment = null) where T: BaseDal<Guid>
     {
         var result = await InsertAsync(taskResult);
         var action = await ChangeStatusAndGetAction(task, status);
-        await CreateNewHistoryEntry(task, action, comment);
+        await CreateNewHistoryEntry(task, action, userId, comment);
         return result;
     }
 
@@ -272,9 +273,9 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
     /// <summary>
     /// Создает новую запись истории задач со входящими данным и возвращет id созданной записи в бд
     /// </summary>
-    private async Task CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action, string? comment=null)
+    private async Task CreateNewHistoryEntry(TaskDal task, ActionTypeEnum action,string userId ,string? comment=null)
     {
-        var history = new HistoryDal(action, task, comment);
+        var history = new HistoryDal(action, task, userId, comment);
         await _historyRepository.InsertAsync(history);
     }
     
