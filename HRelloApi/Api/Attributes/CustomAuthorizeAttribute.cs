@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Dal.Entities;
 using IdentityServer4.Extensions;
 using Logic.Exceptions.User;
@@ -32,7 +33,7 @@ public class CustomAuthorizeAttribute : Attribute, IAuthorizationFilter
             var jwt = handler.ReadToken(clearToken) as JwtSecurityToken;
             try
             {
-                var role = jwt.Claims.First(x => x.Type == "Role").Value;
+                var role = jwt.Claims.First(x => x.Type == ClaimTypes.Role).Value;
                 if (role != Roles)
                 {
                     context.Result = new JsonResult(new { message = "Unauthorized" })

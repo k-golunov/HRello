@@ -6,11 +6,13 @@ using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Results.dto.Request;
 using HRelloApi.Controllers.Public.Results.dto.Response;
 using Logic.Constants;
+using Logic.Excel;
 using Logic.Managers.Result.Interfaces;
 using Logic.Managers.Tasks.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace HRelloApi.Controllers.Public.Results;
 
@@ -57,7 +59,7 @@ public class ResultController : BasePublicController
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(IdResponse), 200)]
-    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]*/
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateTaskResultsAsync([FromBody] CreateTaskResultRequest request)
     {
@@ -115,5 +117,15 @@ public class ResultController : BasePublicController
     {
         await _taskResultManager.DeleteAsync(id);
         return Ok();
+    }
+
+    [HttpGet("download")]
+    [CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> DownloadTaskResultAsync([FromQuery] TaskResultFilters filters)
+    {
+        var excel = await _taskResultManager.GenerateFileAsync(filters.Year, filters.Quarters, filters.DepartmentsId);
+        return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            $"Итоги за {filters.Year} год {string.Join(", ", filters.Quarters)} квартал(ы)");
     }
 }

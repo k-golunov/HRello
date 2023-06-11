@@ -28,6 +28,6 @@ public class ResultMapping : Profile
         CreateMap<EditTaskResultRequest, TaskResultDal>()
             .ForMember(dst => dst.Color, opt => opt.MapFrom(src => src.Color))
             .ForMember(dst => dst.Result, opt => opt.MapFrom(src => src.Result))
-            .ForMember(dst => dst.Tasks, opt => opt.Ignore());
+            .ForMember(dst => dst.Tasks, opt => opt.MapFrom(src => src.TasksId));
     }    
 }
