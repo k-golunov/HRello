@@ -128,7 +128,7 @@ public class DepartamentController : BasePublicController
     /// </summary>
     /// <param name="request">входная модель для создания</param>
     /// <returns></returns>
-    [HttpPatch("user-department")]
+    [HttpPatch("userlist-department")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> UpdateUserListDepartmentAsync(UpdateDepartmentByUserListRequest request)
     {
