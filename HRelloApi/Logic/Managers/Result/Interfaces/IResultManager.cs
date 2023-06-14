@@ -23,4 +23,6 @@ public interface IResultManager : IBaseRepository<TaskResultDal, Guid>
     /// </summary>
     /// <returns></returns>
     Task<byte[]> GenerateFileAsync(int year, string quarters, string departmetnId);
+
+    public Task<Dictionary<Guid, List<TaskResultDal>>> GetAllGroupedByBlocksAsync();
 }

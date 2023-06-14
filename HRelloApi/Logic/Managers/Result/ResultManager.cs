@@ -34,4 +34,13 @@ public class ResultManager : BaseManager<TaskResultDal, Guid>, IResultManager
             res.Tasks.Select(t => t.DepartamentId).Intersect(departmentsArray).Any()).ToList();
         return ResultExcelGenerator.GenerateTasksReport(results, year, quartersArray);
     }
+
+    public async Task<Dictionary<Guid, List<TaskResultDal>>> GetAllGroupedByBlocksAsync()
+    {
+        var results = await Repository.GetAllAsync();
+        var groupedResults = results
+            .GroupBy(x => x.Tasks[0].Block.Id)
+            .ToDictionary(x => x.Key, x => x.ToList());
+        return groupedResults;
+    }
 }
