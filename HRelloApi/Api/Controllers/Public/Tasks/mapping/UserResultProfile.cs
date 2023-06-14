@@ -29,5 +29,12 @@ public class UserResultProfile: Profile
             .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dst => dst.Result, opt => opt.MapFrom(src => src.Result));
 
+        CreateMap<EditUserResultRequest, UserTaskResultDal>()
+            .ForMember(dst => dst.FactResult, opt => opt.MapFrom(src => src.FactResult))
+            .ForMember(dst => dst.FactWeight, opt => opt.MapFrom(src => src.FactWeight))
+            .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dst => dst.Result, opt => opt.MapFrom(src => src.Result))
+            .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id));
+
     }
 }

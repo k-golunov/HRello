@@ -7,6 +7,7 @@ using Dal.Tasks.Enum;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Tasks.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.response;
+using Logic.Exceptions.Base;
 using Logic.Exceptions.Tasks;
 using Logic.Exceptions.User;
 using Logic.Managers.Tasks.Filters;
@@ -174,6 +175,21 @@ public class TaskController: BasePublicController
         var bytes = await _manager.GetExcelFile(request.Year, request.Quearter);
         
         return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Guid.NewGuid().ToString());
+    }
+
+    /// <summary>
+    /// редактирование итогов сотрудника
+    /// </summary>
+    [HttpPut("edit-user-result")]
+    [ProducesResponseType(typeof(TaskResultResponse), 200)]
+    public async Task<IActionResult> EditUserResultAsync([FromBody] EditUserResultRequest request)
+    {
+        var userResult = await _manager.GetAsync<UserTaskResultDal>(request.Id);
+        if (userResult == null)
+            throw new NotFoundEntitiesException(nameof(UserTaskResultDal));
+        var updatedUserResult = _mapper.Map(request, userResult);
+        await _manager.UpdateAsync(updatedUserResult);
+        return Ok(new TaskResultResponse() { TaskId = updatedUserResult.TaskId, ResultId = updatedUserResult.Id});
     }
 
     /// <summary>
