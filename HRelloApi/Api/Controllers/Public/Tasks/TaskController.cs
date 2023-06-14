@@ -160,7 +160,8 @@ public class TaskController: BasePublicController
         var filteredTasks = _manager.ApplyFilters(filters, tasksDals);
         var tasks = filteredTasks.Select(_mapper.Map<TaskResponse>).ToList();
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
-        return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10 + 1, tasks));
+        var pagesCount = filteredTasks.Count % 10 == 0 ? filteredTasks.Count / 10 : filteredTasks.Count / 10 + 1;
+        return Ok(new AllTasksResponse(tasksDals.Count, pagesCount, tasks));
     }
 
     /// <summary>
