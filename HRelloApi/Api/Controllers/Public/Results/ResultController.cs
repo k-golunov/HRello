@@ -80,16 +80,17 @@ public class ResultController : BasePublicController
     /// </summary>
     /// <returns></returns>
     [HttpGet("all")]
-    [ProducesResponseType(typeof(GetAllTaskResultResponse), 200)]
+    [ProducesResponseType(typeof(List<BlockTaskResultResponse>), 200)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetAllTaskResultsAsync()
     {
-        var allTaskResults = await _taskResultManager.GetAllAsync();
+        var allTaskResults = await _taskResultManager.GetAllGroupedByBlocksAsync();
         
-        return Ok(new GetAllTaskResultResponse
+        return Ok(allTaskResults.Select(x => new BlockTaskResultResponse()
         {
-            AllTaskResultResponse = allTaskResults.Select(_mapper.Map<GetTaskResultResponse>).ToList()
-        });
+            BlockId = x.Key,
+            TaskResults = x.Value.Select(_mapper.Map<GetTaskResultResponse>).ToList()
+        }));
     }
 
     /// <summary>

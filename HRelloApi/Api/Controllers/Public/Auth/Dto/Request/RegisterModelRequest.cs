@@ -25,9 +25,8 @@ public record RegisterModelRequest
     /// <summary>
     /// Отчество пользователя
     /// </summary>
-    [Required]
     [JsonProperty("Patronymic")]
-    public required string Patronymic { get; init; }
+    public string? Patronymic { get; init; }
     
     /// <summary>
     /// Пароль пользователя

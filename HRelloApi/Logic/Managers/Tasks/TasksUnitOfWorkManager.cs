@@ -146,6 +146,8 @@ public class TaskUnitOfWorkManager : ITaskUnitOfWorkManager
             throw new TaskNotFoundException(taskId);
         var action = await ChangeStatusAndGetAction(task, nextStatus);
         await CreateNewHistoryEntry(task, action, userId, comment);
+        if (action == ActionTypeEnum.CompletionDeviation)
+            await _userTaskResultsRepository.DeleteAsync(task.UserTaskResultDal.Id);
         return task.Id;
     }
 

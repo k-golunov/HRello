@@ -17,6 +17,8 @@ public class TaskRepository: BaseRepository<TaskDal, Guid>, ITaskRepository
         return await _dbSet
             .Include(x => x.User)
             .Include(x => x.Block)
+            .Include(x => x.UserTaskResultDal)
+            .Include(x => x.BossTaskResultDal)
             .FirstAsync(x => x.Id == id);
     }
 

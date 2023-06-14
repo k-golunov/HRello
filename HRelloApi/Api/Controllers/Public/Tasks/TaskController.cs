@@ -7,6 +7,7 @@ using Dal.Tasks.Enum;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Tasks.dto.request;
 using HRelloApi.Controllers.Public.Tasks.dto.response;
+using Logic.Exceptions.Base;
 using Logic.Exceptions.Tasks;
 using Logic.Exceptions.User;
 using Logic.Managers.Tasks.Filters;
@@ -159,7 +160,8 @@ public class TaskController: BasePublicController
         var filteredTasks = _manager.ApplyFilters(filters, tasksDals);
         var tasks = filteredTasks.Select(_mapper.Map<TaskResponse>).ToList();
         tasks = tasks.Skip(10 * (page - 1)).Take(10).ToList();
-        return Ok(new AllTasksResponse(tasks.Count, filteredTasks.Count / 10 + 1, tasks));
+        var pagesCount = filteredTasks.Count % 10 == 0 ? filteredTasks.Count / 10 : filteredTasks.Count / 10 + 1;
+        return Ok(new AllTasksResponse(tasksDals.Count, pagesCount, tasks));
     }
 
     /// <summary>
@@ -174,6 +176,21 @@ public class TaskController: BasePublicController
         var bytes = await _manager.GetExcelFile(request.Year, request.Quearter);
         
         return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Guid.NewGuid().ToString());
+    }
+
+    /// <summary>
+    /// редактирование итогов сотрудника
+    /// </summary>
+    [HttpPut("edit-user-result")]
+    [ProducesResponseType(typeof(TaskResultResponse), 200)]
+    public async Task<IActionResult> EditUserResultAsync([FromBody] EditUserResultRequest request)
+    {
+        var userResult = await _manager.GetAsync<UserTaskResultDal>(request.Id);
+        if (userResult == null)
+            throw new NotFoundEntitiesException(nameof(UserTaskResultDal));
+        var updatedUserResult = _mapper.Map(request, userResult);
+        await _manager.UpdateAsync(updatedUserResult);
+        return Ok(new TaskResultResponse() { TaskId = updatedUserResult.TaskId, ResultId = updatedUserResult.Id});
     }
 
     /// <summary>

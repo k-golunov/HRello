@@ -45,6 +45,8 @@ public class TaskProfile: Profile
             .ForMember(dst => dst.UserId, opt => opt.MapFrom(src => src.User.Id))
             .ForMember(dst => dst.DepartmentId, opt => opt.MapFrom(src => src.DepartamentId))
             .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dst => dst.UserResult, opt => opt.MapFrom(src => src.UserTaskResultDal))
+            .ForMember(dst => dst.BossResult, opt => opt.MapFrom(src => src.BossTaskResultDal))
             ;
     }
 }
