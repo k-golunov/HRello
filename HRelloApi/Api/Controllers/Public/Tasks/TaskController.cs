@@ -125,7 +125,7 @@ public class TaskController: BasePublicController
             throw new WrongUrlForChangeStatusException(
                 "/api/v1/public/task/change-status или /api/v1/public/task/review");
         var bossResult = _mapper.Map<BossTaskResultDal>(model);
-        var id = await _manager.SendResultForTask(bossResult, task, StatusEnum.Completed, model.Comment);
+        var id = await _manager.SendResultForTask(bossResult, task, StatusEnum.Completed, model.ChangeByUserId, model.Comment);
         return Ok(new TaskResultResponse { ResultId = id, TaskId = task.Id });
 
     }
