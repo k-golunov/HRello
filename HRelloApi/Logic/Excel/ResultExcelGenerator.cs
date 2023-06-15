@@ -12,8 +12,8 @@ public static class ResultExcelGenerator
     private static readonly Dictionary<ColorEnum, Color> Colors = new()
     {
         { ColorEnum.Green, Color.FromArgb(1, 169, 242, 111) },
-        { ColorEnum.Red, Color.FromArgb(1, 255, 249, 100) },
-        { ColorEnum.Yellow, Color.FromArgb(1, 242, 127, 111) }
+        { ColorEnum.Red, Color.FromArgb(1, 242, 127, 111) },
+        { ColorEnum.Yellow, Color.FromArgb(1,  255, 249, 100) }
     };
 
     private static readonly int x = 2;
