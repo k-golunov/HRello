@@ -31,6 +31,7 @@ import ResultsLayout from "./components/ResultsLayout";
 import CreateResultPage from "./pages/CreateResultPage";
 import ResultsPage from "./pages/ResultsPage";
 import RecoveryPage from "./pages/RecoveryPage";
+import RequireAdmin from "./hoc/RequireAdmin";
 
 function App() {
 
@@ -57,7 +58,7 @@ function App() {
                         </RequireUnauth>}/>
                     <Route path='registration/' element={
                             <NotFoundLink/>}/>
-                    <Route path='invitations' element={<RequireAuth><InvitationsPage/></RequireAuth>}/>
+                    <Route path='invitations' element={<RequireAdmin><InvitationsPage/></RequireAdmin>}/>
                     <Route path='*' element={<NotFoundPage/>}/>
                 </Route>
 

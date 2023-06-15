@@ -18,10 +18,12 @@ import {getUsers} from "../../store/slices/usersSlice";
 import {removeTask} from "../../store/slices/taskSlice";
 import Loading from "../Loading/Loading";
 import {useDepartments} from "../../hooks/use-departments";
+import {useAuth} from "../../hooks/use-auth";
 
 function InvitationForm(props) {
     const dispatch = useDispatch();
     const departments = useDepartments();
+    const user = useAuth()
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -32,11 +34,18 @@ function InvitationForm(props) {
         dispatch(removeTask());
     }, []);
 
-    const roleOptions = [
-        { value: "employee", label: "Сотрудник" },
-        { value: "boss", label: "Руководитель" },
-        { value: "mainboss", label: "Главный руководитель" },
-    ];
+    let roleOptions = [];
+    
+    if(user.role === "boss")
+        roleOptions = [
+            { value: "employee", label: "Сотрудник" },
+        ];
+    else
+        roleOptions = [
+            { value: "employee", label: "Сотрудник" },
+            { value: "boss", label: "Руководитель" },
+            { value: "mainboss", label: "Главный руководитель" },
+        ];
 
     const [departmentSelected, setDepartmentSelected] = useState([]);
     const [roleSelected, setRoleSelected] = useState(roleOptions[0]);

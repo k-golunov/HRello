@@ -59,10 +59,12 @@ const CreateResultPage = () => {
     ]
 
     const colors = [
-        {value: 'Green', color: '#A9F26F'},
-        {value: 'Yellow', color: '#FFF964'},
-        {value: 'Red', color: '#F27F6F'},
+        {value: 'Green', color: '#A9F26F8A'},
+        {value: 'Yellow', color: '#FFF9648A'},
+        {value: 'Red', color: '#F27F6F8A'},
     ]
+
+
 
     const [selectedColor, setSelectedColor] = useState(colors[0].value);
     const [selectedBlock, setSelectedBlock] = useState(null);

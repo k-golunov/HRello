@@ -128,7 +128,7 @@ const ResultsPage = () => {
                 results.results.length === 0 ? "Нет итогов" : ""
             }
 
-            <div>
+            <div className={s.resultsPageRows}>
                 {
                     results.results.map(blockResults=>{
                         return <ResultRow title={blocks.blocks.filter(b => b.id === blockResults.blockId)[0].value}
