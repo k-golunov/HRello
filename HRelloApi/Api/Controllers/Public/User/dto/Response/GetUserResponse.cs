@@ -42,4 +42,9 @@ public record GetUserResponse
     /// </summary>
     public bool EmailConfirmed { get; init; }
     
+    /// <summary>
+    /// Удален ли пользователь (заблокирован)
+    /// </summary>
+    public bool LockoutEnabled { get; init; }
+    
 }
