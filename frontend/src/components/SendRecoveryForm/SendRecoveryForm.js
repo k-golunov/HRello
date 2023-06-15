@@ -51,28 +51,31 @@ function SendRecoveryForm(props) {
 
     return (
         <div className={s.authorizationForm}>
-            <p className={s.header}>Название сервиса</p>
+            <p className={s.header}>Восстановление пароля</p>
             <div>
-                <p className={s.authorization}>Восстановление пароля</p>
+                {/*<p className={s.authorization}>Восстановление пароля</p>*/}
                 <Form className={s.form} onSubmit={handleSubmit(onSubmit)}>
-                    <Input register={register}
-                           registerName='recoveryEmail'
-                           options={
-                               {
-                                   required: {
-                                       value: true,
-                                       message: "Поле обязательно для ввода"
-                                   },
-                                   pattern: {
-                                       value: /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/,
-                                       message: "Введите почту"
+                    <div className={s.password}>
+                        <Input register={register}
+                               registerName='recoveryEmail'
+                               options={
+                                   {
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/,
+                                           message: "Введите почту"
+                                       }
                                    }
                                }
-                           }
-                           errors={errors}
-                           title="Почта"
-                           require={true}
-                           type="text"/>
+                               errors={errors}
+                               title="Почта"
+                               require={true}
+                               type="text"/>
+                        <div className={s.forget}><Link to="/login">К авторизации</Link></div>
+                    </div>
 
                     <Button type="submit">Восстановить пароль</Button>
                 </Form>

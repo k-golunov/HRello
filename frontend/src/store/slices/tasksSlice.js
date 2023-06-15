@@ -2,6 +2,38 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import 'react-toastify/dist/ReactToastify.css';
 import TASK_API from "../../api/taskAPI";
 import {forEach} from "react-bootstrap/ElementChildren";
+import RESULT_API from "../../api/resultAPI";
+
+
+function downloadBlob(blob, name = 'file.txt') {
+    if (
+        window.navigator &&
+        window.navigator.msSaveOrOpenBlob
+    ) return window.navigator.msSaveOrOpenBlob(blob);
+
+    // For other browsers:
+    // Create a link pointing to the ObjectURL containing the blob.
+    const data = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = data;
+    link.download = name;
+
+    // this is necessary as link.click() does not work on the latest firefox
+    link.dispatchEvent(
+        new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        })
+    );
+
+    setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+        link.remove();
+    }, 100);
+}
 
 export const getAllTasks = createAsyncThunk(
     'tasks/get',
@@ -51,6 +83,49 @@ export const getAllTasks = createAsyncThunk(
             console.log(response)
             //dispatch(setUser({accessToken: response, email: user.email}));
             dispatch(setTasks(response));
+            // dispatch(togglePopup("signIn"));
+            // createNotify();
+
+            // navigate(`/profile`);
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const downloadTasks = createAsyncThunk(
+    'tasks/download',
+    async function (filters, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            let response = await fetch(
+                TASK_API.DOWNLOAD_TASKS_URL,
+                {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: accessToken
+                    },
+                    body: JSON.stringify(filters)
+                }
+            );
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.blob();
+            downloadBlob(response, 'Задачи за '+filters.year+' год.xlsx')
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            // dispatch(getResults());
             // dispatch(togglePopup("signIn"));
             // createNotify();
 

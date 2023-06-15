@@ -116,7 +116,7 @@ const ResultsPage = () => {
                     </div>
 
                     {
-                        user.role !== "employee" ?
+                        user.role === "mainboss" ?
                             <Button onClick={()=>navigate("/results/create")}>Новый итог</Button>
                             : <></>
                     }

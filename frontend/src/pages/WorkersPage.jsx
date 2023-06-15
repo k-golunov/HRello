@@ -78,7 +78,7 @@ const WorkersPage = () => {
     if(departments.isLoading)
         return <Loading/>
 
-    let workers = users.users.slice();
+    let workers = users.users.filter(worker => worker.name);
 
     const roles = selectedRole.filter(role => role.value).map(role => role.value)
     const departmentsFilter = selectedDepartment.filter(department => department.value).map(department => department.value)

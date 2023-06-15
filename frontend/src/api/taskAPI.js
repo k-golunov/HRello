@@ -9,6 +9,7 @@ export const UPDATE_TASK_URL = `${HOST}/task`;
 export const CHANGE_TASK_STATUS_URL = `${HOST}/task/change-status`;
 export const SEND_TASK_TO_REVIEW_URL = `${HOST}/task/review`;
 export const COMPLETE_TASK_URL = `${HOST}/task/complete`;
+export const DOWNLOAD_TASKS_URL = `${HOST}/task/excel-file`;
 
 const TASK_API = {
   GET_TASK_URL,
@@ -19,7 +20,8 @@ const TASK_API = {
   GET_TASK_HISTORY_URL,
   CHANGE_TASK_STATUS_URL,
   SEND_TASK_TO_REVIEW_URL,
-  COMPLETE_TASK_URL
+  COMPLETE_TASK_URL,
+  DOWNLOAD_TASKS_URL
 };
 
 export default TASK_API;

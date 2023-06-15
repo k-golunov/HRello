@@ -35,7 +35,7 @@ function InvitationForm(props) {
     }, []);
 
     let roleOptions = [];
-    
+
     if(user.role === "boss")
         roleOptions = [
             { value: "employee", label: "Сотрудник" },
