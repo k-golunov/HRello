@@ -2,14 +2,18 @@
 using AutoMapper;
 using Dal.Entities;
 using Dal.User.Models;
+using HRelloApi.Attributes;
 using HRelloApi.Controllers.Base.Exception;
 using HRelloApi.Controllers.Public.Base;
 using HRelloApi.Controllers.Public.Departament.Dto.Request;
 using HRelloApi.Controllers.Public.Departament.Dto.Response;
+using Logic.Constants;
 using Logic.Exceptions.Base;
 using Logic.Exceptions.Department;
 using Logic.Exceptions.User;
 using Logic.Managers.Departament.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,7 +48,7 @@ public class DepartamentController : BasePublicController
     public async Task<IActionResult> CreateDepartamentAsync(CreateDepartamentRequest request)
     {
         var dal = _mapper.Map<DepartamentDal>(request);
-        var response = new CreateIdResponse
+        var response = new IdDepartmentResponse
         {
             Id = await _departamentManager.InsertAsync(dal)
         };
@@ -95,7 +99,7 @@ public class DepartamentController : BasePublicController
     public async Task<IActionResult> CreateDepartmentWithBossIdAsync(CreateDepartmentWithBossIdRequest request)
     {
         var dal = _mapper.Map<DepartamentDal>(request);
-        var response = new CreateIdResponse
+        var response = new IdDepartmentResponse
         {
             Id = await _departamentManager.InsertAsync(dal)
         };
@@ -144,6 +148,39 @@ public class DepartamentController : BasePublicController
             await _userManager.UpdateAsync(user);
         }
 
+        return Ok();
+    }
+
+    /// <summary>
+    /// редактирование отдела
+    /// </summary>
+    [ProducesResponseType(typeof(IdDepartmentResponse), 200)]
+    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]*/
+    [HttpPut]
+    public async Task<IActionResult> EditDepartment([FromBody] EditDepartmentRequest request)
+    {
+        var department = await _departamentManager.GetAsync(request.DepartamentId);
+        if (department == null)
+            throw new DepartmentNotFoundException(request.DepartamentId);
+        
+        department = _mapper.Map(request, department);
+        var id = await _departamentManager.UpdateAsync(department);
+        return Ok(new IdDepartmentResponse() { Id = id });
+    }
+
+    /// <summary>
+    /// удаление отдела
+    /// </summary>
+    /*[CustomAuthorize(Roles = RoleConstants.MainBoss)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]*/
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteDepartment(int id)
+    {
+        var department = await _departamentManager.GetAsync(id);
+        if (department == null)
+            throw new DepartmentNotFoundException(id);
+        await _departamentManager.DeleteAsync(id);
         return Ok();
     }
 }
