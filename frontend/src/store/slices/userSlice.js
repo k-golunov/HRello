@@ -1,5 +1,10 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import USER_API, {DELETE_USER_URL, GET_USER_URL, SEND_RECOVERY_PASSWORD_URL} from '../../api/userAPI';
+import USER_API, {
+    CHECK_INVITATION_URL,
+    DELETE_USER_URL,
+    GET_USER_URL,
+    SEND_RECOVERY_PASSWORD_URL
+} from '../../api/userAPI';
 import jwt from 'jwt-decode'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,6 +14,39 @@ let loginNotify;
 let registrationNotify;
 let createUserNotify;
 let deleteUserNotify;
+let changePasswordNotify;
+
+
+export const checkInvitation = createAsyncThunk(
+    'user/checkInvitation',
+    async function (userID, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+
+            let response = await fetch(USER_API.CHECK_INVITATION_URL+userID, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                dispatch(setInviteStatus({isInvite: false}));
+            }
+
+            response = await response.json();
+
+            console.log(response)
+            dispatch(setInviteStatus(response));
+
+            //loginNotify();
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 export const signInUser = createAsyncThunk(
     'user/signIn',
@@ -173,6 +211,37 @@ export const recoveryUserPassword = createAsyncThunk(
     }
 );
 
+export const changeUserPassword = createAsyncThunk(
+    'user/changePassword',
+    async function (payload, {rejectWithValue, dispatch}) {
+        try {
+            let response = await fetch(USER_API.CHANGE_PASSWORD_URL+payload.userID, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            //response = await response.json();
+            //console.log(response)
+
+            //return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const signUpUser = createAsyncThunk(
     'user/signUp',
     async function (user, {rejectWithValue, dispatch}) {
@@ -216,8 +285,10 @@ const initialState = {
     surname: null,
     patronymic: null,
 
+    inviteStatus: false,
     status: null,
     error: null,
+    isLoading: true,
 };
 
 const userSlice = createSlice({
@@ -239,11 +310,16 @@ const userSlice = createSlice({
             localStorage.setItem('USSCHR-email', action.payload.email);
             localStorage.setItem('USSCHR-departmentID', state.departmentID);
             localStorage.setItem('USSCHR-role', state.role);
+            state.isLoading = false
         },
         setUserName(state, action) {
             state.name = action.payload.name;
             state.surname = action.payload.surname;
             state.patronymic = action.payload.patronymic;
+        },
+        setInviteStatus(state, action) {
+            state.inviteStatus = action.payload.isInvite;
+            state.isLoading = false
         },
         removeUser(state) {
             state.id = null;
@@ -256,6 +332,7 @@ const userSlice = createSlice({
             localStorage.removeItem('USSCHR-email');
             localStorage.removeItem('USSCHR-departmentID');
             localStorage.removeItem('USSCHR-role');
+            state.isLoading = true
         },
     },
     extraReducers: {
@@ -348,9 +425,31 @@ const userSlice = createSlice({
                 }
             );
         },
+        [changeUserPassword.pending]: (state, action) => {
+            changePasswordNotify = toast.loading("Изменяю пароль...")
+        },
+        [changeUserPassword.fulfilled]: (state, action) => {
+            toast.update(changePasswordNotify,
+                {
+                    render: "Пароль успешно изменён!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
+        },
+        [changeUserPassword.rejected]: (state, action) => {
+            toast.update(changePasswordNotify,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
+        },
     },
 });
 debugger;
-export const {setUser, removeUser, setUserName} = userSlice.actions;
+export const {setInviteStatus, setUser, removeUser, setUserName} = userSlice.actions;
 
 export default userSlice.reducer;

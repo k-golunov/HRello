@@ -11,6 +11,7 @@ function Input(props) {
             {props.description? <div className={s.description}>{props.description}</div>:<></>}
             {/*<Form.Control {...props.register(props.registerName, props.options)} className={s.inputBox} {...props}/>*/}
             <Form.Control {...props.register(props.registerName, props.options)} className={classNames(s.inputBox, props.errors?.[props.registerName]?s.invalid:"")} {...props}/>
+            <p className={s.error}>{props.errors[props.registerName]?.message}</p>
         </div>
     )
 }

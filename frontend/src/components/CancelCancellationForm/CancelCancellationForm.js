@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import s from './CancelCompletionForm.module.css';
+import s from './CancelCancellationForm.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import Form from "react-bootstrap/Form";
@@ -12,11 +12,12 @@ import {Link, useNavigate} from "react-router-dom";
 import {changeTaskStatus, getTask, getTaskHistory} from "../../store/slices/taskSlice";
 import {useAuth} from "../../hooks/use-auth";
 
-function CancelCompletionForm(props) {
+function CancelCancellationForm(props) {
     const dispatch = useDispatch();
     const user = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+
 
     const onSubmit = (payload) => {
         if(!isLoading)
@@ -25,14 +26,14 @@ function CancelCompletionForm(props) {
             dispatch(changeTaskStatus({
                 id: props.taskID,
                 nextStatus: "InWork",
-                comment: payload.cancelCompletionComment,
+                comment: payload.cancelCancellationComment,
                 changeByUserId: user.id
             })).then(response=>{
                 dispatch(getTask(props.taskID))
                 dispatch(getTaskHistory(props.taskID));
                 props.setActive(false)
                 if(!response.error)
-                    toast.success('Завершение успешно отменено!', {
+                    toast.success('Отменение задачи успешно отклонено!', {
                         position: "bottom-right",
                         autoClose: 3000,
                         hideProgressBar: false,
@@ -49,10 +50,10 @@ function CancelCompletionForm(props) {
     return (
         <div className={s.authorizationForm}>
             <div>
-                <p className={s.authorization}>Укажите причину отклонения завершения задачи</p>
+                <p className={s.authorization}>Укажите причину отклонения отмены задачи</p>
                 <Form className={s.form} onSubmit={props.handleSubmit(onSubmit)}>
                     <Input register={props.register}
-                           registerName='cancelCompletionComment'
+                           registerName='cancelCancellationComment'
                            errors={props.errors}
                            //title="Комментарий"
                            options={
@@ -83,4 +84,4 @@ function CancelCompletionForm(props) {
     )
 }
 
-export default CancelCompletionForm;
+export default CancelCancellationForm;

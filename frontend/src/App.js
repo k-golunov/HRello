@@ -19,7 +19,7 @@ import EditTaskPage from "./pages/EditTaskPage";
 import EndingTaskPage from "./pages/EndingTaskPage";
 import WorkersPage from "./pages/WorkersPage";
 import DepartmentsPage from "./pages/DepartmentsPage";
-import OnCheckTaskPage from "./pages/OnCheckTaskPage";
+import OnCheckTasksPage from "./pages/OnCheckTasksPage";
 import WorkersLayout from "./components/WorkersLayout";
 import CompleteTaskPage from "./pages/CompleteTaskPage";
 import EditResultTaskPage from "./pages/EditResultTaskPage";
@@ -30,6 +30,7 @@ import BlocksPage from "./pages/BlocksPage";
 import ResultsLayout from "./components/ResultsLayout";
 import CreateResultPage from "./pages/CreateResultPage";
 import ResultsPage from "./pages/ResultsPage";
+import RecoveryPage from "./pages/RecoveryPage";
 
 function App() {
 
@@ -45,6 +46,10 @@ function App() {
                     <Route path='send-recovery' element={
                         <RequireUnauth>
                             <SendRecoveryPage/>
+                        </RequireUnauth>}/>
+                    <Route path='change-password/:userID' element={
+                        <RequireUnauth>
+                            <RecoveryPage/>
                         </RequireUnauth>}/>
                     <Route path='registration/:link' element={
                         <RequireUnauth>
@@ -68,7 +73,7 @@ function App() {
                 <Route path='/tasks' element={<TasksLayout page='onCheck'/>}>
                     <Route path='onCheck' element={
                         <RequireAuth>
-                            <OnCheckTaskPage/>
+                            <OnCheckTasksPage/>
                         </RequireAuth>
                     }
                     />

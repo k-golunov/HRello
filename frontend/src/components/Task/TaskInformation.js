@@ -29,136 +29,192 @@ function TaskInformation(props) {
 
     const isBossAndDepartment = user.role !== "employee" && user.departmentID === props.task.departmentID;
     return (
-        <div className={s.taskInformation}>
-            <div className={s.taskInformationLeftContainer}>
-                <h1>{props.task.name}
-                    {
-                        props.task.taskStatus === "OnChecking" && isBossAndDepartment ?
-                            <p className={s.taskAction}>{"Новая задача"}</p> : <></>
-                    }
+        <div>
+            <div className={s.taskInformationContainer}>
+                <div className={s.taskInformationTopContainer}>
 
-                    {
-                        props.task.taskStatus === "AwaitingCancellation" && isBossAndDepartment ?
-                            <p className={s.taskAction}>{"Ожидающая отмены задача"}</p> : <></>
-                    }
 
-                    {
-                        props.task.taskStatus === "CompletionCheck" && isBossAndDepartment ?
-                            <p className={s.taskAction}>{"Ожидающая завершения задача"}</p> : <></>
-                    }
+                    <div className={s.taskInformationTopContainerTags}>
+                        <Status type={props.task.taskStatus}/>
+                        <Tag>{props.task.quarter + " квартал"}</Tag>
+                        <Tag>{props.task.year}</Tag>
+                    </div>
+                    <h1>{props.task.name}</h1>
+                </div>
 
-                    {
-                        props.task.taskStatus === "Canceled" ?
-                            <p className={s.taskCanceled}>{"ЗАДАЧА ОТМЕНЕНА"}</p> : <></>
-                    }
-                </h1>
 
-                <div>
-                    <h4 className={s.taskInformationTitle}>Информация</h4>
-                    <div className={s.taskInformationTable}>
-                        <div className={s.taskInformationTableRow}>
-                            <p className={s.taskInformationTableTitle}>ФИО сотрудника</p>
-                            <p>{props.task.userName}</p>
+
+
+                <div className={s.taskInformation}>
+                    <div className={s.taskInformationLeftContainer}>
+                        {/*<h1>{props.task.name}*/}
+                        {/*{*/}
+                        {/*    props.task.taskStatus === "OnChecking" && isBossAndDepartment ?*/}
+                        {/*        <p className={s.taskAction}>{"Новая задача"}</p> : <></>*/}
+                        {/*}*/}
+
+                        {/*{*/}
+                        {/*    props.task.taskStatus === "AwaitingCancellation" && isBossAndDepartment ?*/}
+                        {/*        <p className={s.taskAction}>{"Ожидающая отмены задача"}</p> : <></>*/}
+                        {/*}*/}
+
+                        {/*{*/}
+                        {/*    props.task.taskStatus === "CompletionCheck" && isBossAndDepartment ?*/}
+                        {/*        <p className={s.taskAction}>{"Ожидающая завершения задача"}</p> : <></>*/}
+                        {/*}*/}
+
+                        {/*{*/}
+                        {/*    props.task.taskStatus === "Canceled" ?*/}
+                        {/*        <p className={s.taskCanceled}>{"ЗАДАЧА ОТМЕНЕНА"}</p> : <></>*/}
+                        {/*}*/}
+                        {/*</h1>*/}
+
+                        <div>
+                            <h4 className={s.taskInformationTitle}>Информация</h4>
+                            <div className={s.taskInformationTable}>
+                                <div className={s.taskInformationTableRow}>
+                                    <p className={s.taskInformationTableTitle}>ФИО сотрудника</p>
+                                    <p>{props.task.userName}</p>
+                                </div>
+                                <div className={s.taskInformationTableRow}>
+                                    <p className={s.taskInformationTableTitle}>Блок</p>
+                                    <p>{props.task.block}</p>
+                                </div>
+                                <div className={s.taskInformationTableRow}>
+                                    <p className={s.taskInformationTableTitle}>Категория</p>
+                                    <p>{category[props.task.category]}</p>
+                                </div>
+                                <div className={s.taskInformationTableRow}>
+                                    <p className={s.taskInformationTableTitle}>Планируемый результат</p>
+                                    <p>{props.task.waitResult}</p>
+                                </div>
+
+
+
+                                {
+                                    props.action === "watching" &&
+                                    props.task.taskStatus === "OnChecking" &&
+                                    user.id !== props.task.userID &&
+                                    isBossAndDepartment ?
+                                        <div className={s.buttons}>
+                                            <Button onClick={() => {
+                                                dispatch(changeTaskStatus({
+                                                    id: props.task.id,
+                                                    nextStatus: "InWork",
+                                                    changeByUserId: user.id
+                                                })).then(response=>{
+                                                    dispatch(getTask(props.task.id))
+                                                    dispatch(getTaskHistory(props.task.id));
+                                                    if(!response.error)
+                                                        toast.success('Задача успешно отправлена в работу!', {
+                                                            position: "bottom-right",
+                                                            autoClose: 3000,
+                                                            hideProgressBar: false,
+                                                            closeOnClick: true,
+                                                            pauseOnHover: true,
+                                                            draggable: true,
+                                                            progress: undefined,
+                                                            theme: "light",
+                                                        });
+                                                })
+                                                //navigate("./edit")
+                                            }}>Одобрить</Button>
+                                            <Button isSecond onClick={() => props.setOnReworkModalActive(true)}>На доработку</Button>
+                                        </div> : <></>
+                                }
+
+
+
+                                {
+                                    props.action === "watching" &&
+                                    props.task.taskStatus === "AwaitingCancellation" &&
+                                    user.id !== props.task.userID &&
+                                    isBossAndDepartment ?
+                                        <div className={s.buttons}>
+                                            <Button onClick={() => {
+                                                dispatch(changeTaskStatus({
+                                                    id: props.task.id,
+                                                    nextStatus: "Canceled",
+                                                    changeByUserId: user.id
+                                                })).then(response=>{
+                                                    dispatch(getTask(props.task.id))
+                                                    dispatch(getTaskHistory(props.task.id));
+                                                    if(!response.error)
+                                                        toast.success('Задача успешно отменена!', {
+                                                            position: "bottom-right",
+                                                            autoClose: 3000,
+                                                            hideProgressBar: false,
+                                                            closeOnClick: true,
+                                                            pauseOnHover: true,
+                                                            draggable: true,
+                                                            progress: undefined,
+                                                            theme: "light",
+                                                        });
+                                                })
+                                                //navigate("./edit")
+                                            }}>Одобрить</Button>
+                                            <Button isSecond onClick={() => props.setCancelCancellationModalActive(true)}>Отклонить отмену</Button>
+                                        </div> : <></>
+                                }
+
+
+
+                                {
+                                    props.action === "watching" &&
+                                    props.task.taskStatus === "InWork" &&
+                                    user.id === props.task.userID ?
+                                        <div className={s.buttons}>
+                                            <Button onClick={   () => {navigate("./ending")}   }>Завершить</Button>
+                                            {/*<ResultCell isSecond onClick={() => setOnReworkModalActive(true)}>На доработку</ResultCell>*/}
+                                        </div> : <></>
+                                }
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
                         </div>
-                        <div className={s.taskInformationTableRow}>
-                            <p className={s.taskInformationTableTitle}>Блок</p>
-                            <p>{props.task.block}</p>
-                        </div>
-                        <div className={s.taskInformationTableRow}>
-                            <p className={s.taskInformationTableTitle}>Категория</p>
-                            <p>{category[props.task.category]}</p>
-                        </div>
-                        <div className={s.taskInformationTableRow}>
-                            <p className={s.taskInformationTableTitle}>Планируемый результат</p>
-                            <p>{props.task.waitResult}</p>
-                        </div>
-
-
+                    </div>
+                    <div className={s.taskInformationRightContainer}>
 
                         {
-                            props.action === "watching" &&
-                            props.task.taskStatus === "OnChecking" &&
-                            user.id !== props.task.userID &&
-                            isBossAndDepartment ?
-                                <div className={s.buttons}>
-                                    <Button onClick={() => {
-                                        dispatch(changeTaskStatus({
-                                            id: props.task.id,
-                                            nextStatus: "InWork",
-                                            changeByUserId: user.id
-                                        })).then(response=>{
-                                            dispatch(getTask(props.task.id))
-                                            dispatch(getTaskHistory(props.task.id));
-                                            if(!response.error)
-                                                toast.success('Задача успешно отправлена в работу!', {
-                                                    position: "bottom-right",
-                                                    autoClose: 3000,
-                                                    hideProgressBar: false,
-                                                    closeOnClick: true,
-                                                    pauseOnHover: true,
-                                                    draggable: true,
-                                                    progress: undefined,
-                                                    theme: "light",
-                                                });
-                                        })
-                                        //navigate("./edit")
-                                    }}>Одобрить</Button>
-                                    <Button isSecond onClick={() => props.setOnReworkModalActive(true)}>На доработку</Button>
+                            props.task.plannedWeight !== -1 ?
+                                <div>
+                                    <p className={s.taskInformationPlannedWeightTitle}>Планируемый вес:</p>
+                                    <p className={s.taskInformationPlannedWeight}>{props.task.plannedWeight + "%"}</p>
                                 </div> : <></>
                         }
 
 
 
-                        {
-                            props.action === "watching" &&
-                            props.task.taskStatus === "AwaitingCancellation" &&
-                            user.id !== props.task.userID &&
-                            isBossAndDepartment ?
-                                <div className={s.buttons}>
-                                    <Button onClick={() => {
-                                        dispatch(changeTaskStatus({
-                                            id: props.task.id,
-                                            nextStatus: "Canceled",
-                                            changeByUserId: user.id
-                                        })).then(response=>{
-                                            dispatch(getTask(props.task.id))
-                                            dispatch(getTaskHistory(props.task.id));
-                                            if(!response.error)
-                                                toast.success('Задача успешно отменена!', {
-                                                    position: "bottom-right",
-                                                    autoClose: 3000,
-                                                    hideProgressBar: false,
-                                                    closeOnClick: true,
-                                                    pauseOnHover: true,
-                                                    draggable: true,
-                                                    progress: undefined,
-                                                    theme: "light",
-                                                });
-                                        })
-                                        //navigate("./edit")
-                                    }}>Одобрить</Button>
-                                    <Button isSecond onClick={() => props.setOnReworkModalActive(true)}>Отклонить отмену</Button>
-                                </div> : <></>
-                        }
-
-
 
                         {
                             props.action === "watching" &&
-                            props.task.taskStatus === "InWork" &&
+                            (props.task.taskStatus === "OnChecking" || props.task.taskStatus === "OnRework") &&
                             user.id === props.task.userID ?
-                                <div className={s.buttons}>
-                                    <Button onClick={   () => {navigate("./ending")}   }>Завершить</Button>
-                                    {/*<Badge isSecond onClick={() => setOnReworkModalActive(true)}>На доработку</Badge>*/}
-                                </div> : <></>
+                                <Button onClick={() => navigate("./edit")}>Редактировать</Button> : <></>
                         }
 
 
-
-
-
-
-
+                        {
+                            props.action === "watching" &&
+                            (props.task.taskStatus === "InWork" &&
+                                user.id === props.task.userID)
+                            ||
+                            ((props.task.taskStatus === "OnChecking" ||
+                                    props.task.taskStatus === "InWork") &&
+                                user.id !== props.task.userID &&
+                                isBossAndDepartment)?
+                                <Button onClick={() => props.setCancellationModalActive(true)} isSecond>Отменить</Button> : <></>
+                            // <ResultCell onClick={() => navigate("./edit")} isSecond>Отменить</ResultCell> : <></>
+                        }
 
 
 
@@ -166,46 +222,8 @@ function TaskInformation(props) {
                     </div>
                 </div>
             </div>
-            <div className={s.taskInformationRightContainer}>
-                <Status type={props.task.taskStatus}/>
-                <Tag>{props.task.quarter + " квартал"}</Tag>
-                <Tag>{props.task.year}</Tag>
-                {
-                    props.task.plannedWeight !== -1 ?
-                        <div>
-                            <p className={s.taskInformationPlannedWeightTitle}>Планируемый вес:</p>
-                            <p className={s.taskInformationPlannedWeight}>{props.task.plannedWeight + "%"}</p>
-                        </div> : <></>
-                }
 
 
-
-
-                {
-                    props.action === "watching" &&
-                    (props.task.taskStatus === "OnChecking" || props.task.taskStatus === "OnRework") &&
-                    user.id === props.task.userID ?
-                        <Button onClick={() => navigate("./edit")}>Редактировать</Button> : <></>
-                }
-
-
-                {
-                    props.action === "watching" &&
-                        (props.task.taskStatus === "InWork" &&
-                        user.id === props.task.userID)
-                    ||
-                        ((props.task.taskStatus === "OnChecking" ||
-                                props.task.taskStatus === "InWork") &&
-                        user.id !== props.task.userID &&
-                        isBossAndDepartment)?
-                            <Button onClick={() => props.setCancellationModalActive(true)} isSecond>Отменить</Button> : <></>
-                            // <Badge onClick={() => navigate("./edit")} isSecond>Отменить</Badge> : <></>
-                }
-
-
-
-
-            </div>
         </div>
     )
 }

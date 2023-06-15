@@ -5,7 +5,7 @@ import tasksReducer from './slices/tasksSlice';
 import taskReducer from './slices/taskSlice';
 import departmentsReducer from './slices/departmentsSlice';
 import blocksReducer from './slices/blocksSlice';
-import resultReducer from './slices/resultSlice';
+import resultsReducer from './slices/resultsSlice';
 
 export default configureStore({
     reducer: {
@@ -13,7 +13,7 @@ export default configureStore({
         users: usersReducer,
         tasks: tasksReducer,
         task: taskReducer,
-        result: resultReducer,
+        results: resultsReducer,
         departments: departmentsReducer,
         blocks: blocksReducer,
     },

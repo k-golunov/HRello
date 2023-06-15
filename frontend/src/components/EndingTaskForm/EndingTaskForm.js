@@ -104,10 +104,13 @@ function EndingTaskForm(props) {
                         <Input register={register}
                                registerName='endingTaskResult'
                                errors={errors}
-                               title="Результат работы"
+                               title="Достигнутый результат"
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
                                    }
                                }
                                require={true}
@@ -116,20 +119,27 @@ function EndingTaskForm(props) {
                                as="textarea"
                         />
                         <Input register={register}
-                               registerName='endingTaskComment'
-                               errors={errors}
-                               title="Комментарий"
+                               registerName='endingTaskPercent'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^([1-9][0-9]{0,2}|1000)$/,
+                                           message: "Число от 1 до 1000"
+                                       }
                                    }
                                }
+                               errors={errors}
+                               title="Процент выполнения задачи"
                                require={true}
                                type="text"
-                               rows={2}
-                               as="textarea"
-                               description="Расскажите о возникших сложностях"
+                               // description="Укажите, на сколько процентов, по Вашему мнению, Вы справились с задачей"
                         />
+
+
 
                         <div className={s.buttons}>
                             <Button type="submit">Отправить</Button>
@@ -138,11 +148,38 @@ function EndingTaskForm(props) {
                     </div>
 
                     <div className={s.formRightContainer}>
+
+
+                        <Input register={register}
+                               registerName='endingTaskComment'
+                               errors={errors}
+                               title="Комментарий"
+                               options={
+                                   {
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                   }
+                               }
+                               require={true}
+                               type="text"
+                               rows={2}
+                               as="textarea"
+                               // description="Расскажите о возникших сложностях"
+                        />
                         <Input register={register}
                                registerName='endingTaskFactWeight'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^([1-9][0-9]{0,2}|1000)$/,
+                                           message: "Число от 1 до 1000"
+                                       }
                                    }
                                }
                                errors={errors}
@@ -150,19 +187,7 @@ function EndingTaskForm(props) {
                                require={true}
                                type="text"/>
 
-                        <Input register={register}
-                               registerName='endingTaskPercent'
-                               options={
-                                   {
-                                       required: true
-                                   }
-                               }
-                               errors={errors}
-                               title="Процент выполнения"
-                               require={true}
-                               type="text"
-                               description="Укажите, на сколько процентов, по Вашему мнению, Вы справились с задачей"
-                        />
+
                     </div>
                 </Form>
             </div>

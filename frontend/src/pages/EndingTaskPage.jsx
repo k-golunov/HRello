@@ -10,15 +10,20 @@ import s from "../components/Task/Task.module.css";
 import Task from "../components/Task/Task";
 import TaskInformation from "../components/Task/TaskInformation";
 import History from "../components/History/History";
+import {useUsers} from "../hooks/use-users";
+import Loading from "../components/Loading/Loading";
+import {getUsers} from "../store/slices/usersSlice";
 
 const EndingTaskPage = (props) => {
     const { taskId } = useParams();
     const dispatch = useDispatch();
     const task = useTask();
+    const users = useUsers();
     const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(getTask(taskId));
+        dispatch(getUsers());
         dispatch(getTaskHistory(taskId));
     }, []);
     useEffect(() => {
@@ -43,6 +48,12 @@ const EndingTaskPage = (props) => {
         'NotPlanned': 'Незапланированная'
     }
 
+    if(users.isLoading)
+        return <Loading/>
+
+    if(!task.isLoading && task.taskStatus !== "InWork")
+        navigate("/task/"+task.id)
+
     return (
         <div className={s.task}>
             <Breadcrumbs breadcrumbs={[{id: 1, title: "Мои задачи", src: "/tasks/my"}, {id: 2, title: "Просмотр задачи", src: "/task/"+task.id}]}/>
@@ -54,7 +65,7 @@ const EndingTaskPage = (props) => {
             />
             <EndingTaskForm taskID={taskId}/>
 
-            <History history={task.history}/>
+            <History history={task.history} users={users}/>
         </div>
     );
 };

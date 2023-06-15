@@ -22,3 +22,23 @@
     /*align-items: start;*/
     gap: 10px
 }
+
+.valueContainer {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px
+}
+
+.valueCount {
+    border-radius: 10px;
+    background-color: #B5B2B2;
+    color: white;
+    min-width: 22px;
+    text-align: center;
+
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+}

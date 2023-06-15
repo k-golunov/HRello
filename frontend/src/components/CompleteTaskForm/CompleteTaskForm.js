@@ -104,18 +104,22 @@ function CompleteTaskForm(props) {
                                title="Комментарий"
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
                                    }
                                }
                                require={true}
                                type="text"
                                rows={2}
                                as="textarea"
-                               description="Какое-то напоминание для руководителя/главного руководителя"
+                               // description="Какое-то напоминание для руководителя/главного руководителя"
                         />
 
                         <div className={s.buttons}>
                             <Button type="submit">Отправить</Button>
+                            <Button isSecond onClick={() => navigate("/task/"+props.taskID)}>Отменить одобрение</Button>
                         </div>
                     </div>
 
@@ -124,14 +128,21 @@ function CompleteTaskForm(props) {
                                registerName='completeTaskPercent'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^([1-9][0-9]{0,2}|1000)$/,
+                                           message: "Число от 1 до 1000"
+                                       }
                                    }
                                }
                                errors={errors}
                                title="Процент выполнения"
                                require={true}
                                type="text"
-                               description="Укажите, на сколько процентов, по Вашему мнению, сотрудник справился с задачей"
+                               // description="Укажите, на сколько процентов, по Вашему мнению, сотрудник справился с задачей"
                         />
                     </div>
                 </Form>

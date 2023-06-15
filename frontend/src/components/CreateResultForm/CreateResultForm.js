@@ -40,7 +40,10 @@ function CreateResultForm(props) {
                                     errors={props.errors}
                                     title="Итог"
                                     options={{
-                                        required: true
+                                        required: {
+                                            value: true,
+                                            message: "Поле обязательно для ввода"
+                                        },
                                     }}
                                     require={true}
                                     type="text"

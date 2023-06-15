@@ -94,6 +94,7 @@ function EditTaskForm(props) {
         return <Loading/>
 
     console.log("BLOCK", selectedBlock, "QUARTER", selectedQuarter, "CATEGORY", selectedCategory)
+    console.log("ERRORS", errors)
 
     return (
         <div className={s.createTaskForm}>
@@ -107,7 +108,10 @@ function EditTaskForm(props) {
                                registerName='editTaskName'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
                                    }
                                }
                                errors={errors}
@@ -118,7 +122,13 @@ function EditTaskForm(props) {
                                registerName='editTaskYear'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^[0-9]{4}$/, message: "Необходимо ввести год (4 цифры)"
+                                       }
                                    }
                                }
                                errors={errors}
@@ -150,7 +160,14 @@ function EditTaskForm(props) {
                                        registerName='editTaskPlaningWeight'
                                        options={
                                            {
-                                               required: true
+                                               required: {
+                                                   value: true,
+                                                   message: "Поле обязательно для ввода"
+                                               },
+                                               pattern: {
+                                                   value: /^0*(?:[1-9][0-9]?|100|-1)$/,
+                                                   message: "Число от 1 до 100"
+                                               }
                                            }
                                        }
                                        errors={errors}
@@ -167,7 +184,10 @@ function EditTaskForm(props) {
                            title="Планируемый результат"
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
                                }
                            }
                            require={true}
@@ -186,7 +206,10 @@ function EditTaskForm(props) {
                                title="Комментарий"
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
                                    }
                                }
                                require={true}

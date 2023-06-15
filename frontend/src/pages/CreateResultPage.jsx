@@ -18,7 +18,7 @@ import {useUsers} from "../hooks/use-users";
 import CreateResultForm from "../components/CreateResultForm/CreateResultForm";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
-import {createResult} from "../store/slices/resultSlice";
+import {createResult} from "../store/slices/resultsSlice";
 import {useNavigate} from "react-router-dom";
 
 const CreateResultPage = () => {
@@ -64,7 +64,7 @@ const CreateResultPage = () => {
         {value: 'Red', color: '#F27F6F'},
     ]
 
-    const [selectedColor, setSelectedColor] = useState(colors[0]);
+    const [selectedColor, setSelectedColor] = useState(colors[0].value);
     const [selectedBlock, setSelectedBlock] = useState(null);
     const [selectedQuarter, setSelectedQuarter] = useState(quarterList[0]);
     const [selectedYear, setSelectedYear] = useState(yearList[0]);
@@ -143,7 +143,7 @@ const CreateResultPage = () => {
         }
         const data = {
             result: payload.createResultResult,
-            color: selectedColor.value,
+            color: selectedColor,
             year: selectedYear.value,
             quarter: selectedQuarter.value,
             tasksId: selectedTasksID
@@ -158,6 +158,8 @@ const CreateResultPage = () => {
         // console.log(data);
         dispatch(createResult(data)).then(()=>navigate("/results"));
     }
+
+    console.log('SELECTED COLOR', selectedColor)
 
     return (
         <div>
@@ -189,7 +191,7 @@ const CreateResultPage = () => {
                             {type: "text", text: taskUser.surname + " " + taskUser.name + " " + taskUser.patronymic, alignment: "left", width: "215px"},
                             {type: "text", text: task.name, alignment: "left", width: "340px"},
                             {type: "text", text: task.waitResult, alignment: "left", width: "340px"},
-                            // {type: "text", text: task.factResult, alignment: "left", width: "340px"},
+                            {type: "text", text: task.userResult.result, alignment: "left", width: "340px"},
                         ]
                         return <TableRow cells={cells}
                                          taskID={task.id}
@@ -211,6 +213,22 @@ const CreateResultPage = () => {
                             current={ currentPage }
                             onChange={page => setCurrentPage(page)}
                             pageSize={10}
+                            locale={{
+                                // Options.jsx
+                                items_per_page: '/ страница',
+                                jump_to: 'Go to',
+                                jump_to_confirm: 'подтвердить',
+                                page: 'Страница',
+
+                                // Pagination.jsx
+                                prev_page: 'Предыдущая',
+                                next_page: 'Следующая',
+                                prev_5: 'Previous 5 Pages',
+                                next_5: 'Next 5 Pages',
+                                prev_3: 'Previous 3 Pages',
+                                next_3: 'Next 3 Pages',
+                                page_size: 'Page Size',
+                            }}
                             hideOnSinglePage
                 />
             </div>

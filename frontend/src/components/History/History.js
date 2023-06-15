@@ -11,7 +11,7 @@ function History(props) {
             <div className={s.history}>
                 {
                     props.history.map(historyRow => {
-                        return <HistoryRow history={historyRow}/>
+                        return <HistoryRow history={historyRow} users={props.users}/>
                     })
                 }
             </div>

@@ -58,7 +58,10 @@ function OnReworkForm(props) {
                            //title="Комментарий"
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
                                }
                            }
                            //require={true}

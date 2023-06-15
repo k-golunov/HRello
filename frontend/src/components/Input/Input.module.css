@@ -75,3 +75,11 @@
     line-height: 14px;
     color: #818284;
 }
+
+.error {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    color: rgba(242, 127, 111, 1);
+}
