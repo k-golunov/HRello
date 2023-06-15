@@ -24,12 +24,7 @@ const MyTasksPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
-        dispatch(resetTasks());
-        dispatch(getAllTasks({page: currentPage, users: [user.id]}));
-        dispatch(getBlocks());
-        dispatch(removeTask());
-    }, []);
+
 
     const yearList = [
         { value: '2023', label: '2023'},
@@ -51,7 +46,7 @@ const MyTasksPage = () => {
     ]
 
     const statusList = [
-        { value: ["OnChecking", "OnRework", "InWork", "AwaitingCancellation", "Canceled", "CompletionCheck", "Completed"], label: '-'},
+        { value: ["OnChecking", "OnRework", "InWork", "AwaitingCancellation", "Canceled", "CompletionCheck", "Completed"], label: 'Любой статус'},
         { value: "OnChecking", label: 'На проверке'},
         { value: "OnRework", label: 'На доработку'},
         { value: "InWork", label: 'В работе'},
@@ -60,6 +55,18 @@ const MyTasksPage = () => {
         { value: "CompletionCheck", label: 'Проверка завершения'},
         { value: "Completed", label: 'Завершена'},
     ]
+
+    useEffect(() => {
+        dispatch(resetTasks());
+        dispatch(getAllTasks({
+            year: [yearList[0].value],
+            page: currentPage,
+            users:[user.id],
+            status: [statusList[0].value]
+        }));
+        dispatch(getBlocks());
+        dispatch(removeTask());
+    }, []);
 
     const [selectedYear, setSelectedYear] = useState(yearList[0]);
     const [selectedQuarter, setSelectedQuarter] = useState([]);
@@ -105,7 +112,7 @@ const MyTasksPage = () => {
             'state': selectedStatus,
             'setState': setSelectedStatus,
             'placeholder': "Статус задачи",
-            'title': "Статус задачи",
+            // 'title': "Статус задачи",
             'isMulti': false,
             'minWidth': '232px'
         }
@@ -114,7 +121,7 @@ const MyTasksPage = () => {
     const headers = [
         {type: "header", text: 'Год', alignment: "left", width: "100px"},
         {type: "header", text: 'Квартал', alignment: "left", width: "100px"},
-        {type: "header", text: 'Блок', alignment: "left", width: "260px"},
+        {type: "header", text: 'Блок', alignment: "left", width: "212px"},
         {type: "header", text: 'Название', alignment: "left", width: "500px"},
         {type: "header", text: 'Вес', alignment: "left", width: "100px"},
         {type: "header", text: 'Статус', alignment: "left", width: "260px"},
@@ -152,7 +159,7 @@ const MyTasksPage = () => {
                     let cells = [
                             {type: "text", text: task.year, alignment: "left", width: "100px"},
                             {type: "text", text: task.quarter, alignment: "left", width: "100px"},
-                            {type: "text", text: task.block, alignment: "left", width: "260px"},
+                            {type: "text", text: task.block, alignment: "left", width: "212px"},
                             {type: "text", text: task.name, alignment: "left", width: "500px"},
                             {type: "percent", percent: task.plannedWeight, alignment: "left", width: "100px"},
                             {type: "status", status: task.status, alignment: "left", width: "260px"},

@@ -80,7 +80,7 @@ function TaskResults(props) {
                                         navigate("./complete")
                                     }}>Одобрить</Button>
                                     <Button isSecond onClick={() => props.setCancelCompletionModalActive(true)}>Отклонить завершение</Button>
-                                    {/*<Badge isSecond onClick={() => props.setOnReworkModalActive(true)}>На доработку</Badge>*/}
+                                    {/*<ResultCell isSecond onClick={() => props.setOnReworkModalActive(true)}>На доработку</ResultCell>*/}
                                 </div> : <></>
                         }
 
@@ -102,7 +102,7 @@ function TaskResults(props) {
                     props.task.userResult &&
                     props.task.userResult.factWeight !== -1 ?
                         <div>
-                            <p className={s.taskInformationPlannedWeightTitle}>% выполнения - оценка<br/> сотрудника:</p>
+                            <p className={s.taskInformationPlannedWeightTitle}>Процент выполнения<br/>оценка сотрудника:</p>
                             <p className={s.taskResultPlannedWeight}>{props.task.userResult.factResult + "%"}</p>
                         </div> : <></>
                 }
@@ -111,7 +111,7 @@ function TaskResults(props) {
                     props.task.bossResult &&
                     props.task.bossResult.result !== -1 ?
                         <div>
-                            <p className={s.taskInformationPlannedWeightTitle}>% выполнения - оценка<br/> рукводителя:</p>
+                            <p className={s.taskInformationPlannedWeightTitle}>Процент выполнения<br/>оценка рукводителя:</p>
                             <p className={s.taskResultPlannedWeight}>{props.task.bossResult.result + "%"}</p>
                         </div> : <></>
                 }
@@ -121,7 +121,7 @@ function TaskResults(props) {
                 {/*    props.action === "watching" &&*/}
                 {/*    (props.task.taskStatus === "CompletionCheck") &&*/}
                 {/*    user.id === props.task.userID ?*/}
-                {/*        <Badge onClick={() => navigate("./edit")}>Редактировать</Badge> : <></>*/}
+                {/*        <ResultCell onClick={() => navigate("./edit")}>Редактировать</ResultCell> : <></>*/}
                 {/*}*/}
 
 

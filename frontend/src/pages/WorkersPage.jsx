@@ -15,6 +15,8 @@ import {removeTask} from "../store/slices/taskSlice";
 import {getDepartments} from "../store/slices/departmentsSlice";
 import {useDepartments} from "../hooks/use-departments";
 import Loading from "../components/Loading/Loading";
+import {useUsers} from "../hooks/use-users";
+import {getUsers} from "../store/slices/usersSlice";
 
 const WorkersPage = () => {
     const dispatch = useDispatch();
@@ -22,10 +24,12 @@ const WorkersPage = () => {
     const navigate = useNavigate();
 
     const departments = useDepartments();
+    const users = useUsers();
 
     useEffect(() => {
         dispatch(getDepartments());
         dispatch(removeTask());
+        dispatch(getUsers());
     }, []);
 
     const rolesList = [
@@ -105,6 +109,9 @@ const WorkersPage = () => {
         {name: "Астафьева Анна Викторовна", department: "Selection", role: 'boss'},
     ]
 
+    if(users.isLoading || departments.isLoading)
+        return <Loading/>
+
 
     return (
         <>
@@ -116,16 +123,16 @@ const WorkersPage = () => {
 
             <TableRow cells={headers} isHeader/>
             {
-                workers.length === 0 ?
+                users.users.length === 0 ?
                     <TableRow cells={[{type: "text", text: "Нет сотрудников!", alignment: "center", width: "1272px"}]}/> :
                     <></>
             }
             {
-                workers.map(worker => {
+                users.users.map(user => {
                     let cells = [
-                        {type: "text", text: worker.name, alignment: "left", width: "400px"},
-                        {type: "text", text: block[worker.department], alignment: "left", width: "400px"}, //TODO
-                        {type: "text", text: roles[worker.role], alignment: "left", width: "400px"}
+                        {type: "text", text: user.surname + " " + user.name + " " + user.patronymic, alignment: "left", width: "400px"},
+                        {type: "text", text: departments.departments.filter(department => department.id === user.departamentId)[0].name, alignment: "left", width: "400px"}, //TODO
+                        {type: "text", text: "В разработке", alignment: "left", width: "400px"}
                     ]
                     return <TableRow cells={cells}/>
                 })

@@ -2,6 +2,25 @@ import React from 'react';
 import s from './FilterDropdown.module.css';
 import Select, {components} from "react-select";
 
+
+const ValueContainer = ({ children, ...props }) => {
+    let { getValue, hasValue } = props;
+    const nbValues = getValue().length-1;
+    if(nbValues === 0) hasValue = false
+    if (!hasValue) {
+        return (
+            <components.ValueContainer {...props}>
+                {children}
+            </components.ValueContainer>
+        );
+    }
+    return (
+        <components.ValueContainer {...props} className={s.valueContainer}>
+            {children}<p className={s.valueCount}>{`${nbValues}`}</p>
+        </components.ValueContainer>
+    );
+};
+
 const Option = (props) => {
     return (
         <div>
@@ -69,7 +88,8 @@ function FilterDropdown(props) {
                 controlShouldRenderValue={!props.isMulti}
                 isMulti={props.isMulti}
                 components={props.isMulti?{
-                    Option
+                    Option,
+                    ValueContainer
                 }:{}}
             />
         </div>

@@ -41,15 +41,18 @@ function AuthorizationForm(props) {
 
     return (
         <div className={s.authorizationForm}>
-            <p className={s.header}>Название сервиса</p>
+            <p className={s.header}>Авторизация</p>
             <div>
-                <p className={s.authorization}>Авторизация</p>
+                {/*<p className={s.authorization}>Авторизация</p>*/}
                 <Form className={s.form} onSubmit={handleSubmit(onSubmit)}>
                     <Input register={register}
                            registerName='authorizationEmail'
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
                                }
                            }
                            errors={errors}
@@ -61,7 +64,10 @@ function AuthorizationForm(props) {
                                registerName='authorizationPassword'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
                                    }
                                }
                                errors={errors}

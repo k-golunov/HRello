@@ -6,9 +6,40 @@ import TASK_API, {
     SEND_TASK_TO_REVIEW_URL
 } from "../../api/taskAPI";
 import {toast} from "react-toastify";
-import RESULT_API from "../../api/resultAPI";
+import RESULT_API, {DOWNLOAD_RESULTS_URL} from "../../api/resultAPI";
 
 let createResultToast;
+
+function downloadBlob(blob, name = 'file.txt') {
+    if (
+        window.navigator &&
+        window.navigator.msSaveOrOpenBlob
+    ) return window.navigator.msSaveOrOpenBlob(blob);
+
+    // For other browsers:
+    // Create a link pointing to the ObjectURL containing the blob.
+    const data = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = data;
+    link.download = name;
+
+    // this is necessary as link.click() does not work on the latest firefox
+    link.dispatchEvent(
+        new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        })
+    );
+
+    setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+        link.remove();
+    }, 100);
+}
+
 
 export const getResults = createAsyncThunk(
     'results/get',
@@ -16,7 +47,7 @@ export const getResults = createAsyncThunk(
         // let navigate = useNavigate();
         try {
             const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
-            let response = await fetch(RESULT_API.CREATE_RESULT_URL, {
+            let response = await fetch(RESULT_API.GET_RESULTS_URL, {
                 method: 'get',
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,7 +110,49 @@ export const createResult = createAsyncThunk(
             // debugger;
             console.log(response)
             //dispatch(setUser({accessToken: response, email: user.email}));
-            // dispatch(getProfile());
+            dispatch(getResults());
+            // dispatch(togglePopup("signIn"));
+            // createNotify();
+
+            // navigate(`/profile`);
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const downloadResult = createAsyncThunk(
+    'results/download',
+    async function (filters, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            let response = await fetch(
+                RESULT_API.DOWNLOAD_RESULTS_URL + "?Year="+filters.year+"&Quarters="+filters.quarter+"&DepartmentsId="+filters.department ,
+                {
+                    method: 'get',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: accessToken
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.blob();
+            downloadBlob(response, 'Итоги за '+filters.year+' год.xlsx')
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            // dispatch(getResults());
             // dispatch(togglePopup("signIn"));
             // createNotify();
 
@@ -97,12 +170,12 @@ const initialState = {
     isLoading: true,
 };
 
-const resultSlice = createSlice({
+const resultsSlice = createSlice({
     name: 'results',
     initialState: initialState,
     reducers: {
         setResults(state, action) {
-            state.results = action.payload.allTaskResultResponse;
+            state.results = action.payload;
             state.isLoading = false;
         },
         removeResults(state) {
@@ -136,6 +209,6 @@ const resultSlice = createSlice({
     },
 });
 debugger;
-export const {setResults, removeResults} = resultSlice.actions;
+export const {setResults, removeResults} = resultsSlice.actions;
 
-export default resultSlice.reducer;
+export default resultsSlice.reducer;

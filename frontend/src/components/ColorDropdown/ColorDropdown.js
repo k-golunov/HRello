@@ -3,13 +3,20 @@ import {GithubPicker} from 'react-color';
 import s from "./ColorDropdown.module.css"
 
 const ColorDropdown = (props) => {
-
+    console.log("PROPS", props)
     const [isOpenPicker, setIsOpenPicker] = useState(false)
     const [pickedColor, setPickedColor] = useState("#A9F26F")
+
+    const colors = {
+        "#a9f26f": 'Green',
+        "#fff964": 'Yellow',
+        "#f27f6f":'Red'
+    }
 
     const handleChangeComplete = (color) => {
         setPickedColor(color.hex);
         setIsOpenPicker(false)
+        props.onChange(colors[color.hex])
         console.log(color)
     };
 

@@ -34,19 +34,14 @@ const AllTasksPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
-        dispatch(resetTasks());
-        dispatch(getAllTasks({page: currentPage}));
-        dispatch(getDepartments());
-        dispatch(getBlocks());
-        dispatch(getUsers());
-        dispatch(removeTask());
-    }, []);
+
 
     const yearList = [
         { value: '2023', label: '2023'},
         { value: '2022', label: '2022'},
     ]
+
+
 
     const quarterlist = [
         { value: '1', label: '1 квартал'},
@@ -66,7 +61,7 @@ const AllTasksPage = () => {
     ]
 
     const statusList = [
-        { value: ["OnChecking", "OnRework", "InWork", "AwaitingCancellation", "Canceled", "CompletionCheck", "Completed"], label: '-'},
+        { value: ["OnChecking", "OnRework", "InWork", "AwaitingCancellation", "Canceled", "CompletionCheck", "Completed"], label: 'Любой статус'},
         { value: "OnChecking", label: 'На проверке'},
         { value: "OnRework", label: 'На доработку'},
         { value: "InWork", label: 'В работе'},
@@ -75,6 +70,19 @@ const AllTasksPage = () => {
         { value: "CompletionCheck", label: 'Проверка завершения'},
         { value: "Completed", label: 'Завершена'},
     ]
+
+    useEffect(() => {
+        dispatch(resetTasks());
+        dispatch(getAllTasks({
+            year: [yearList[0].value],
+            page: currentPage,
+            status: [statusList[0].value]
+        }));
+        dispatch(getDepartments());
+        dispatch(getBlocks());
+        dispatch(getUsers());
+        dispatch(removeTask());
+    }, []);
 
     if(!departments.isLoading)
         departmentFilter = departments.departments.map(department =>{
@@ -117,7 +125,7 @@ const AllTasksPage = () => {
             'setState': setSelectedQuarter,
             'placeholder': "Квартал",
             'isMulti': true,
-            'minWidth': '120px'
+            'minWidth': '200px'
         },
         {
             'options': departmentFilter,
@@ -148,7 +156,7 @@ const AllTasksPage = () => {
             'state': selectedStatus,
             'setState': setSelectedStatus,
             'placeholder': "Статус задачи",
-            'title': "Статус задачи",
+            //'title': "Статус задачи",
             'isMulti': false,
             'minWidth': '232px'
         }
@@ -158,7 +166,7 @@ const AllTasksPage = () => {
         {type: "header", text: 'Квартал', alignment: "left", width: "100px"},
         {type: "header", text: 'Отдел', alignment: "left", width: "150px"},
         {type: "header", text: 'ФИО сотрудника', alignment: "left", width: "200px"},
-        {type: "header", text: 'Блок', alignment: "left", width: "260px"},
+        {type: "header", text: 'Блок', alignment: "left", width: "182px"},
         {type: "header", text: 'Название', alignment: "left", width: "300px"},
         {type: "header", text: 'Вес', alignment: "left", width: "80px"},
         {type: "header", text: 'Статус', alignment: "left", width: "260px"},
@@ -206,7 +214,7 @@ const AllTasksPage = () => {
                         {type: "text", text: task.quarter, alignment: "left", width: "100px"},
                         {type: "text", text: taskDepartment.name, alignment: "left", width: "150px"},
                         {type: "text", text: taskUser.surname + " " + taskUser.name + " " + taskUser.patronymic, alignment: "left", width: "200px"},
-                        {type: "text", text: task.block, alignment: "left", width: "260px"},
+                        {type: "text", text: task.block, alignment: "left", width: "182px"},
                         {type: "text", text: task.name, alignment: "left", width: "300px"},
                         {type: "percent", percent: task.plannedWeight, alignment: "left", width: "80px"},
                         {type: "status", status: task.status, alignment: "left", width: "260px"},

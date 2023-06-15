@@ -53,7 +53,6 @@ function TableRow(props) {
 
         document.body.removeChild(textArea)
     };
-    console.log("FUNC", props.setSelectedID, props.isSelect)
 
     return (
         <div className={classNames(s.tableRow, props.isHeader ? s.tableRowHeader : "")} onClick={

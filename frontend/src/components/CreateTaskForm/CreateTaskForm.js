@@ -106,7 +106,10 @@ function CreateTaskForm(props) {
                         <Input register={register}
                                registerName='createTaskName'
                                options={{
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
                                }}
                                errors={errors}
                                title="Название"
@@ -115,7 +118,13 @@ function CreateTaskForm(props) {
                         <Input register={register}
                                registerName='createTaskYear'
                                options={{
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
+                                   pattern: {
+                                       value: /^[0-9]{4}$/, message: "Необходимо ввести год (4 цифры)"
+                                   }
                                }}
                                errors={errors}
                                title="Год"
@@ -135,7 +144,14 @@ function CreateTaskForm(props) {
                             <Input register={register}
                                    registerName='createTaskPlaningWeight'
                                    options={{
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^0*(?:[1-9][0-9]?|100|-1)$/,
+                                           message: "Число от 1 до 100"
+                                       }
                                    }}
                                    errors={errors}
                                    title="Планируемый вес задачи, %"
@@ -149,7 +165,10 @@ function CreateTaskForm(props) {
                            errors={errors}
                            title="Планируемый результат"
                            options={{
-                               required: true
+                               required: {
+                                   value: true,
+                                   message: "Поле обязательно для ввода"
+                               },
                            }}
                            require={true}
                            type="text"

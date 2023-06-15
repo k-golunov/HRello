@@ -19,10 +19,11 @@ const InvitationsPage = () => {
     }, []);
     const headers = [
         {type: "header", text: 'Почта', alignment: "left", width: "250px"},
-        {type: "header", text: 'ФИО', alignment: "left", width: "400px"},
+        {type: "header", text: 'ФИО', alignment: "left", width: "348px"},
         //{type: "header", text: 'Дата отправки', alignment: "left", width: "174px"},
         {type: "header", text: 'Ссылка', alignment: "left", width: "374px"},
         {type: "header", text: 'Статус', alignment: "left", width: "260px"},
+        {type: "header", text: '', alignment: "left", width: "40px"},
     ]
 
     const status = {
@@ -54,7 +55,7 @@ const InvitationsPage = () => {
                 link: FRONTEND_HOST+"registration/"+user.id,
                 status: user.emailConfirmed? "Registr" : "Wait"}
         })
-
+    console.log(invitations)
     return (
         <div>
             <PageTitle title="Приглашения"/>
@@ -70,7 +71,7 @@ const InvitationsPage = () => {
                     invitations.map(invitation => {
                         let cells = [
                             {type: "text", text: invitation.mail, alignment: "left", width: "250px"},
-                            {type: "text", text: invitation.name, alignment: "left", width: "400px"},
+                            {type: "text", text: invitation.name, alignment: "left", width: "348px"},
                         ]
                         if(invitation.status==="Wait")
                             cells.push({type: "copyLink", link: invitation.link, alignment: "left", width: "374px"})
@@ -78,7 +79,8 @@ const InvitationsPage = () => {
                             cells.push({type: "text", text: "-", alignment: "left", width: "374px"})
 
                         cells.push({type: "status", status: invitation.status, alignment: "left", width: "260px"},)
-                        cells.push({type: "deleteInvention", id: invitation.id, alignment: "left", width: "40px"},)
+                        if(invitation.name === "-")
+                            cells.push({type: "deleteInvention", id: invitation.id, alignment: "left", width: "40px"},)
                         return <TableRow cells={cells}/>
                     })
                 }

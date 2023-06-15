@@ -21,7 +21,7 @@ import {useUsers} from "../hooks/use-users";
 import {removeTask} from "../store/slices/taskSlice";
 import Pagination from "rc-pagination";
 
-const OnCheckTaskPage = () => {
+const OnCheckTasksPage = () => {
     const dispatch = useDispatch();
     const user = useAuth();
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ const OnCheckTaskPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
 
     const statusList = [
-        { value: ["OnChecking", "CompletionCheck", "AwaitingCancellation"], label: '-'},
+        { value: ["OnChecking", "CompletionCheck", "AwaitingCancellation"], label: 'Любой статус'},
         { value: "OnChecking", label: 'На проверке'},
         { value: "CompletionCheck", label: 'Проверка завершения'},
         { value: "AwaitingCancellation", label: 'Ожидает отмены'},
@@ -152,9 +152,9 @@ const OnCheckTaskPage = () => {
             'state': selectedStatus,
             'setState': setSelectedStatus,
             'placeholder': "Статус задачи",
-            'title': "Статус задачи",
+            // 'title': "Статус задачи",
             'isMulti': false,
-            'minWidth': '232px'
+            'minWidth': '240px'
         }
     ]
 
@@ -162,7 +162,7 @@ const OnCheckTaskPage = () => {
         {type: "header", text: 'Квартал', alignment: "left", width: "100px"},
         {type: "header", text: 'Отдел', alignment: "left", width: "150px"},
         {type: "header", text: 'ФИО сотрудника', alignment: "left", width: "200px"},
-        {type: "header", text: 'Блок', alignment: "left", width: "260px"},
+        {type: "header", text: 'Блок', alignment: "left", width: "182px"},
         {type: "header", text: 'Название', alignment: "left", width: "300px"},
         {type: "header", text: 'Вес', alignment: "left", width: "80px"},
         {type: "header", text: 'Статус', alignment: "left", width: "260px"},
@@ -194,7 +194,7 @@ const OnCheckTaskPage = () => {
                         {type: "text", text: task.quarter, alignment: "left", width: "100px"},
                         {type: "text", text: taskDepartment.name, alignment: "left", width: "150px"},
                         {type: "text", text: taskUser.surname + " " + taskUser.name + " " + taskUser.patronymic, alignment: "left", width: "200px"},
-                        {type: "text", text: task.block, alignment: "left", width: "260px"},
+                        {type: "text", text: task.block, alignment: "left", width: "182px"},
                         {type: "text", text: task.name, alignment: "left", width: "300px"},
                         {type: "percent", percent: task.plannedWeight, alignment: "left", width: "80px"},
                         {type: "status", status: task.status, alignment: "left", width: "260px"},
@@ -219,4 +219,4 @@ const OnCheckTaskPage = () => {
     );
 };
 
-export default OnCheckTaskPage;
+export default OnCheckTasksPage;

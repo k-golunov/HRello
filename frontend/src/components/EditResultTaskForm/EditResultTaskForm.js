@@ -74,7 +74,7 @@ function EditResultTaskForm(props) {
         //console.log("SELECTED QUARTER", selectedQuarter);
 
         dispatch(sendToReviewTask(data)).then(response => {
-            if(!response.error) {
+            if (!response.error) {
                 toast.success('Задача успешно отправлена на завершение!', {
                     position: "bottom-right",
                     autoClose: 3000,
@@ -87,7 +87,7 @@ function EditResultTaskForm(props) {
                 });
                 dispatch(getTask(props.taskID))
                 dispatch(getTaskHistory(props.taskID))
-                navigate("/task/"+props.taskID);
+                navigate("/task/" + props.taskID);
             }
         });
     }
@@ -104,7 +104,10 @@ function EditResultTaskForm(props) {
                                title="Результат работы"
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
                                    }
                                }
                                require={true}
@@ -118,7 +121,10 @@ function EditResultTaskForm(props) {
                                title="Комментарий"
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
                                    }
                                }
                                require={true}
@@ -130,7 +136,8 @@ function EditResultTaskForm(props) {
 
                         <div className={s.buttons}>
                             <Button type="submit">Отправить</Button>
-                            <Button isSecond click={()=> navigate("/task/"+props.taskID)}>Отменить завершение</Button>
+                            <Button isSecond click={() => navigate("/task/" + props.taskID)}>Отменить
+                                завершение</Button>
                         </div>
                     </div>
 
@@ -139,7 +146,14 @@ function EditResultTaskForm(props) {
                                registerName='endingTaskFactWeight'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^([1-9][0-9]{0,2}|1000)$/,
+                                           message: "Число от 1 до 1000"
+                                       }
                                    }
                                }
                                errors={errors}
@@ -151,7 +165,14 @@ function EditResultTaskForm(props) {
                                registerName='endingTaskPercent'
                                options={
                                    {
-                                       required: true
+                                       required: {
+                                           value: true,
+                                           message: "Поле обязательно для ввода"
+                                       },
+                                       pattern: {
+                                           value: /^([1-9][0-9]{0,2}|1000)$/,
+                                           message: "Число от 1 до 1000"
+                                       }
                                    }
                                }
                                errors={errors}

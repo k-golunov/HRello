@@ -17,15 +17,20 @@ import TaskInformation from "./TaskInformation";
 import ToCancellationForm from "../ToCancellationForm/ToCancellationForm";
 import CancelCompletionForm from "../CancelCompletionForm/CancelCompletionForm";
 import TaskResults from "./TaskResults";
+import CancelCancellationForm from "../CancelCancellationForm/CancelCancellationForm";
+import {useUsers} from "../../hooks/use-users";
+import {getUsers} from "../../store/slices/usersSlice";
 
 function Task(props) {
     const dispatch = useDispatch();
     const task = useTask();
     const user = useAuth();
+    const users = useUsers();
 
     const [onReworkModalActive, setOnReworkModalActive] = useState(false);
     const [cancellationModalActive, setCancellationModalActive] = useState(false);
     const [cancelCompletionModalActive, setCancelCompletionModalActive] = useState(false);
+    const [cancelCancellationModalActive, setCancelCancellationModalActive] = useState(false);
 
     const {register: registerOnRework, reset: resetOnRework, handleSubmit: handleSubmitOnRework, formState: {errors: errorsOnRework}} = useForm({
         defaultValues: {
@@ -41,6 +46,13 @@ function Task(props) {
         mode: "onBlur"
     });
 
+    const {register: registerCancelCancellation, reset: resetCancelCancellation, handleSubmit: handleSubmitCancelCancellation, formState: {errors: errorsCancelCancellation}} = useForm({
+        defaultValues: {
+            cancelCancellationComment: ''
+        },
+        mode: "onBlur"
+    });
+
     const {register: registerCancelCompletion, reset: resetCancelCompletion, handleSubmit: handleSubmitCancelCompletion, formState: {errors: errorsCancelCompletion}} = useForm({
         defaultValues: {
             cancelCompletionComment: ''
@@ -51,6 +63,7 @@ function Task(props) {
     useEffect(() => {
         dispatch(getTask(props.taskID));
         dispatch(getTaskHistory(props.taskID));
+        dispatch(getUsers());
     }, []);
     useEffect(() => {
         dispatch(getTaskUser(task.userID));
@@ -64,7 +77,7 @@ function Task(props) {
         'NotPlanned': 'Незапланированная'
     }
 
-    if(task.isLoading)
+    if(users.isLoading || task.isLoading)
         return <Loading/>
 
     const isBossAndDepartment = user.role !== "employee" && user.departmentID === task.departmentID;
@@ -75,6 +88,7 @@ function Task(props) {
                              setOnReworkModalActive={setOnReworkModalActive}
                              setCancellationModalActive={setCancellationModalActive}
                              setCancelCompletionModalActive={setCancelCompletionModalActive}
+                             setCancelCancellationModalActive={setCancelCancellationModalActive}
             />
 
             <TaskResults task={task}
@@ -82,7 +96,7 @@ function Task(props) {
                          setCancelCompletionModalActive={setCancelCompletionModalActive}
             />
 
-            <History history={task.history}/>
+            <History history={task.history} users={users}/>
 
             <ModalWindow active={onReworkModalActive}
                          setActive={setOnReworkModalActive}
@@ -109,6 +123,20 @@ function Task(props) {
                               taskID={task.id}
                               setActive={setCancellationModalActive}
                               reset={resetToCancellation}
+                />
+            </ModalWindow>
+
+            <ModalWindow active={cancelCancellationModalActive}
+                         setActive={setCancelCancellationModalActive}
+                         onClose={()=>resetCancelCancellation({
+                             cancelCancellationComment: ''
+                         })}>
+                <CancelCancellationForm handleSubmit={handleSubmitCancelCancellation}
+                                        errors={errorsCancelCancellation}
+                                        register={registerCancelCancellation}
+                                        taskID={task.id}
+                                        setActive={setCancelCancellationModalActive}
+                                        reset={resetCancelCancellation}
                 />
             </ModalWindow>
 

@@ -43,7 +43,10 @@ function EditBlockForm(props) {
                            title="Название"
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
                                }
                            }
                            //require={true}

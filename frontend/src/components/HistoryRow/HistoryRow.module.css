@@ -37,6 +37,8 @@
     font-size: 14px;
     line-height: 18px;
     color: #565A5A;
+    word-wrap: break-word;
+    max-width: 732px;
 }
 
 .divider {
@@ -52,4 +54,18 @@
     font-size: 16px;
     line-height: 20px;
     color: #000000;
+}
+
+.historyTitle {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.historyTitleUser {
+    background: rgb(181, 178, 178);
+    padding: 0px 10px;
+    border-radius: 12px;
+    color: rgba(249, 157, 29, 1);
+    color: white;
 }

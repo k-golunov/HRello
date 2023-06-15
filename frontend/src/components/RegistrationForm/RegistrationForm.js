@@ -29,9 +29,36 @@ function RegistrationForm(props) {
         if(!isLoading) {
             setIsLoading(true);
             if (payload.registrationPassword !== payload.registrationRetryPassword) {
-                alert('Вы указали разные пароли!');
+                toast.error('Пароли не совпадают!', {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setIsLoading(false);
                 return;
             }
+
+            if(payload.registrationPassword.length < 4)
+            {
+                toast.error('Пароли должен содержать минимум 4 символа!', {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setIsLoading(false);
+                return;
+            }
+
 
             delete payload.registrationRetryPassword;
             //payload.registrationPassword = md5(payload.registrationPassword);
@@ -51,17 +78,22 @@ function RegistrationForm(props) {
         }
     }
 
+    console.log(errors)
+
     return (
         <div className={s.createRoomForm}>
-            <p className={s.header}>Название сервиса</p>
+            <p className={s.header}>Регистрация</p>
             <div>
-                <p className={s.authorization}>Регистрация</p>
+                {/*<p className={s.authorization}>Регистрация</p>*/}
                 <Form className={s.form} onSubmit={handleSubmit(onSubmit)}>
                     <Input register={register}
                            registerName='registrationSurname'
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
                                }
                            }
                            errors={errors}
@@ -72,7 +104,10 @@ function RegistrationForm(props) {
                            registerName='registrationName'
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
                                }
                            }
                            errors={errors}
@@ -94,7 +129,18 @@ function RegistrationForm(props) {
                            registerName='registrationPassword'
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
+                                   pattern: {
+                                       value: /^[A-Za-z0-9!#$%&'*+/=?^_`{|}.,~-]+$/gm,
+                                       message: "Только английские буквы или цифры"
+                                   },
+                                   minLength: {
+                                       value: 4,
+                                       message: "Минимум 4 символа",
+                                   },
                                }
                            }
                            errors={errors}
@@ -105,7 +151,18 @@ function RegistrationForm(props) {
                            registerName='registrationRetryPassword'
                            options={
                                {
-                                   required: true
+                                   required: {
+                                       value: true,
+                                       message: "Поле обязательно для ввода"
+                                   },
+                                   pattern: {
+                                       value: /^[A-Za-z0-9!#$%&'*+/=?^_`{|}.,~-]+$/gm,
+                                       message: "Только английские буквы или цифры"
+                                   },
+                                   minLength: {
+                                       value: 4,
+                                       message: "Минимум 4 символа",
+                                   },
                                }
                            }
                            errors={errors}
@@ -113,7 +170,7 @@ function RegistrationForm(props) {
                            require={true}
                            type="password"/>
 
-                    <Button type="submit">Войти</Button>
+                    <Button type="submit">Зарегистрироваться</Button>
                 </Form>
             </div>
         </div>
