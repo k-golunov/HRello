@@ -20,5 +20,9 @@ public class DepartamentProfiles : Profile
             .ForMember(dst => dst.BossId, opt => opt.MapFrom(src => src.BossId))
             .ForMember(dst => dst.Id, opt => opt.Ignore())
             ;
+        CreateMap<EditDepartmentRequest, DepartamentDal>()
+            .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.DepartamentId))
+            ;
     }
 }

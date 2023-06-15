@@ -157,7 +157,7 @@ public class UserController : BasePublicController
         {
             return NotFound(new BaseExceptionModel("User.404", "User not found"));
         }
-        await _userManager.DeleteAsync(user);
+        await _userManager.SetLockoutEnabledAsync(user, false);
         return Ok();
     }
     

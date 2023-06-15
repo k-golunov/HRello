@@ -3,7 +3,7 @@
 /// <summary>
 /// Возвращаемые значение после создания отдела
 /// </summary>
-public record CreateIdResponse
+public record IdDepartmentResponse
 {
     /// <summary>
     /// Id отдела
