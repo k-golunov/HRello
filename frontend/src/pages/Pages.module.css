@@ -114,3 +114,11 @@
     flex-direction: column;
     gap: 25px;
 }
+
+.allTasksPageButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
