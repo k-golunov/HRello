@@ -4,8 +4,8 @@ import { useAuth } from '../hooks/use-auth';
 
 const RequireAdmin = ({ children }) => {
   const user = useAuth();
-  debugger
-  if (!user.isAdmin) {
+
+  if (!user.isAuth || user.role === "employee") {
     return <Navigate to='/' />;
   }
 

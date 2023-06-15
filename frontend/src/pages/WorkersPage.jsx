@@ -20,7 +20,7 @@ import {getUsers} from "../store/slices/usersSlice";
 
 const WorkersPage = () => {
     const dispatch = useDispatch();
-    const isAuth = useAuth().isAuth;
+    const user = useAuth();
     const navigate = useNavigate();
 
     const departments = useDepartments();
@@ -122,7 +122,10 @@ const WorkersPage = () => {
             <PageTitle title="Сотрудники"/>
             <div className={s.workersPageFilters}>
                 <Filters filters={filters}/>
-                <Button onClick={()=>navigate("/invitations")}>Пригласить нового сотрудника</Button>
+                {
+                    user.role !== "employee" ? <Button onClick={()=>navigate("/invitations")}>Пригласить нового сотрудника</Button> : <></>
+                }
+
             </div>
 
             <TableRow cells={headers} isHeader/>

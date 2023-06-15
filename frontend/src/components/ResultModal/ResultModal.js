@@ -14,12 +14,14 @@ import Loading from "../Loading/Loading";
 import {useNavigate} from "react-router-dom";
 import Button from "../Button/Button";
 import {deleteResult} from "../../store/slices/resultsSlice";
+import {useAuth} from "../../hooks/use-auth";
 
 function ResultModal(props) {
     console.log(props)
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const blocks = useBlocks();
+    const user = useAuth()
     const departments = useDepartments();
     const users = useUsers();
 
@@ -40,9 +42,9 @@ function ResultModal(props) {
     let boss = users.users.filter(user => user.id === bossID)[0]
 
     const colors = {
-        "Green": "#a9f26f",
-        "Yellow": "#fff964",
-        "Red": "#f27f6f"
+        "Green": "#a9f26f8a",
+        "Yellow": "#fff9648a",
+        "Red": "#f27f6f8a",
     }
 
     return (
@@ -90,12 +92,15 @@ function ResultModal(props) {
             </div>
 
             <div className={s.buttons}>
-                <Button click={()=>{
-                    dispatch(deleteResult(props.selectedResult?.id)).then(()=>{
-                        props.setActive(false)
-                        props.setSelectedResult(null)
-                    })
-                }}>Удалить</Button>
+                {
+                    user.role === 'mainboss' ? <Button click={()=>{
+                        dispatch(deleteResult(props.selectedResult?.id)).then(()=>{
+                            props.setActive(false)
+                            props.setSelectedResult(null)
+                        })
+                    }}>Удалить</Button> : <></>
+                }
+
             </div>
 
 

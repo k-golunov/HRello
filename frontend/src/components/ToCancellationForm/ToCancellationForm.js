@@ -25,7 +25,7 @@ function ToCancellationForm(props) {
             setIsLoading(true);
             dispatch(changeTaskStatus({
                 id: props.taskID,
-                nextStatus: "AwaitingCancellation",
+                nextStatus: user.role === "employee" ? "AwaitingCancellation" : "Canceled" ,
                 comment: payload.toCancellationComment,
                 changeByUserId: user.id
             })).then(response=>{
@@ -33,7 +33,7 @@ function ToCancellationForm(props) {
                 dispatch(getTaskHistory(props.taskID));
                 props.setActive(false)
                 if(!response.error)
-                    toast.success('Задача успешно отправлена на отмену!', {
+                    toast.success(user.role === "employee" ? 'Задача успешно отправлена на отмену!' : "Задача успешно отменена!", {
                         position: "bottom-right",
                         autoClose: 3000,
                         hideProgressBar: false,
