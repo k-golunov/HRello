@@ -157,7 +157,7 @@ const ResultsPage = () => {
             <ModalWindow active={resultModalActive}
                          setActive={setResultModalActive}
                          onClose={()=> {setSelectedResult(null)}}>
-                <ResultModal selectedResult={selectedResult}/>
+                <ResultModal selectedResult={selectedResult} setActive={setResultModalActive} setSelectedResult={setSelectedResult}/>
             </ModalWindow>
         </div>
     );

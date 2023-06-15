@@ -53,7 +53,7 @@ const InvitationsPage = () => {
                 id: user.id,
                 //date: "26.02.2023",
                 link: FRONTEND_HOST+"registration/"+user.id,
-                status: user.emailConfirmed? "Registr" : "Wait"}
+                status: user.lockoutEnabled ? user.emailConfirmed? "Registr" : "Wait" : "NotWorking"}
         })
     console.log(invitations)
     return (
@@ -79,7 +79,7 @@ const InvitationsPage = () => {
                             cells.push({type: "text", text: "-", alignment: "left", width: "374px"})
 
                         cells.push({type: "status", status: invitation.status, alignment: "left", width: "260px"},)
-                        if(invitation.name === "-")
+                        if(invitation.name === "-" && invitation.status !== "NotWorking")
                             cells.push({type: "deleteInvention", id: invitation.id, alignment: "left", width: "40px"},)
                         return <TableRow cells={cells}/>
                     })

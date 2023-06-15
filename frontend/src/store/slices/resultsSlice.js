@@ -9,6 +9,7 @@ import {toast} from "react-toastify";
 import RESULT_API, {DOWNLOAD_RESULTS_URL} from "../../api/resultAPI";
 
 let createResultToast;
+let deleteResultToast;
 
 function downloadBlob(blob, name = 'file.txt') {
     if (
@@ -123,6 +124,47 @@ export const createResult = createAsyncThunk(
     }
 );
 
+export const deleteResult = createAsyncThunk(
+    'result/delete',
+    async function (resultID, {rejectWithValue, dispatch}) {
+        // let navigate = useNavigate();
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            let response = await fetch(RESULT_API.DELETE_RESULT_URL+"?id="+resultID, {
+                method: 'delete',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                }
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            // response = await response.json();
+            // debugger;
+            // console.log(response)
+            //dispatch(setUser({accessToken: response, email: user.email}));
+            dispatch(getResults());
+            // dispatch(togglePopup("signIn"));
+            // createNotify();
+
+            // navigate(`/profile`);
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+
 export const downloadResult = createAsyncThunk(
     'results/download',
     async function (filters, {rejectWithValue, dispatch}) {
@@ -199,6 +241,28 @@ const resultsSlice = createSlice({
         },
         [createResult.rejected]: (state, action) => {
             toast.update(createResultToast,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
+        },
+        [deleteResult.pending]: (state, action) => {
+            deleteResultToast = toast.loading("Удаляю итог...")
+        },
+        [deleteResult.fulfilled]: (state, action) => {
+            toast.update(deleteResultToast,
+                {
+                    render: "Итог успешно удалён",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
+        },
+        [deleteResult.rejected]: (state, action) => {
+            toast.update(deleteResultToast,
                 { render: action.payload,
                     type: "error",
                     isLoading: false,

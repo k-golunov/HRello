@@ -20,6 +20,9 @@ import {useForm} from "react-hook-form";
 import AddBlockForm from "../components/AddBlockForm/AddBlockForm";
 import {ModalWindow} from "../components/ModalWindow/ModalWindow";
 import AddDepartmentForm from "../components/AddDepartmentForm/AddDepartmentForm";
+import EditBlockForm from "../components/EditBlockForm/EditBlockForm";
+import EditDepartmentForm from "../components/EditDepartmentForm/EditDepartmentForm";
+import Loading from "../components/Loading/Loading";
 
 const DepartmentsPage = () => {
     const dispatch = useDispatch();
@@ -29,9 +32,27 @@ const DepartmentsPage = () => {
     const departments = useDepartments();
     const users = useUsers();
 
+    useEffect(() => {
+        dispatch(getDepartments());
+        dispatch(getUsers());
+        dispatch(removeTask());
+    }, []);
+
+    let employeeFilter = []
+
+    if(!users.isLoading)
+        employeeFilter = users.users.filter(user => user.emailConfirmed).map(user =>{
+            return { value: user.id, label: user.surname + " " + user.name + " " + user.patronymic}
+        })
+
+    // useEffect(() => {
+    //     setSelectedEmployee(employeeFilter.find(employee => employee.value === props.department?.bossId))
+    // }, [users]);
+
     const [addDepartmentModalActive, setAddDepartmentModalActive] = useState(false);
     const [editDepartmentModalActive, setEditDepartmentModalActive] = useState(false);
     const [editDepartment, setEditDepartment] = useState(null);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     const {register: registerAddDepartment, reset: resetAddDepartment, handleSubmit: handleSubmitAddDepartment, formState: {errors: errorsAddDepartment}} = useForm({
         defaultValues: {
@@ -47,11 +68,6 @@ const DepartmentsPage = () => {
         mode: "onBlur"
     });
 
-    useEffect(() => {
-        dispatch(getDepartments());
-        dispatch(getUsers());
-        dispatch(removeTask());
-    }, []);
 
     const rolesList = [
         { value: 'worker', label: "Сотрудник"},
@@ -59,11 +75,6 @@ const DepartmentsPage = () => {
         { value: 'mainboss', label: "Главный руководитель"},
     ]
 
-
-    const sortWeightList = [
-        { value: 'desc', label: 'По возрастанию'},
-        { value: 'asc', label: 'По убыванию'},
-    ]
 
     const departmentFilter = [
         { value: 'Selection', label: 'Подбор'},
@@ -131,6 +142,9 @@ const DepartmentsPage = () => {
         {boss: "Астафьева Анна Викторовна", name: "Разработка"},
     ]*/
 
+    if(departments.isLoading || users.isLoading)
+        return <Loading/>
+
 
     return (
         <>
@@ -151,7 +165,14 @@ const DepartmentsPage = () => {
                         {type: "text", text: department.name, alignment: "left", width: "600px"},
                         {type: "text", text: user? user.surname+" "+user.name+" "+user.patronymic: "-", alignment: "left", width: "600px"},
                     ]
-                    return <TableRow cells={cells}/>
+                    return <TableRow cells={cells}
+                                     department={department}
+                                     setEditDepartment={setEditDepartment}
+                                     resetEditDepartment={resetEditDepartment}
+                                     setActive={setEditDepartmentModalActive}
+                                     setSelectedEmployee={setSelectedEmployee}
+                                     employeeFilter={employeeFilter}
+                    />
                 })
             }
             <div className={s.serviceButtons}>
@@ -164,10 +185,31 @@ const DepartmentsPage = () => {
                              addBlockName: ''
                          })}>
                 <AddDepartmentForm handleSubmit={handleSubmitAddDepartment}
-                              errors={errorsAddDepartment}
-                              register={registerAddDepartment}
-                              setActive={setAddDepartmentModalActive}
-                              reset={resetAddDepartment}
+                                   errors={errorsAddDepartment}
+                                   register={registerAddDepartment}
+                                   setActive={setAddDepartmentModalActive}
+                                   reset={resetAddDepartment}
+                />
+            </ModalWindow>
+
+            <ModalWindow active={editDepartmentModalActive}
+                         setActive={setEditDepartmentModalActive}
+                         onClose={()=>{
+                             resetEditDepartment({ editDepartmentName: ''});
+                             setEditDepartment(null);
+                             setSelectedEmployee(null);
+                         }}>
+                <EditDepartmentForm handleSubmit={handleSubmitEditDepartment}
+                                    errors={errorsEditDepartment}
+                                    register={registerEditDepartment}
+                                    setActive={setEditDepartmentModalActive}
+                                    setEditDepartment={setEditDepartment}
+                                    editDepartment={editDepartment}
+                                    reset={resetEditDepartment}
+                                    department={editDepartment}
+                                    selectedEmployee={selectedEmployee}
+                                    setSelectedEmployee={setSelectedEmployee}
+                                    employeeFilter={employeeFilter}
                 />
             </ModalWindow>
         </>

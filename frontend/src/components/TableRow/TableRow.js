@@ -76,7 +76,12 @@ function TableRow(props) {
                     props.resetEditBlock({editBlockName: props.block.value})
                     props.setActive(true);
                 }
-                : () => {})
+                : props.department ? () => {
+                        props.setEditDepartment(props.department);
+                        props.setSelectedEmployee(props.employeeFilter.find(employee => employee.value === props.department?.bossId))
+                        props.resetEditDepartment({editDepartmentName: props.department.name})
+                        props.setActive(true);
+                } : () => {})
              }>
             {
                 props.cells.map(cell => {
