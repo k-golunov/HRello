@@ -1,6 +1,45 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import 'react-toastify/dist/ReactToastify.css';
-import DEPARTMENTS_API from "../../api/departmentsAPI";
+import DEPARTMENTS_API, {CREATE_DEPARTMENT} from "../../api/departmentsAPI";
+import BLOCKS_API from "../../api/blocksAPI";
+import {toast} from "react-toastify";
+import {createBlock} from "./blocksSlice";
+
+
+let createDepartmentNotify;
+
+export const createDepartment = createAsyncThunk(
+    'department/create',
+    async function (payload, {rejectWithValue, dispatch}) {
+        try {
+            const accessToken = 'Bearer ' + localStorage.getItem('USSCHR-accessToken')
+            let response = await fetch(DEPARTMENTS_API.CREATE_DEPARTMENT, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: accessToken
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                //alert("Username or password is incorrect");
+                throw new Error(
+                    `${response.status}${
+                        response.statusText ? ' ' + response.statusText : ''
+                    }`
+                );
+            }
+
+            response = await response.json();
+
+
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 export const getDepartments = createAsyncThunk(
     'departments/get',
@@ -33,6 +72,7 @@ export const getDepartments = createAsyncThunk(
     }
 );
 
+
 const initialState = {
     departments: [],
     isLoading: true,
@@ -53,7 +93,28 @@ const departmentsSlice = createSlice({
         },
     },
     extraReducers: {
-
+        [createDepartment.pending]: (state, action) => {
+            createDepartmentNotify = toast.loading("Добавляю отдел...")
+        },
+        [createDepartment.fulfilled]: (state, action) => {
+            toast.update(createDepartmentNotify,
+                {
+                    render: "Отдел успешно добавлен!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 4000,
+                    hideProgressBar: false
+                });
+        },
+        [createDepartment.rejected]: (state, action) => {
+            toast.update(createDepartmentNotify,
+                { render: action.payload,
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 10000,
+                }
+            );
+        },
     },
 });
 debugger;

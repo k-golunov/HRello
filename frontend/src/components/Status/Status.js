@@ -16,8 +16,8 @@ function Status(props) {
         'Completed': 'Завершена',
 
         'Wait': 'Ожидание',
-        'NotWorking': 'Аннулированно',
-        "Registr": 'Зарегестрирован'
+        'NotWorking': 'Аннулировано',
+        "Registr": 'Зарегистрирован'
     }
 
     return (

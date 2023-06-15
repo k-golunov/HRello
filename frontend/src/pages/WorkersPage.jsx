@@ -58,11 +58,11 @@ const WorkersPage = () => {
         'Estimation': 'Оценка'
     } //TODO
 
-    const roles = {
-        'worker': "Сотрудник",
-        'boss': 'Руководитель',
-        'mainboss': "Главный руководитель"
-    }
+    // const roles = {
+    //     'worker': "Сотрудник",
+    //     'boss': 'Руководитель',
+    //     'mainboss': "Главный руководитель"
+    // }
 
 
 
@@ -78,6 +78,16 @@ const WorkersPage = () => {
     if(departments.isLoading)
         return <Loading/>
 
+    let workers = users.users.slice();
+
+    const roles = selectedRole.filter(role => role.value).map(role => role.value)
+    const departmentsFilter = selectedDepartment.filter(department => department.value).map(department => department.value)
+
+    if(roles.length !== 0)
+        workers = workers.filter(result => roles.includes(result.quarter))
+    if(departmentsFilter.length !== 0)
+        workers = workers.filter(worker => departmentsFilter.includes(worker.departamentId))
+
     const filters = [
         {
             'options': departmentFilter,
@@ -87,26 +97,20 @@ const WorkersPage = () => {
             'isMulti': true,
             'minWidth': '200px'
         },
-        {
-            'options': rolesList,
-            'state': selectedRole,
-            'setState': setSelectedRole,
-            'placeholder': "Роль",
-            'isMulti': true,
-            'minWidth': '200px'
-        }
+        // {
+        //     'options': rolesList,
+        //     'state': selectedRole,
+        //     'setState': setSelectedRole,
+        //     'placeholder': "Роль",
+        //     'isMulti': true,
+        //     'minWidth': '200px'
+        // }
     ]
 
     const headers = [
         {type: "header", text: 'ФИО', alignment: "left", width: "400px"},
         {type: "header", text: 'Отдел', alignment: "left", width: "400px"},
         {type: "header", text: 'Роль', alignment: "left", width: "400px"},
-    ]
-
-    const workers = [
-        {name: "Кочнева Анжелика Дмитриевна", department: "Selection", role: 'boss'},
-        {name: "Бурханова Екатерина Сергеевна", department: "InternalWork", role: 'boss'},
-        {name: "Астафьева Анна Викторовна", department: "Selection", role: 'boss'},
     ]
 
     if(users.isLoading || departments.isLoading)
@@ -123,12 +127,12 @@ const WorkersPage = () => {
 
             <TableRow cells={headers} isHeader/>
             {
-                users.users.length === 0 ?
+                workers.length === 0 ?
                     <TableRow cells={[{type: "text", text: "Нет сотрудников!", alignment: "center", width: "1272px"}]}/> :
                     <></>
             }
             {
-                users.users.map(user => {
+                workers.map(user => {
                     let cells = [
                         {type: "text", text: user.surname + " " + user.name + " " + user.patronymic, alignment: "left", width: "400px"},
                         {type: "text", text: departments.departments.filter(department => department.id === user.departamentId)[0].name, alignment: "left", width: "400px"}, //TODO

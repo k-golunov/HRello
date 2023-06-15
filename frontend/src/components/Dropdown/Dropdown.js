@@ -29,7 +29,7 @@ function Dropdown(props) {
             <p className={s.title}>{props.title}</p>
             <Select
                 className={s.dropdown}
-                defaultValue={props.options[0]}
+                defaultValue={props.isDefault?null:props.options[0]}
                 isDisabled={false}
                 isLoading={!props.options.length}
                 isClearable={false}

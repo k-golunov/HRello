@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import s from './AddDepartmentForm.module.css';
+import s from './EditDepartmentForm.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import Form from "react-bootstrap/Form";
@@ -9,58 +9,62 @@ import {useDispatch} from "react-redux";
 import md5 from 'md5';
 import {toast} from "react-toastify";
 import {Link, useNavigate} from "react-router-dom";
-import {changeTaskStatus, getTask, getTaskHistory, removeTask} from "../../store/slices/taskSlice";
-import {createBlock, getBlocks} from "../../store/slices/blocksSlice";
-import {createDepartment, getDepartments} from "../../store/slices/departmentsSlice";
+import {changeTaskStatus, getTask, getTaskHistory} from "../../store/slices/taskSlice";
+import {createBlock, editBlock, getBlocks} from "../../store/slices/blocksSlice";
+import Dropdown from "../Dropdown/Dropdown";
 import {getUsers} from "../../store/slices/usersSlice";
 import {useUsers} from "../../hooks/use-users";
-import FilterDropdown from "../FilterDropdown/FilterDropdown";
-import Dropdown from "../Dropdown/Dropdown";
+import {useDepartments} from "../../hooks/use-departments";
+import {getDepartments} from "../../store/slices/departmentsSlice";
 
-function AddDepartmentForm(props) {
+function EditDepartmentForm(props) {
+    console.log(props)
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
-    const users = useUsers();
-
-    let employeeFilter = []
-
-    if(!users.isLoading)
-        employeeFilter = users.users.filter(user => user.emailConfirmed).map(user =>{
-            return { value: user.id, label: user.surname + " " + user.name + " " + user.patronymic}
-        })
-
-    const [selectedEmployee, setSelectedEmployee] = useState(null);
-
-    useEffect(() => {
-        dispatch(getUsers());
-    }, []);
-
 
     const onSubmit = (payload) => {
+        console.log("EDIT", payload, props.selectedEmployee)
+
         if(!isLoading)
         {
+
+            if(!props.selectedEmployee)
+            {
+                toast.error('Выберите руководителя!', {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                return;
+            }
             setIsLoading(true);
-            dispatch(createDepartment({
-                name: payload.addDepartmentName,
-                bossId: selectedEmployee.value
-            })).then(response=>{
-                dispatch(getDepartments())
-                setSelectedEmployee(null)
-                props.reset()
-                props.setActive(false)
-            })
+
+
+            // dispatch(editDepartment({
+            //     id: props.block.id,
+            //     value: payload.editBlockName
+            // })).then(response=>{
+            //     dispatch(getBlocks())
+            //     props.setActive(false)
+            //     setIsLoading(false)
+            // })
         }
     }
 
     return (
         <div className={s.authorizationForm}>
             <div>
-                <p className={s.authorization}>Создание отдела</p>
+                <p className={s.authorization}>Редактирование отдела</p>
                 <Form className={s.form} onSubmit={props.handleSubmit(onSubmit)}>
                     <Input register={props.register}
-                           registerName='addDepartmentName'
+                           registerName='editDepartmentName'
                            errors={props.errors}
                            title="Название"
                            options={
@@ -75,10 +79,14 @@ function AddDepartmentForm(props) {
                            type="text"
                            //description="Расскажите о возникших сложностях"
                     />
-                    <Dropdown title="Руководитель" options={employeeFilter} minWidth="353px"
-                              onChange={setSelectedEmployee}/>
+
+                    <Dropdown title="Руководитель" options={props.employeeFilter} minWidth="353px"
+                              onChange={props.setSelectedEmployee}
+                              value={props.selectedEmployee??null}
+                              isDefault
+                    />
                     <div className={s.buttons}>
-                        <Button type="submit">Создать</Button>
+                        <Button type="submit">Сохранить</Button>
                         <Button isSecond click={()=>{
                             props.setActive(false)
                             props.reset()
@@ -91,4 +99,4 @@ function AddDepartmentForm(props) {
     )
 }
 
-export default AddDepartmentForm;
+export default EditDepartmentForm;

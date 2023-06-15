@@ -12,6 +12,8 @@ import {getBlocks} from "../../store/slices/blocksSlice";
 import {useUsers} from "../../hooks/use-users";
 import Loading from "../Loading/Loading";
 import {useNavigate} from "react-router-dom";
+import Button from "../Button/Button";
+import {deleteResult} from "../../store/slices/resultsSlice";
 
 function ResultModal(props) {
     console.log(props)
@@ -86,6 +88,16 @@ function ResultModal(props) {
                     <p className={s.result} style={{backgroundColor: colors[props.selectedResult?.color]}}>{props.selectedResult?.result}</p>
                 </div>
             </div>
+
+            <div className={s.buttons}>
+                <Button click={()=>{
+                    dispatch(deleteResult(props.selectedResult?.id)).then(()=>{
+                        props.setActive(false)
+                        props.setSelectedResult(null)
+                    })
+                }}>Удалить</Button>
+            </div>
+
 
 
         </div>
